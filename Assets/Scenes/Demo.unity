@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 1312308579}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -236,10 +236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db76858d38718f4468b4ed52fd325d71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  screen_width: 80
-  screen_height: 50
-  playerPrefab: {fileID: 4563847484379436636, guid: e85475dbb5ed30a49bb5db6082b6e840, type: 3}
-  player: {fileID: 0}
+  time: 0.1
+  isPlayerTurn: 1
 --- !u!4 &1312308580
 Transform:
   m_ObjectHideFlags: 0
