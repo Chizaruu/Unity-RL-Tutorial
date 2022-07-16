@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// A generic class to represent players, enemies, items, etc.
+/// </summary>
 public class Entity : MonoBehaviour {
   [SerializeField] private bool isSentient = false;
 
