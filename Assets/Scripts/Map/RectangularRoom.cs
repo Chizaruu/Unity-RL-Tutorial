@@ -13,7 +13,7 @@ public class RectangularRoom {
     this.id = id;
   }
 
-  public Vector2 Center() => new Vector2(x + width / 2, y + height / 2);
+  public Vector2Int Center() => new Vector2Int(x + width / 2, y + height / 2);
 
   /// <summary>
   ///  Return the area of this room as a Bounds.

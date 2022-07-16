@@ -42,6 +42,7 @@ public class MapManager : MonoBehaviour {
   private void Start() {
     ProcGen procGen = new ProcGen();
     procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, rooms);
+
     Instantiate(Resources.Load<GameObject>("NPC"), new Vector3(40 - 5.5f, 25 + 0.5f, 0), Quaternion.identity).name = "NPC";
 
     Camera.main.transform.position = new Vector3(40, 20.25f, -10);
