@@ -95,7 +95,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2353431262086747075}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de2a0a49562ad39488590a35ab814a61, type: 3}
+  m_Script: {fileID: 11500000, guid: 727f95c08f0b76b47b93c7ffbb649d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveKeyHeld: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2353431262086747075}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53d6f3a4689e7344f8d16cbc57630ab5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ee5374e1d7092b4680f908b55e88823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isSentient: 1
