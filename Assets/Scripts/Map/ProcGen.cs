@@ -26,10 +26,15 @@ sealed class ProcGen {
       for (int x = roomX; x < roomX + roomWidth; x++) {
         for (int y = roomY; y < roomY + roomHeight; y++) {
           if (x == roomX || x == roomX + roomWidth - 1 || y == roomY || y == roomY + roomHeight - 1) {
-            if (MapManager.instance.FloorMap.GetTile(new Vector3Int(x, y, 0)))
+            if (MapManager.instance.FloorMap.GetTile(new Vector3Int(x, y, 0))) {
               continue;
-            MapManager.instance.ObstacleMap.SetTile(new Vector3Int(x, y, 0), MapManager.instance.WallTile);
+            } else {
+              MapManager.instance.ObstacleMap.SetTile(new Vector3Int(x, y, 0), MapManager.instance.WallTile);
+            }
           } else {
+            if (MapManager.instance.ObstacleMap.GetTile(new Vector3Int(x, y, 0)))
+              MapManager.instance.ObstacleMap.SetTile(new Vector3Int(x, y, 0), null);
+
             MapManager.instance.FloorMap.SetTile(new Vector3Int(x, y, 0), MapManager.instance.FloorTile);
           }
         }
@@ -80,8 +85,11 @@ sealed class ProcGen {
       //Set the tiles around this tile to be walls using for loops
       for (int x = coord.x - 1; x <= coord.x + 1; x++) {
         for (int y = coord.y - 1; y <= coord.y + 1; y++) {
-          if (!MapManager.instance.FloorMap.HasTile(new Vector3Int(x, y, 0)))
+          if (MapManager.instance.FloorMap.GetTile(new Vector3Int(x, y, 0))) {
+            continue;
+          } else {
             MapManager.instance.ObstacleMap.SetTile(new Vector3Int(x, y, 0), MapManager.instance.WallTile);
+          }
         }
       }
     }
