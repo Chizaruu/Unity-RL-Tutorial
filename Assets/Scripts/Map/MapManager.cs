@@ -74,21 +74,24 @@ public class MapManager : MonoBehaviour {
   private void SetupFogMap() {
     foreach (Vector3Int pos in tiles.Keys) {
       fogMap.SetTile(pos, fogTile);
+      fogMap.SetTileFlags(pos, TileFlags.None);
     }
   }
 
   public void UpdateFogMap(List<Vector3Int> playerFOV) {
     foreach (Vector3Int pos in visibleTiles) {
-      tiles[pos].isVisible = false; // Set the tile to not visible
-      tiles[pos].isExplored = true; // Set the tile to explored
-      fogMap.SetTileFlags(pos, TileFlags.None); // Set the tile to not be a blocking tile
-      fogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f)); // Set the tile to be a half transparent tile
+      if (!tiles[pos].isExplored) {
+        tiles[pos].isExplored = true;
+      }
+
+      tiles[pos].isVisible = false;
+      fogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f));
     }
 
     visibleTiles.Clear();
 
     foreach (Vector3Int pos in playerFOV) {
-      fogMap.SetTileFlags(pos, TileFlags.None);
+      tiles[pos].isVisible = true;
       fogMap.SetColor(pos, Color.clear);
       visibleTiles.Add(pos);
     }
