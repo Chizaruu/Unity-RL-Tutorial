@@ -11,37 +11,41 @@ public class MapManager : MonoBehaviour {
   [SerializeField] private int roomMaxSize = 10;
   [SerializeField] private int roomMinSize = 6;
   [SerializeField] private int maxRooms = 30;
-
-  [Header("Colors")]
-  [SerializeField] private Color32 darkColor = new Color32(0, 0, 0, 0);
-  [SerializeField] private Color32 lightColor = new Color32(255, 255, 255, 255);
-
   [Header("Tiles")]
   [SerializeField] private TileBase floorTile;
   [SerializeField] private TileBase wallTile;
+  [SerializeField] private TileBase fogTile;
   [Header("Tilemaps")]
   [SerializeField] private Tilemap floorMap;
   [SerializeField] private Tilemap obstacleMap;
+  [SerializeField] private Tilemap fogMap;
   [Header("Features")]
   [SerializeField] private List<RectangularRoom> rooms = new List<RectangularRoom>();
+  [SerializeField] private List<Vector3Int> visibleTiles = new List<Vector3Int>();
+  [SerializeField] private Dictionary<Vector3Int, TileData> tiles = new Dictionary<Vector3Int, TileData>();
 
   public TileBase FloorTile { get => floorTile; }
   public TileBase WallTile { get => wallTile; }
   public Tilemap FloorMap { get => floorMap; }
   public Tilemap ObstacleMap { get => obstacleMap; }
-
-  public List<RectangularRoom> Rooms { get => rooms; }
+  public Tilemap FogMap { get => fogMap; }
 
   private void Awake() {
-    if (instance == null)
+    if (instance == null) {
       instance = this;
-    else
+    } else {
       Destroy(gameObject);
+    }
   }
 
   private void Start() {
     ProcGen procGen = new ProcGen();
     procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, rooms);
+
+    AddTileMapToDictionary(floorMap);
+    AddTileMapToDictionary(obstacleMap);
+
+    SetupFogMap();
 
     Instantiate(Resources.Load<GameObject>("NPC"), new Vector3(40 - 5.5f, 25 + 0.5f, 0), Quaternion.identity).name = "NPC";
 
@@ -54,5 +58,39 @@ public class MapManager : MonoBehaviour {
 
   public void CreatePlayer(Vector2 position) {
     Instantiate(Resources.Load<GameObject>("Player"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Player";
+  }
+
+  private void AddTileMapToDictionary(Tilemap tilemap) {
+    foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin) {
+      if (!tilemap.HasTile(pos)) {
+        continue;
+      }
+
+      TileData tile = new TileData(pos);
+      tiles.Add(pos, tile);
+    }
+  }
+
+  private void SetupFogMap() {
+    foreach (Vector3Int pos in tiles.Keys) {
+      fogMap.SetTile(pos, fogTile);
+    }
+  }
+
+  public void UpdateFogMap(List<Vector3Int> playerFOV) {
+    foreach (Vector3Int pos in visibleTiles) {
+      tiles[pos].isVisible = false; // Set the tile to not visible
+      tiles[pos].isExplored = true; // Set the tile to explored
+      fogMap.SetTileFlags(pos, TileFlags.None); // Set the tile to not be a blocking tile
+      fogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f)); // Set the tile to be a half transparent tile
+    }
+
+    visibleTiles.Clear();
+
+    foreach (Vector3Int pos in playerFOV) {
+      fogMap.SetTileFlags(pos, TileFlags.None);
+      fogMap.SetColor(pos, Color.clear);
+      visibleTiles.Add(pos);
+    }
   }
 }

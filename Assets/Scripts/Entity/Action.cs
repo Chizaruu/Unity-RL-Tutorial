@@ -9,6 +9,7 @@ static public class Action {
   static public void MovementAction(Entity entity, Vector2 direction) {
     //Debug.Log($"{entity.name} moves {direction}!");
     entity.Move(direction);
+    entity.UpdateFieldOfView();
     GameManager.instance.EndTurn();
   }
 
