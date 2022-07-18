@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 sealed class ProcGen {
-
   /// <summary>
   /// Generate a new dungeon map.
   /// </summary>
@@ -15,7 +14,7 @@ sealed class ProcGen {
       int roomX = Random.Range(0, mapWidth - roomWidth - 1);
       int roomY = Random.Range(0, mapHeight - roomHeight - 1);
 
-      RectangularRoom newRoom = new RectangularRoom(roomX, roomY, roomWidth, roomHeight, MapManager.instance.Rooms.Count);
+      RectangularRoom newRoom = new RectangularRoom(roomX, roomY, roomWidth, roomHeight);
 
       //Check if this room intersects with any other rooms
       if (newRoom.Overlaps(rooms)) {
@@ -27,24 +26,21 @@ sealed class ProcGen {
       for (int x = roomX; x < roomX + roomWidth; x++) {
         for (int y = roomY; y < roomY + roomHeight; y++) {
           if (x == roomX || x == roomX + roomWidth - 1 || y == roomY || y == roomY + roomHeight - 1) {
-            if (SetWallTileIfEmpty(new Vector3Int(x, y, 0))) {
+            if (SetWallTileIfEmpty(new Vector3Int(x, y))) {
               continue;
             }
           } else {
-            if (MapManager.instance.ObstacleMap.GetTile(new Vector3Int(x, y, 0))) {
-              MapManager.instance.ObstacleMap.SetTile(new Vector3Int(x, y, 0), null);
-            }
-            MapManager.instance.FloorMap.SetTile(new Vector3Int(x, y, 0), MapManager.instance.FloorTile);
+            SetFloorTile(new Vector3Int(x, y));
           }
         }
       }
 
-      if (MapManager.instance.Rooms.Count == 0) {
+      if (rooms.Count == 0) {
         //The first room, where the player starts.
         MapManager.instance.CreatePlayer(newRoom.Center());
       } else {
         //Dig out a tunnel between this room and the previous one.
-        TunnelBetween(MapManager.instance.Rooms[MapManager.instance.Rooms.Count - 1], newRoom);
+        TunnelBetween(rooms[rooms.Count - 1], newRoom);
       }
 
       rooms.Add(newRoom);
@@ -69,22 +65,17 @@ sealed class ProcGen {
 
     //Generate the coordinates for this tunnel.
     List<Vector2Int> tunnelCoords = new List<Vector2Int>();
-    BresenhamLine(oldRoomCenter, tunnelCorner, tunnelCoords);
-    BresenhamLine(tunnelCorner, newRoomCenter, tunnelCoords);
+    BresenhamLine.Compute(oldRoomCenter, tunnelCorner, tunnelCoords);
+    BresenhamLine.Compute(tunnelCorner, newRoomCenter, tunnelCoords);
 
     //Set the tiles for this tunnel.
     for (int i = 0; i < tunnelCoords.Count; i++) {
-      if (MapManager.instance.ObstacleMap.HasTile(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y, 0))) {
-        MapManager.instance.ObstacleMap.SetTile(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y, 0), null);
-      }
-
-      //Set the floor tile.
-      MapManager.instance.FloorMap.SetTile(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y, 0), MapManager.instance.FloorTile);
+      SetFloorTile(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y));
 
       //Set the wall tiles around this tile to be walls.
       for (int x = tunnelCoords[i].x - 1; x <= tunnelCoords[i].x + 1; x++) {
         for (int y = tunnelCoords[i].y - 1; y <= tunnelCoords[i].y + 1; y++) {
-          if (SetWallTileIfEmpty(new Vector3Int(x, y, 0))) {
+          if (SetWallTileIfEmpty(new Vector3Int(x, y))) {
             continue;
           }
         }
@@ -92,34 +83,19 @@ sealed class ProcGen {
     }
   }
 
-  private void BresenhamLine(Vector2Int roomCenter, Vector2Int tunnelCorner, List<Vector2Int> tunnelCoords) {
-    int x = roomCenter.x, y = roomCenter.y;
-    int dx = Mathf.Abs(tunnelCorner.x - roomCenter.x), dy = Mathf.Abs(tunnelCorner.y - roomCenter.y);
-    int sx = roomCenter.x < tunnelCorner.x ? 1 : -1, sy = roomCenter.y < tunnelCorner.y ? 1 : -1;
-    int err = dx - dy;
-    while (true) {
-      tunnelCoords.Add(new Vector2Int(x, y));
-      if (x == tunnelCorner.x && y == tunnelCorner.y) {
-        break;
-      }
-      int e2 = 2 * err;
-      if (e2 > -dy) {
-        err -= dy;
-        x += sx;
-      }
-      if (e2 < dx) {
-        err += dx;
-        y += sy;
-      }
+  private bool SetWallTileIfEmpty(Vector3Int pos) {
+    if (MapManager.instance.FloorMap.GetTile(pos)) {
+      return true;
+    } else {
+      MapManager.instance.ObstacleMap.SetTile(pos, MapManager.instance.WallTile);
+      return false;
     }
   }
 
-  private bool SetWallTileIfEmpty(Vector3Int pos) {
-    if (MapManager.instance.FloorMap.GetTile(new Vector3Int(pos.x, pos.y, 0))) {
-      return true;
-    } else {
-      MapManager.instance.ObstacleMap.SetTile(new Vector3Int(pos.x, pos.y, 0), MapManager.instance.WallTile);
-      return false;
+  private void SetFloorTile(Vector3Int pos) {
+    if (MapManager.instance.ObstacleMap.GetTile(pos)) {
+      MapManager.instance.ObstacleMap.SetTile(pos, null);
     }
+    MapManager.instance.FloorMap.SetTile(pos, MapManager.instance.FloorTile);
   }
 }
