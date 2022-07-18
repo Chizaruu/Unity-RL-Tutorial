@@ -26,11 +26,11 @@ sealed class ProcGen {
       for (int x = roomX; x < roomX + roomWidth; x++) {
         for (int y = roomY; y < roomY + roomHeight; y++) {
           if (x == roomX || x == roomX + roomWidth - 1 || y == roomY || y == roomY + roomHeight - 1) {
-            if (SetWallTileIfEmpty(new Vector2Int(x, y))) {
+            if (SetWallTileIfEmpty(new Vector3Int(x, y))) {
               continue;
             }
           } else {
-            SetFloorTile(new Vector2Int(x, y));
+            SetFloorTile(new Vector3Int(x, y));
           }
         }
       }
@@ -70,12 +70,12 @@ sealed class ProcGen {
 
     //Set the tiles for this tunnel.
     for (int i = 0; i < tunnelCoords.Count; i++) {
-      SetFloorTile(tunnelCoords[i]);
+      SetFloorTile(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y));
 
       //Set the wall tiles around this tile to be walls.
       for (int x = tunnelCoords[i].x - 1; x <= tunnelCoords[i].x + 1; x++) {
         for (int y = tunnelCoords[i].y - 1; y <= tunnelCoords[i].y + 1; y++) {
-          if (SetWallTileIfEmpty(new Vector2Int(x, y))) {
+          if (SetWallTileIfEmpty(new Vector3Int(x, y))) {
             continue;
           }
         }
@@ -83,19 +83,19 @@ sealed class ProcGen {
     }
   }
 
-  private bool SetWallTileIfEmpty(Vector2Int pos) {
-    if (MapManager.instance.FloorMap.GetTile(new Vector3Int(pos.x, pos.y, 0))) {
+  private bool SetWallTileIfEmpty(Vector3Int pos) {
+    if (MapManager.instance.FloorMap.GetTile(pos)) {
       return true;
     } else {
-      MapManager.instance.ObstacleMap.SetTile(new Vector3Int(pos.x, pos.y, 0), MapManager.instance.WallTile);
+      MapManager.instance.ObstacleMap.SetTile(pos, MapManager.instance.WallTile);
       return false;
     }
   }
 
-  private void SetFloorTile(Vector2Int pos) {
-    if (MapManager.instance.ObstacleMap.GetTile(new Vector3Int(pos.x, pos.y, 0))) {
-      MapManager.instance.ObstacleMap.SetTile(new Vector3Int(pos.x, pos.y, 0), null);
+  private void SetFloorTile(Vector3Int pos) {
+    if (MapManager.instance.ObstacleMap.GetTile(pos)) {
+      MapManager.instance.ObstacleMap.SetTile(pos, null);
     }
-    MapManager.instance.FloorMap.SetTile(new Vector3Int(pos.x, pos.y, 0), MapManager.instance.FloorTile);
+    MapManager.instance.FloorMap.SetTile(pos, MapManager.instance.FloorTile);
   }
 }

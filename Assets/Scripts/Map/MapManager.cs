@@ -60,24 +60,6 @@ public class MapManager : MonoBehaviour {
     Instantiate(Resources.Load<GameObject>("Player"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Player";
   }
 
-  private void AddTileMapToDictionary(Tilemap tilemap) {
-    foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin) {
-      if (!tilemap.HasTile(pos)) {
-        continue;
-      }
-
-      TileData tile = new TileData(pos);
-      tiles.Add(pos, tile);
-    }
-  }
-
-  private void SetupFogMap() {
-    foreach (Vector3Int pos in tiles.Keys) {
-      fogMap.SetTile(pos, fogTile);
-      fogMap.SetTileFlags(pos, TileFlags.None);
-    }
-  }
-
   public void UpdateFogMap(List<Vector3Int> playerFOV) {
     foreach (Vector3Int pos in visibleTiles) {
       if (!tiles[pos].isExplored) {
@@ -94,6 +76,40 @@ public class MapManager : MonoBehaviour {
       tiles[pos].isVisible = true;
       fogMap.SetColor(pos, Color.clear);
       visibleTiles.Add(pos);
+    }
+  }
+
+  public void SetEntitiesVisibilities() {
+    foreach (Entity entity in GameManager.instance.Entities) {
+      if (entity.GetComponent<Player>()) {
+        continue;
+      }
+
+      Vector3Int entityPosition = floorMap.WorldToCell(entity.transform.position);
+
+      if (visibleTiles.Contains(entityPosition)) {
+        entity.GetComponent<SpriteRenderer>().enabled = true;
+      } else {
+        entity.GetComponent<SpriteRenderer>().enabled = false;
+      }
+    }
+  }
+
+  private void AddTileMapToDictionary(Tilemap tilemap) {
+    foreach (Vector3Int pos in tilemap.cellBounds.allPositionsWithin) {
+      if (!tilemap.HasTile(pos)) {
+        continue;
+      }
+
+      TileData tile = new TileData(pos);
+      tiles.Add(pos, tile);
+    }
+  }
+
+  private void SetupFogMap() {
+    foreach (Vector3Int pos in tiles.Keys) {
+      fogMap.SetTile(pos, fogTile);
+      fogMap.SetTileFlags(pos, TileFlags.None);
     }
   }
 }

@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour {
   [SerializeField] private bool isPlayerTurn = true;
   [SerializeField] private int entityNum = 0;
   [SerializeField] private List<Entity> entities = new List<Entity>();
-
   public bool IsPlayerTurn { get => isPlayerTurn; }
+  public List<Entity> Entities { get => entities; }
 
   private void Awake() {
     if (instance == null)

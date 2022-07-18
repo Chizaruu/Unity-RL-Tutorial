@@ -7,18 +7,22 @@ using UnityEngine;
 public class Entity : MonoBehaviour {
   [SerializeField] private bool isSentient = false;
   [SerializeField] private int fieldOfViewRange = 8;
-  [SerializeField] private List<Vector3Int> fieldOfView = new List<Vector3Int>();
+  [SerializeField] private List<Vector3Int> fieldOfView;
   AdamMilVisibility algorithm;
   public bool IsSentient { get => isSentient; }
 
   private void Start() {
-    if (GetComponent<Player>()) {
-      GameManager.instance.InsertEntity(this, 0);
-    } else if (IsSentient) {
-      GameManager.instance.AddEntity(this);
+    if (isSentient) {
+      if (GetComponent<Player>()) {
+        GameManager.instance.InsertEntity(this, 0);
+      } else {
+        GameManager.instance.AddEntity(this);
+      }
+
+      fieldOfView = new List<Vector3Int>();
+      algorithm = new AdamMilVisibility();
+      UpdateFieldOfView();
     }
-    algorithm = new AdamMilVisibility();
-    UpdateFieldOfView();
   }
 
   public void Move(Vector2 direction) {
@@ -33,6 +37,7 @@ public class Entity : MonoBehaviour {
 
     if (GetComponent<Player>()) {
       MapManager.instance.UpdateFogMap(fieldOfView);
+      MapManager.instance.SetEntitiesVisibilities();
     }
   }
 }
