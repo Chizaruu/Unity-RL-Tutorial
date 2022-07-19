@@ -101,7 +101,7 @@ public class MapManager : MonoBehaviour {
         continue;
       }
 
-      TileData tile = new TileData(pos);
+      TileData tile = new TileData();
       tiles.Add(pos, tile);
     }
   }
