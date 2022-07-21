@@ -40,7 +40,7 @@ sealed class ProcGen {
         TunnelBetween(rooms[rooms.Count - 1], newRoom);
       }
 
-      PlaceEntities(newRoom, maxMonstersPerRoom);
+      PlaceActors(newRoom, maxMonstersPerRoom);
 
       rooms.Add(newRoom);
     }
@@ -100,7 +100,7 @@ sealed class ProcGen {
     MapManager.instance.FloorMap.SetTile(pos, MapManager.instance.FloorTile);
   }
 
-  private void PlaceEntities(RectangularRoom newRoom, int maximumMonsters) {
+  private void PlaceActors(RectangularRoom newRoom, int maximumMonsters) {
     int numberOfMonsters = Random.Range(0, maximumMonsters + 1);
 
     for (int monster = 0; monster < numberOfMonsters;) {
@@ -111,8 +111,8 @@ sealed class ProcGen {
         continue;
       }
 
-      for (int entity = 0; entity < GameManager.instance.Entities.Count; entity++) {
-        Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(GameManager.instance.Entities[entity].transform.position);
+      for (int actor = 0; actor < GameManager.instance.Actors.Count; actor++) {
+        Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(GameManager.instance.Actors[actor].transform.position);
 
         if (pos.x == x && pos.y == y) {
           return;

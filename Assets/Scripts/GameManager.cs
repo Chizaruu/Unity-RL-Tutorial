@@ -5,43 +5,54 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
   public static GameManager instance;
 
-  [SerializeField] private float time = 0.1f;
+  [SerializeField] private float baseTime = 0.075f;
+  [SerializeField] private float delayTime;
   [SerializeField] private bool isPlayerTurn = true;
-  [SerializeField] private int entityNum = 0;
+  [SerializeField] private int actorNum = 0;
   [SerializeField] private List<Entity> entities = new List<Entity>();
+  [SerializeField] private List<Actor> actors = new List<Actor>();
+  [SerializeField] private Sprite deadSprite;
+  private Dictionary<Vector3Int, Node> allNodes = new Dictionary<Vector3Int, Node>();
   public bool IsPlayerTurn { get => isPlayerTurn; }
   public List<Entity> Entities { get => entities; }
+  public List<Actor> Actors { get => actors; }
+  public Sprite DeadSprite { get => deadSprite; }
+  public Dictionary<Vector3Int, Node> AllNodes { get => allNodes; set => allNodes = value; }
 
   private void Awake() {
-    if (instance == null)
+    if (instance == null) {
       instance = this;
-    else
+    } else {
       Destroy(gameObject);
+    }
   }
 
   private void StartTurn() {
-    //Debug.Log($"{entities[entityNum].name} starts its turn!");
-    if (entities[entityNum].GetComponent<Player>())
+    //Debug.Log($"{Actors[actorNum].name} starts its turn!");
+    if (Actors[actorNum].GetComponent<Player>()) {
       isPlayerTurn = true;
-    else if (entities[entityNum].IsSentient)
-      Action.SkipAction(entities[entityNum]); //We don't have AI logic yet, so just skip their turn.
+    } else {
+      Action.SkipAction(Actors[actorNum]); //We don't have AI logic yet, so just skip their turn.
+    }
   }
 
   public void EndTurn() {
-    //Debug.Log($"{entities[entityNum].name} ends its turn!");
-    if (entities[entityNum].GetComponent<Player>())
+    //Debug.Log($"{Actors[actorNum].name} ends its turn!");
+    if (Actors[actorNum].GetComponent<Player>()) {
       isPlayerTurn = false;
+    }
 
-    if (entityNum == entities.Count - 1)
-      entityNum = 0;
-    else
-      entityNum++;
+    if (actorNum == Actors.Count - 1) {
+      actorNum = 0;
+    } else {
+      actorNum++;
+    }
 
     StartCoroutine(TurnDelay());
   }
 
   public IEnumerator TurnDelay() {
-    yield return new WaitForSeconds(time);
+    yield return new WaitForSeconds(delayTime);
     StartTurn();
   }
 
@@ -49,16 +60,33 @@ public class GameManager : MonoBehaviour {
     entities.Add(entity);
   }
 
-  public void InsertEntity(Entity entity, int index) {
-    entities.Insert(index, entity);
+  public void RemoveEntity(Entity entity) {
+    entities.Remove(entity);
   }
 
-  public Entity GetBlockingEntityAtLocation(Vector3 location) {
-    foreach (Entity entity in entities) {
-      if (entity.BlocksMovement && entity.transform.position == location) {
-        return entity;
+  public void AddActor(Actor actor) {
+    Actors.Add(actor);
+    delayTime = SetTime();
+  }
+
+  public void InsertActor(Actor actor, int index) {
+    Actors.Insert(index, actor);
+    delayTime = SetTime();
+  }
+
+  public void RemoveActor(Actor actor) {
+    Actors.Remove(actor);
+    delayTime = SetTime();
+  }
+
+  public Actor GetBlockingActorAtLocation(Vector3 location) {
+    foreach (Actor actor in Actors) {
+      if (actor.BlocksMovement && actor.transform.position == location) {
+        return actor;
       }
     }
     return null;
   }
+
+  private float SetTime() => baseTime / Actors.Count;
 }
