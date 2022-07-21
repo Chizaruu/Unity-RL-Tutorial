@@ -111,4 +111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ee5374e1d7092b4680f908b55e88823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityName: Player
   isSentient: 1
+  blocksMovement: 1
+  fieldOfViewRange: 8
+  fieldOfView: []

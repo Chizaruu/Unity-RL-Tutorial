@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5596009288642769278}
   - component: {fileID: 7785378381976259298}
   m_Layer: 0
-  m_Name: NPC
+  m_Name: Orc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,8 +74,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 2063746809, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
-  m_Color: {r: 0.9304826, g: 1, b: 0, a: 1}
+  m_Sprite: {fileID: -1076480580, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
+  m_Color: {r: 0.24705882, g: 0.49803922, b: 0.24705882, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ee5374e1d7092b4680f908b55e88823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityName: NPC
+  entityName: Orc
   isSentient: 1
   blocksMovement: 1
   fieldOfViewRange: 8
