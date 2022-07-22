@@ -12,24 +12,34 @@ public class MapManager : MonoBehaviour {
   [SerializeField] private int roomMinSize = 6;
   [SerializeField] private int maxRooms = 30;
   [SerializeField] private int maxMonstersPerRoom = 2;
+
   [Header("Tiles")]
   [SerializeField] private TileBase floorTile;
   [SerializeField] private TileBase wallTile;
   [SerializeField] private TileBase fogTile;
+
   [Header("Tilemaps")]
   [SerializeField] private Tilemap floorMap;
   [SerializeField] private Tilemap obstacleMap;
   [SerializeField] private Tilemap fogMap;
+
   [Header("Features")]
   [SerializeField] private List<RectangularRoom> rooms = new List<RectangularRoom>();
   [SerializeField] private List<Vector3Int> visibleTiles = new List<Vector3Int>();
-  [SerializeField] private Dictionary<Vector3Int, TileData> tiles = new Dictionary<Vector3Int, TileData>();
+  [SerializeField] private List<Vector3Int> obstacleTiles = new List<Vector3Int>();
+  [SerializeField] private List<Vector3Int> monsterSpawnPoints = new List<Vector3Int>();
+  private Dictionary<Vector3Int, TileData> tiles = new Dictionary<Vector3Int, TileData>();
+  private Dictionary<Vector2Int, Node> nodes = new Dictionary<Vector2Int, Node>();
 
+  public int Width { get => width; }
+  public int Height { get => height; }
   public TileBase FloorTile { get => floorTile; }
   public TileBase WallTile { get => wallTile; }
   public Tilemap FloorMap { get => floorMap; }
   public Tilemap ObstacleMap { get => obstacleMap; }
   public Tilemap FogMap { get => fogMap; }
+  public List<Vector3Int> ObstacleTiles { get => obstacleTiles; }
+  public Dictionary<Vector2Int, Node> Nodes { get => nodes; set => nodes = value; }
 
   private void Awake() {
     if (instance == null) {
@@ -45,6 +55,7 @@ public class MapManager : MonoBehaviour {
 
     AddTileMapToDictionary(floorMap);
     AddTileMapToDictionary(obstacleMap);
+    GetObstacleTilesPositions();
 
     SetupFogMap();
 
@@ -74,18 +85,18 @@ public class MapManager : MonoBehaviour {
 
   public void UpdateFogMap(List<Vector3Int> playerFOV) {
     foreach (Vector3Int pos in visibleTiles) {
-      if (!tiles[pos].isExplored) {
-        tiles[pos].isExplored = true;
+      if (!tiles[pos].IsExplored) {
+        tiles[pos].IsExplored = true;
       }
 
-      tiles[pos].isVisible = false;
+      tiles[pos].IsVisible = false;
       fogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f));
     }
 
     visibleTiles.Clear();
 
     foreach (Vector3Int pos in playerFOV) {
-      tiles[pos].isVisible = true;
+      tiles[pos].IsVisible = true;
       fogMap.SetColor(pos, Color.clear);
       visibleTiles.Add(pos);
     }
@@ -123,5 +134,14 @@ public class MapManager : MonoBehaviour {
       fogMap.SetTile(pos, fogTile);
       fogMap.SetTileFlags(pos, TileFlags.None);
     }
+  }
+
+  private List<Vector3Int> GetObstacleTilesPositions() {
+    List<Vector3Int> obstacleTiles = new List<Vector3Int>();
+    //for each tile position in obstacle Map
+    foreach (Vector3Int pos in MapManager.instance.ObstacleMap.cellBounds.allPositionsWithin) {
+      obstacleTiles.Add(pos); // Add pos to obstacle tiles
+    }
+    return obstacleTiles; // Return obstacle tiles
   }
 }

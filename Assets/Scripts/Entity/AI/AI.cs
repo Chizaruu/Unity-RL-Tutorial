@@ -1,18 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class AI : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+[RequireComponent(typeof(Actor), typeof(AStar))]
+public class AI : MonoBehaviour {
+  [SerializeField] private AStar aStar;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  public AStar AStar { get => aStar; set => aStar = value; }
+
+  private void OnValidate() => aStar = GetComponent<AStar>();
 }

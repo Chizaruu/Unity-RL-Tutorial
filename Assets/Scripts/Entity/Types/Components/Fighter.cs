@@ -1,10 +1,9 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Actor))]
 sealed class Fighter : MonoBehaviour {
-  [SerializeField] private int maxHp;
-  [SerializeField] private int hp;
-  [SerializeField] private int defense;
-  [SerializeField] private int power;
+  [SerializeField] private int maxHp, hp, defense, power;
+  [SerializeField] private Actor target;
 
   public int Hp {
     get => hp; set {
@@ -16,6 +15,7 @@ sealed class Fighter : MonoBehaviour {
 
   public int Defense { get => defense; }
   public int Power { get => power; }
+  public Actor Target { get => target; set => target = value; }
 
   private void Die() {
     if (GetComponent<Player>()) {
@@ -29,8 +29,12 @@ sealed class Fighter : MonoBehaviour {
     spriteRenderer.color = new Color(191, 0, 0, 1);
     spriteRenderer.sortingOrder = 0;
 
-    GetComponent<Actor>().BlocksMovement = false;
-    GameManager.instance.RemoveActor(this.GetComponent<Actor>());
     name = $"Remains of {name}";
+    GetComponent<Actor>().BlocksMovement = false;
+    if (GetComponent<Player>()) {
+      GetComponent<Player>().IsAlive = false;
+    } else {
+      GameManager.instance.RemoveActor(this.GetComponent<Actor>());
+    }
   }
 }

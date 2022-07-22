@@ -1,11 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Actor : Entity {
   [SerializeField] private int fieldOfViewRange = 8;
-  [SerializeField] private List<Vector3Int> fieldOfView;
+  [SerializeField] private List<Vector3Int> fieldOfView = new List<Vector3Int>();
+  [SerializeField] private AI aI;
   AdamMilVisibility algorithm;
+
+  public List<Vector3Int> FieldOfView { get => fieldOfView; }
+
+  private void OnValidate() {
+    if (GetComponent<AI>()) {
+      aI = GetComponent<AI>();
+    }
+  }
 
   private void Start() {
     AddToGameManager();
@@ -16,10 +24,10 @@ public class Actor : Entity {
       GameManager.instance.AddActor(this);
     }
 
-    fieldOfView = new List<Vector3Int>();
     algorithm = new AdamMilVisibility();
     UpdateFieldOfView();
   }
+
 
   public void UpdateFieldOfView() {
     Vector3Int gridPosition = MapManager.instance.FloorMap.WorldToCell(transform.position);

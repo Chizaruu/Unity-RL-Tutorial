@@ -104,10 +104,10 @@ sealed class ProcGen {
     int numberOfMonsters = Random.Range(0, maximumMonsters + 1);
 
     for (int monster = 0; monster < numberOfMonsters;) {
-      int x = Random.Range(newRoom.x, newRoom.x + newRoom.width);
-      int y = Random.Range(newRoom.y, newRoom.y + newRoom.height);
+      int x = Random.Range(newRoom.X, newRoom.X + newRoom.Width);
+      int y = Random.Range(newRoom.Y, newRoom.Y + newRoom.Height);
 
-      if (x == newRoom.x || x == newRoom.x + newRoom.width - 1 || y == newRoom.y || y == newRoom.y + newRoom.height - 1) {
+      if (x == newRoom.X || x == newRoom.X + newRoom.Width - 1 || y == newRoom.Y || y == newRoom.Y + newRoom.Height - 1) {
         continue;
       }
 

@@ -6,7 +6,7 @@ static public class Action {
     //Application.Quit();
   }
 
-  static public void SkipAction(Actor entity) {
+  static public void SkipAction() {
     GameManager.instance.EndTurn();
   }
 

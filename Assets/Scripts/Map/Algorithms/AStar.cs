@@ -1,67 +1,74 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 /// <summary> A* pathfinding algorithm </summary>
 public class AStar : MonoBehaviour {
-  [SerializeField] private Vector3Int startPos, goalPos; // Start and goal positions
+  [SerializeField] private Vector2Int startPos, goalPos; // Start and goal positions
+  [SerializeField] private Node currentNode; // Current node
+  [SerializeField] private HashSet<Node> openList, closedList; // Open and closed list
+  [SerializeField] private Stack<Vector2Int> path; // Path to goal
 
-  private Node current; // Current node
-  private HashSet<Node> openList, closedList; // Open and closed list
-  private Stack<Vector3Int> path; // Path to goal
-  private List<Vector3Int> obstacleTiles = new List<Vector3Int>(); // Obstacle tiles
-
-  // Start is called before the first frame update
-  private void Start() => obstacleTiles = GetObstacleTiles(); // Get obstacle tiles
-
-  /// <summary> Finds the path to the goal </summary>
-  public Stack<Vector3Int> Algorithm(Vector3 startPosition, Vector3 goalPosition) {
+  /// <summary> Finds the shortest path between two points </summary>q
+  /// <param name="current">Start position</param>
+  /// <param name="goal">End position</param>
+  /// <returns>List of directions to move to get to the end</returns>
+  /// <remarks>
+  /// This algorithm is based on the pseudocode found here:
+  /// https://www.redblobgames.com/pathfinding/a-star/introduction.html#astar
+  /// </remarks>
+  public Vector2 Compute(Vector3Int start, Vector3Int goal) {
     Reset(); // Reset
-    startPos = MapManager.instance.FloorMap.WorldToCell(startPosition); // Set start position
-    goalPos = MapManager.instance.FloorMap.WorldToCell(goalPosition); // Set goal position
+    startPos = (Vector2Int)start; // Set start position
+    goalPos = (Vector2Int)goal; // Set goal position
 
     // Add start node to open list
-    if (current == null) {
+    if (currentNode == null) {
       Initialize(); // Initialize
     }
 
-    // While there is no path
     while (openList.Count > 0 && path == null) {
-      List<Node> neighbours = FindNeighbours(current.position); // Get neighbours
-
-      ExamineNeighbours(neighbours, current); // Examine neighbours
-      UpdateCurrentTile(ref current); // Update current tile
-
-      path = GeneratePath(current); // Generate path
+      List<Node> neighbours = FindNeighbours(currentNode.position); // Get neighbours
+      ExamineNeighbours(neighbours, currentNode); // Examine neighbours
+      UpdateCurrentTile(ref currentNode); // Update current tile
+      path = GeneratePath(currentNode); // Generate path
     }
-    return path; // Return path
+    //Get Vector2 distance between start and path
+    Vector2 step = new Vector2(path.Peek().x - start.x, path.Peek().y - start.y);
+
+    if (GameManager.instance.GetBlockingActorAtLocation(transform.position + (Vector3)step)) {
+      return Vector2.zero;
+    }
+
+    return step != Vector2.zero ? step : Vector2.zero; // Return step
   }
 
   /// <summary> Initializes the algorithm </summary>
   private void Initialize() {
-    current = GetNode(startPos); // Set current node
+    currentNode = GetNode(startPos); // Set current node
 
     openList = new HashSet<Node>(); // Initialize open list
 
     closedList = new HashSet<Node>(); // Initialize closed list
 
-    openList.Add(current); // Add current node to open list
+    openList.Add(currentNode); // Add current node to open list
   }
 
   /// <summary> Finds the neighbours of the current node </summary>
-  private List<Node> FindNeighbours(Vector3Int parentPosition) {
+  private List<Node> FindNeighbours(Vector2Int parentPosition) {
     List<Node> neighbours = new List<Node>(); // Initialize neighbours
 
     // For each neighbour in the x position
     for (int x = -1; x <= 1; x++) {
       // For each neighbour in the y position
       for (int y = -1; y <= 1; y++) {
-        Vector3Int neighbourPos = new Vector3Int(parentPosition.x - x, parentPosition.y - y, parentPosition.z); // Set neighbour position
+        Vector2Int neighbourPos = new Vector2Int(parentPosition.x - x, parentPosition.y - y);
 
         // If the neighbour is not the parent node
         if (y != 0 || x != 0) {
           // If the neighbour is not an obstacle tile
-          if (neighbourPos != startPos && MapManager.instance.FloorMap.GetTile(neighbourPos)) {
+          if (neighbourPos != startPos && MapManager.instance.FloorMap.GetTile((Vector3Int)neighbourPos)) {
             Node neighbour = GetNode(neighbourPos); // Get neighbour
             neighbours.Add(neighbour); // Add neighbour to neighbours
           }
@@ -82,7 +89,7 @@ public class AStar : MonoBehaviour {
         continue; // Skip
       }
 
-      int gScore = DetermineGScore(neighbours[i].position, current.position); // Determine g score
+      int gScore = DetermineGScore(neighbours[i].position, currentNode.position); // Determine g score
 
       // If neighbour is not in open list
       if (openList.Contains(neighbour)) {
@@ -112,7 +119,7 @@ public class AStar : MonoBehaviour {
   }
 
   /// <summary> Determines the g score </summary>
-  private int DetermineGScore(Vector3Int neighbour, Vector3Int current) {
+  private int DetermineGScore(Vector2Int neighbour, Vector2Int current) {
     int gScore = 0; // Initialize g score
 
     int x = current.x - neighbour.x; // Set x
@@ -143,38 +150,38 @@ public class AStar : MonoBehaviour {
   }
 
   /// <summary> Gets the node </summary>
-  private Node GetNode(Vector3Int position) {
+  private Node GetNode(Vector2Int position) {
     // If node is not in open list
-    if (GameManager.instance.AllNodes.ContainsKey(position)) {
-      return GameManager.instance.AllNodes[position]; // Return node
+    if (MapManager.instance.Nodes.ContainsKey(position)) {
+      return MapManager.instance.Nodes[position]; // Return node
     }
     // else node is not in open list
     else {
       Node node = new Node(position); // Create node
-      GameManager.instance.AllNodes.Add(position, node); // Add node to all nodes
+      MapManager.instance.Nodes.Add(position, node); // Add node to all nodes
       return node; // Return node
     }
   }
 
   /// <summary> Checks if the node is connected diagonally </summary>
-  private bool ConnectedDiagonally(Node currentNode, Node neighbour) {
-    Vector3Int direct = currentNode.position - neighbour.position; // Set direct
+  private bool ConnectedDiagonally(Node current, Node neighbour) {
+    Vector2Int direct = current.position - neighbour.position; // Set direct
 
-    Vector3Int first = new Vector3Int(current.position.x + (direct.x * -1), current.position.y, current.position.z); // Set first
-    Vector3Int second = new Vector3Int(current.position.x, current.position.y + (direct.y * -1), current.position.z); // Set second
+    Vector3Int first = new Vector3Int(currentNode.position.x + (direct.x * -1), currentNode.position.y); // Set first
+    Vector3Int second = new Vector3Int(currentNode.position.x, currentNode.position.y + (direct.y * -1)); // Set second
 
     // If first is in open list or second is in open list
-    if (obstacleTiles.Contains(first) || obstacleTiles.Contains(second)) {
+    if (MapManager.instance.ObstacleTiles.Contains(first) || MapManager.instance.ObstacleTiles.Contains(second)) {
       return false; // Return false
     }
     return true; // Return true
   }
 
   /// <summary> Generates the path </summary>
-  private Stack<Vector3Int> GeneratePath(Node current) {
+  private Stack<Vector2Int> GeneratePath(Node current) {
     // If current is the goal
     if (current.position == goalPos) {
-      Stack<Vector3Int> finalPath = new Stack<Vector3Int>(); // Initialize final path
+      Stack<Vector2Int> finalPath = new Stack<Vector2Int>(); // Initialize final path
 
       // While current is not the start
       while (current.position != startPos) {
@@ -189,18 +196,22 @@ public class AStar : MonoBehaviour {
 
   /// <summary> Resets the path </summary>
   public void Reset() {
-    obstacleTiles.Clear();
     path = null;
-    current = null;
+    currentNode = null;
   }
 
-  /// <summary> Gets all the obstacle tiles in the path </summary>
-  private List<Vector3Int> GetObstacleTiles() {
-    //for each tile position in obstacle Map
-    foreach (Vector3Int pos in MapManager.instance.ObstacleMap.cellBounds.allPositionsWithin) {
-      obstacleTiles.Add(pos); // Add pos to obstacle tiles
+  private Vector2 GetPath(Node currentNode) {
+    // Create a stack to hold the path
+    Stack<Vector2> path = new Stack<Vector2>();
+    // While there is a parent
+    while (currentNode.parent != null) {
+      // Add the current node's position to the stack
+      path.Push(currentNode.position);
+      // Set the current node to the parent
+      currentNode = currentNode.parent;
     }
-    return obstacleTiles; // Return obstacle tiles
+    // Return the path
+    return path.Pop();
   }
 }
 

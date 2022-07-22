@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5596009288642769278}
   - component: {fileID: 2240680719201403495}
   - component: {fileID: 1657599316176765477}
+  - component: {fileID: 4906761112842409411}
+  - component: {fileID: 3125749561450854138}
   m_Layer: 0
   m_Name: Troll
   m_TagString: Untagged
@@ -101,6 +103,7 @@ MonoBehaviour:
   blocksMovement: 1
   fieldOfViewRange: 8
   fieldOfView: []
+  aI: {fileID: 4906761112842409411}
 --- !u!114 &1657599316176765477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,3 +120,31 @@ MonoBehaviour:
   hp: 16
   defense: 1
   power: 4
+  target: {fileID: 0}
+--- !u!114 &4906761112842409411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4045285357597916935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e7129c6056a2d347bfe85754f0409c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aStar: {fileID: 3125749561450854138}
+  fighter: {fileID: 1657599316176765477}
+  isFighting: 0
+--- !u!114 &3125749561450854138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4045285357597916935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f65d9f1c4171fd948b642e2ca501161a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
