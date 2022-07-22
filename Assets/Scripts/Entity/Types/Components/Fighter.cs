@@ -31,9 +31,8 @@ sealed class Fighter : MonoBehaviour {
 
     name = $"Remains of {name}";
     GetComponent<Actor>().BlocksMovement = false;
-    if (GetComponent<Player>()) {
-      GetComponent<Player>().IsAlive = false;
-    } else {
+    GetComponent<Actor>().IsAlive = false;
+    if (!GetComponent<Player>()) {
       GameManager.instance.RemoveActor(this.GetComponent<Actor>());
     }
   }

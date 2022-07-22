@@ -8,7 +8,7 @@ public class AI : MonoBehaviour {
 
   public void MoveAlongPath(Vector3Int targetPosition) {
     Vector3Int gridPosition = MapManager.instance.FloorMap.WorldToCell(transform.position);
-    Vector2 direction = aStar.Compute(gridPosition, targetPosition);
+    Vector2 direction = aStar.Compute((Vector2Int)gridPosition, (Vector2Int)targetPosition);
     Action.MovementAction(GetComponent<Actor>(), direction);
   }
 }

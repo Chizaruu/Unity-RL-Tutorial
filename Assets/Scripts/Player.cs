@@ -5,9 +5,7 @@ using UnityEngine.InputSystem;
 sealed class Player : MonoBehaviour, Controls.IPlayerActions {
   private Controls controls;
 
-  [SerializeField] private bool moveKeyHeld, isAlive = true; //read-only
-
-  public bool IsAlive { get => isAlive; set => isAlive = value; }
+  [SerializeField] private bool moveKeyHeld; //read-only
 
   private void Awake() => controls = new Controls();
 
@@ -34,7 +32,7 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
   }
 
   private void FixedUpdate() {
-    if (GameManager.instance.IsPlayerTurn && moveKeyHeld && isAlive) {
+    if (GameManager.instance.IsPlayerTurn && moveKeyHeld && GetComponent<Actor>().IsAlive) {
       MovePlayer();
     }
   }

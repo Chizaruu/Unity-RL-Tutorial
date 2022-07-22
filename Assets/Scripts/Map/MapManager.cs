@@ -27,7 +27,6 @@ public class MapManager : MonoBehaviour {
   [SerializeField] private List<RectangularRoom> rooms = new List<RectangularRoom>();
   [SerializeField] private List<Vector3Int> visibleTiles = new List<Vector3Int>();
   [SerializeField] private List<Vector3Int> obstacleTiles = new List<Vector3Int>();
-  [SerializeField] private List<Vector3Int> monsterSpawnPoints = new List<Vector3Int>();
   private Dictionary<Vector3Int, TileData> tiles = new Dictionary<Vector3Int, TileData>();
   private Dictionary<Vector2Int, Node> nodes = new Dictionary<Vector2Int, Node>();
 

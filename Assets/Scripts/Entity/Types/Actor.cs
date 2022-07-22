@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Actor : Entity {
+  [SerializeField] private bool isAlive = true; //read-only
   [SerializeField] private int fieldOfViewRange = 8;
   [SerializeField] private List<Vector3Int> fieldOfView = new List<Vector3Int>();
   [SerializeField] private AI aI;
   AdamMilVisibility algorithm;
 
+  public bool IsAlive { get => isAlive; set => isAlive = value; }
   public List<Vector3Int> FieldOfView { get => fieldOfView; }
 
   private void OnValidate() {
