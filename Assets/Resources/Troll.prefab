@@ -10,10 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4347136763259795765}
   - component: {fileID: 5596009288642769278}
-  - component: {fileID: 2240680719201403495}
-  - component: {fileID: 1657599316176765477}
-  - component: {fileID: 4906761112842409411}
-  - component: {fileID: 3125749561450854138}
+  - component: {fileID: 7785378381976259298}
   m_Layer: 0
   m_Name: Troll
   m_TagString: Untagged
@@ -74,8 +71,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1161121641
-  m_SortingLayer: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: -1498483670, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
   m_Color: {r: 0, g: 0.49803922, b: 0, a: 1}
@@ -88,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2240680719201403495
+--- !u!114 &7785378381976259298
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,54 +94,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4045285357597916935}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f68dca875eddbc041b2f5d4fac65a464, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ee5374e1d7092b4680f908b55e88823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entityName: Troll
+  isSentient: 1
   blocksMovement: 1
   fieldOfViewRange: 8
   fieldOfView: []
-  aI: {fileID: 4906761112842409411}
---- !u!114 &1657599316176765477
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4045285357597916935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51a48956c5f0c5844a225ac0181751a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHp: 16
-  hp: 16
-  defense: 1
-  power: 4
-  target: {fileID: 0}
---- !u!114 &4906761112842409411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4045285357597916935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e7129c6056a2d347bfe85754f0409c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aStar: {fileID: 3125749561450854138}
-  fighter: {fileID: 1657599316176765477}
-  isFighting: 0
---- !u!114 &3125749561450854138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4045285357597916935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f65d9f1c4171fd948b642e2ca501161a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

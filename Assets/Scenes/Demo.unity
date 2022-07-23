@@ -399,7 +399,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -338235139
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -596,13 +596,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db76858d38718f4468b4ed52fd325d71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseTime: 0.075
-  time: 0.075
+  time: 0.005
   isPlayerTurn: 1
-  actorNum: 0
+  entityNum: 0
   entities: []
-  actors: []
-  deadSprite: {fileID: 1552831975, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
 --- !u!4 &1312308580
 Transform:
   m_ObjectHideFlags: 0
