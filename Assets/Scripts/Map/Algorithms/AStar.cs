@@ -56,10 +56,6 @@ public class AStar : MonoBehaviour {
     for (int i = 0; i < neighbours.Count; i++) {
       Node neighbour = neighbours[i];
 
-      if (!ConnectedDiagonally(current, neighbour)) {
-        continue;
-      }
-
       int gScore = DetermineGScore(neighbours[i].position, currentNode.position);
 
       if (openList.Contains(neighbour)) {
@@ -122,18 +118,6 @@ public class AStar : MonoBehaviour {
       MapManager.instance.Nodes.Add(position, node);
       return node;
     }
-  }
-
-  /// <summary> Checks if the node is connected diagonally </summary>
-  private bool ConnectedDiagonally(Node current, Node neighbour) {
-    Vector2Int direct = current.position - neighbour.position;
-    Vector3Int first = new Vector3Int(currentNode.position.x + (direct.x * -1), currentNode.position.y);
-    Vector3Int second = new Vector3Int(currentNode.position.x, currentNode.position.y + (direct.y * -1));
-
-    if (MapManager.instance.ObstacleTiles.Contains(first) || MapManager.instance.ObstacleTiles.Contains(second)) {
-      return false;
-    }
-    return true;
   }
 
   /// <summary> Generates the path </summary>
