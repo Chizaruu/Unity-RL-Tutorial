@@ -5,7 +5,10 @@ public class HostileEnemy : AI {
   [SerializeField] private Fighter fighter;
   [SerializeField] private bool isFighting;
 
-  private void OnValidate() => fighter = GetComponent<Fighter>();
+  private void OnValidate() {
+    fighter = GetComponent<Fighter>();
+    AStar = GetComponent<AStar>();
+  }
 
   public void RunAI() {
     if (!fighter.Target) {
