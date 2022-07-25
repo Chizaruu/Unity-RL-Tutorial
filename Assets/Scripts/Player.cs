@@ -31,9 +31,16 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
       Action.EscapeAction();
   }
 
+  public void OnView(InputAction.CallbackContext context) {
+    if (context.performed)
+      UIManager.instance.ToggleMessageHistory();
+  }
+
   private void FixedUpdate() {
-    if (GameManager.instance.IsPlayerTurn && moveKeyHeld && GetComponent<Actor>().IsAlive) {
-      MovePlayer();
+    if (!UIManager.instance.IsMessageHistoryOpen) {
+      if (GameManager.instance.IsPlayerTurn && moveKeyHeld && GetComponent<Actor>().IsAlive) {
+        MovePlayer();
+      }
     }
   }
 
