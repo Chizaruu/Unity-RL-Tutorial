@@ -18,27 +18,6 @@ public class UIManager : MonoBehaviour {
 
   public bool IsMessageHistoryOpen { get => isMessageHistoryOpen; }
 
-  private void OnValidate() {
-    if (hpSlider == null) {
-      hpSlider = GameObject.Find("HP Slider").GetComponent<Slider>();
-    }
-    if (hpSliderText == null) {
-      hpSliderText = GameObject.Find("HP Slider Text").GetComponent<TextMeshProUGUI>();
-    }
-
-    if (messageHistory == null) {
-      messageHistory = GameObject.Find("Message History");
-    }
-
-    if (messageHistoryContent == null) {
-      messageHistoryContent = GameObject.Find("Message History Content");
-    }
-
-    if (lastFiveMessagesContent == null) {
-      lastFiveMessagesContent = GameObject.Find("Last Five Messages Content");
-    }
-  }
-
   private void Awake() {
     if (instance == null) {
       instance = this;
