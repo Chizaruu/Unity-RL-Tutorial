@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour {
   }
 
   private void StartTurn() {
-    //Debug.Log($"{Actors[actorNum].name} starts its turn!");
     if (actors[actorNum].GetComponent<Player>()) {
       isPlayerTurn = true;
     } else {
@@ -44,7 +43,6 @@ public class GameManager : MonoBehaviour {
   }
 
   public void EndTurn() {
-    //Debug.Log($"{Actors[actorNum].name} ends its turn!");
     if (actors[actorNum].GetComponent<Player>()) {
       isPlayerTurn = false;
     }
