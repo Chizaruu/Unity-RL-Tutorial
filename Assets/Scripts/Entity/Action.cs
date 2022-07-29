@@ -49,4 +49,47 @@ static public class Action {
     }
     GameManager.instance.EndTurn();
   }
+
+  static public void PickupAction(Actor actor) {
+    for (int i = 0; i < GameManager.instance.Entities.Count; i++) {
+      if (GameManager.instance.Entities[i].GetComponent<Actor>() || actor.transform.position != GameManager.instance.Entities[i].transform.position) {
+        continue;
+      }
+
+      if (actor.Inventory.Items.Count >= actor.Inventory.Capacity) {
+        UIManager.instance.AddMessage($"Your inventory is full.", "#808080");
+        return;
+      }
+
+      Item item = GameManager.instance.Entities[i].GetComponent<Item>();
+      item.transform.SetParent(actor.transform);
+      actor.Inventory.Items.Add(item);
+
+      UIManager.instance.AddMessage($"You picked up the {item.name}!", "#FFFFFF");
+
+      GameManager.instance.RemoveEntity(item);
+      GameManager.instance.EndTurn();
+    }
+  }
+
+  static public void DropAction(Actor actor, Item item) {
+    actor.Inventory.Drop(item);
+    GameManager.instance.EndTurn();
+  }
+
+  static public void UseAction(Actor actor, int index) {
+    Item item = actor.Inventory.Items[index];
+
+    bool itemUsed = false;
+
+    if (item.GetComponent<Consumable>()) {
+      itemUsed = item.GetComponent<Consumable>().Activate(actor, item);
+    }
+
+    if (!itemUsed) {
+      return;
+    }
+
+    GameManager.instance.EndTurn();
+  }
 }

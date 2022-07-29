@@ -62,10 +62,14 @@ public class GameManager : MonoBehaviour {
   }
 
   public void AddEntity(Entity entity) {
+    if (!entity.gameObject.activeSelf) {
+      entity.gameObject.SetActive(true);
+    }
     entities.Add(entity);
   }
 
   public void RemoveEntity(Entity entity) {
+    entity.gameObject.SetActive(false);
     entities.Remove(entity);
   }
 

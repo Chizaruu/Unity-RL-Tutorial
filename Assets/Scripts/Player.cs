@@ -36,6 +36,11 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
       UIManager.instance.ToggleMessageHistory();
   }
 
+  public void OnPickup(InputAction.CallbackContext context) {
+    if (context.performed)
+      Action.PickupAction(GetComponent<Actor>());
+  }
+
   private void FixedUpdate() {
     if (!UIManager.instance.IsMessageHistoryOpen) {
       if (GameManager.instance.IsPlayerTurn && moveKeyHeld && GetComponent<Actor>().IsAlive) {

@@ -5,7 +5,7 @@ sealed class ProcGen {
   /// <summary>
   /// Generate a new dungeon map.
   /// </summary>
-  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, int maxMonstersPerRoom, List<RectangularRoom> rooms) {
+  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, int maxMonstersPerRoom, int maxItemsPerRoom, List<RectangularRoom> rooms) {
     // Generate the rooms.
     for (int roomNum = 0; roomNum < maxRooms; roomNum++) {
       int roomWidth = Random.Range(roomMinSize, roomMaxSize);
@@ -102,6 +102,7 @@ sealed class ProcGen {
 
   private void PlaceActors(RectangularRoom newRoom, int maximumMonsters) {
     int numberOfMonsters = Random.Range(0, maximumMonsters + 1);
+    int numberOfItems = Random.Range(0, maximumMonsters + 1);
 
     for (int monster = 0; monster < numberOfMonsters;) {
       int x = Random.Range(newRoom.X, newRoom.X + newRoom.Width);
@@ -125,6 +126,25 @@ sealed class ProcGen {
         MapManager.instance.CreateEntity("Troll", new Vector2(x, y));
       }
       monster++;
+    }
+
+    for (int item = 0; item < numberOfItems;) {
+      int x = Random.Range(newRoom.X, newRoom.X + newRoom.Width);
+      int y = Random.Range(newRoom.Y, newRoom.Y + newRoom.Height);
+
+      if (x == newRoom.X || x == newRoom.X + newRoom.Width - 1 || y == newRoom.Y || y == newRoom.Y + newRoom.Height - 1) {
+        continue;
+      }
+
+      for (int entity = 0; entity < GameManager.instance.Entities.Count; entity++) {
+        Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(GameManager.instance.Entities[entity].transform.position);
+
+        if (pos.x == x && pos.y == y) {
+          return;
+        }
+      }
+      MapManager.instance.CreateEntity("Potion of Health", new Vector2(x, y));
+      item++;
     }
   }
 }
