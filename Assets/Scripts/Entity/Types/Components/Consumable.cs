@@ -35,6 +35,6 @@ public class Consumable : MonoBehaviour {
 
   private void Consume(Actor actor, Item item) {
     actor.Inventory.Items.Remove(item);
-    //Destroy(gameObject);
+    Destroy(item.gameObject);
   }
 }

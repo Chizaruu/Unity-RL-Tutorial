@@ -48,12 +48,4 @@ public class Actor : Entity {
       MapManager.instance.SetEntitiesVisibilities();
     }
   }
-
-  public void Test() {
-    Action.DropAction(this, inventory.Items[0]);
-  }
-
-  public void HealTest() {
-    Action.UseAction(this, 0);
-  }
 }

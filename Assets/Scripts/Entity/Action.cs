@@ -1,11 +1,6 @@
 using UnityEngine;
 
 static public class Action {
-  static public void EscapeAction() {
-    Debug.Log("Quit");
-    //Application.Quit();
-  }
-
   static public void SkipAction() {
     GameManager.instance.EndTurn();
   }
@@ -74,6 +69,8 @@ static public class Action {
 
   static public void DropAction(Actor actor, Item item) {
     actor.Inventory.Drop(item);
+
+    UIManager.instance.ToggleDropMenu();
     GameManager.instance.EndTurn();
   }
 
@@ -90,6 +87,7 @@ static public class Action {
       return;
     }
 
+    UIManager.instance.ToggleInventory();
     GameManager.instance.EndTurn();
   }
 }
