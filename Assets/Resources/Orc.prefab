@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1161121641
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: -1076480580, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
   m_Color: {r: 0.24705882, g: 0.49803922, b: 0.24705882, a: 1}
   m_FlipX: 0
@@ -101,8 +101,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
+  isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []
+  inventory: []
   aI: {fileID: 2435539870580237300}
 --- !u!114 &7760322755128577293
 MonoBehaviour:

@@ -1,13 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class UIManager : MonoBehaviour {
   public static UIManager instance;
+  [SerializeField] private EventSystem eventSystem;
+  [SerializeField] private bool isMenuOpen = false; //Read-only
 
   [Header("Health UI")]
   [SerializeField] private Slider hpSlider;
   [SerializeField] private TextMeshProUGUI hpSliderText;
+
   [Header("Message UI")]
   [SerializeField] private int sameMessageCount = 0; //Read-only
   [SerializeField] private string lastMessage; //Read-only
@@ -16,7 +20,19 @@ public class UIManager : MonoBehaviour {
   [SerializeField] private GameObject messageHistoryContent;
   [SerializeField] private GameObject lastFiveMessagesContent;
 
+  [Header("Inventory UI")]
+  [SerializeField] private bool isInventoryOpen = false; //Read-only
+  [SerializeField] private GameObject inventory;
+  [SerializeField] private GameObject inventoryContent;
+
+  [Header("Drop Menu UI")]
+  [SerializeField] private bool isDropMenuOpen = false; //Read-only
+  [SerializeField] private GameObject dropMenu;
+  [SerializeField] private GameObject dropMenuContent;
+  public bool IsMenuOpen { get => isMenuOpen; }
   public bool IsMessageHistoryOpen { get => isMessageHistoryOpen; }
+  public bool IsInventoryOpen { get => isInventoryOpen; }
+  public bool IsDropMenuOpen { get => isDropMenuOpen; }
 
   private void Awake() {
     if (instance == null) {
@@ -37,9 +53,49 @@ public class UIManager : MonoBehaviour {
     hpSliderText.text = $"HP: {hp}/{maxHp}";
   }
 
+  public void ToggleMenu() {
+    if (isMenuOpen) {
+      isMenuOpen = !isMenuOpen;
+
+      if (isMessageHistoryOpen) {
+        ToggleMessageHistory();
+      }
+
+      if (isInventoryOpen) {
+        ToggleInventory();
+      }
+
+      if (isDropMenuOpen) {
+        ToggleDropMenu();
+      }
+      return;
+    }
+  }
+
   public void ToggleMessageHistory() {
     messageHistory.SetActive(!messageHistory.activeSelf);
+    isMenuOpen = messageHistory.activeSelf;
     isMessageHistoryOpen = messageHistory.activeSelf;
+  }
+
+  public void ToggleInventory(Actor actor = null) {
+    inventory.SetActive(!inventory.activeSelf);
+    isMenuOpen = inventory.activeSelf;
+    isInventoryOpen = inventory.activeSelf;
+
+    if (isMenuOpen) {
+      UpdateMenu(actor, inventoryContent);
+    }
+  }
+
+  public void ToggleDropMenu(Actor actor = null) {
+    dropMenu.SetActive(!dropMenu.activeSelf);
+    isMenuOpen = dropMenu.activeSelf;
+    isDropMenuOpen = dropMenu.activeSelf;
+
+    if (isMenuOpen) {
+      UpdateMenu(actor, dropMenuContent);
+    }
   }
 
   public void AddMessage(string newMessage, string colorHex) {
@@ -80,6 +136,31 @@ public class UIManager : MonoBehaviour {
       Debug.Log("GetColorFromHex: Could not parse color from string");
       return Color.white;
     }
+  }
+
+  private void UpdateMenu(Actor actor, GameObject menuContent) {
+    for (int i = 0; i < menuContent.transform.childCount; i++) {
+      GameObject menuContentChild = menuContent.transform.GetChild(i).gameObject;
+      menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
+      menuContentChild.GetComponent<Button>().onClick.RemoveAllListeners();
+      menuContentChild.SetActive(false);
+    }
+
+    char c = 'a';
+    for (int i = 0; i < actor.Inventory.Items.Count; i++) {
+      GameObject menuContentChild = menuContent.transform.GetChild(i).gameObject;
+      menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {actor.Inventory.Items[i].name}";
+      menuContentChild.GetComponent<Button>().onClick.AddListener(() => {
+        if (menuContent == inventoryContent) {
+          Action.UseAction(actor, i - 1);
+        } else if (menuContent == dropMenuContent) {
+          Action.DropAction(actor, actor.Inventory.Items[i - 1]);
+        }
+        UpdateMenu(actor, menuContent);
+      });
+      menuContentChild.SetActive(true);
+    }
+    eventSystem.SetSelectedGameObject(menuContent.transform.GetChild(0).gameObject);
   }
 }
 

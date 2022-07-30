@@ -8,7 +8,7 @@ public class Entity : MonoBehaviour {
   public bool BlocksMovement { get => blocksMovement; set => blocksMovement = value; }
 
   public void AddToGameManager() {
-    GameManager.instance.Entities.Add(this);
+    GameManager.instance.AddEntity(this);
   }
 
   public void Move(Vector2 direction) {

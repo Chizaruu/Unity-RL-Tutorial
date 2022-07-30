@@ -27,17 +27,51 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
   }
 
   void Controls.IPlayerActions.OnExit(InputAction.CallbackContext context) {
-    if (context.performed)
-      Action.EscapeAction();
+    if (context.performed) {
+      UIManager.instance.ToggleMenu();
+    }
   }
 
   public void OnView(InputAction.CallbackContext context) {
-    if (context.performed)
-      UIManager.instance.ToggleMessageHistory();
+    if (context.performed) {
+      if (!UIManager.instance.IsMenuOpen || UIManager.instance.IsMessageHistoryOpen) {
+        UIManager.instance.ToggleMessageHistory();
+      }
+    }
+  }
+
+  public void OnPickup(InputAction.CallbackContext context) {
+    if (context.performed) {
+      Action.PickupAction(GetComponent<Actor>());
+    }
+  }
+
+  public void OnInventory(InputAction.CallbackContext context) {
+    if (context.performed) {
+      if (!UIManager.instance.IsMenuOpen || UIManager.instance.IsInventoryOpen) {
+        if (GetComponent<Inventory>().Items.Count > 0) {
+          UIManager.instance.ToggleInventory(GetComponent<Actor>());
+        } else {
+          UIManager.instance.AddMessage("You have no items.", "#808080");
+        }
+      }
+    }
+  }
+
+  public void OnDrop(InputAction.CallbackContext context) {
+    if (context.performed) {
+      if (!UIManager.instance.IsMenuOpen || UIManager.instance.IsDropMenuOpen) {
+        if (GetComponent<Inventory>().Items.Count > 0) {
+          UIManager.instance.ToggleDropMenu(GetComponent<Actor>());
+        } else {
+          UIManager.instance.AddMessage("You have no items.", "#808080");
+        }
+      }
+    }
   }
 
   private void FixedUpdate() {
-    if (!UIManager.instance.IsMessageHistoryOpen) {
+    if (!UIManager.instance.IsMenuOpen) {
       if (GameManager.instance.IsPlayerTurn && moveKeyHeld && GetComponent<Actor>().IsAlive) {
         MovePlayer();
       }
@@ -49,15 +83,16 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
     Vector2 roundedDirection = new Vector2(Mathf.Round(direction.x), Mathf.Round(direction.y));
     Vector3 futurePosition = transform.position + (Vector3)roundedDirection;
 
-    if (IsValidPosition(futurePosition))
+    if (IsValidPosition(futurePosition)) {
       moveKeyHeld = Action.BumpAction(GetComponent<Actor>(), roundedDirection); //If we bump into an entity, moveKeyHeld is set to false.
+    }
   }
 
   private bool IsValidPosition(Vector3 futurePosition) {
     Vector3Int gridPosition = MapManager.instance.FloorMap.WorldToCell(futurePosition);
-    if (!MapManager.instance.InBounds(gridPosition.x, gridPosition.y) || MapManager.instance.ObstacleMap.HasTile(gridPosition) || futurePosition == transform.position)
+    if (!MapManager.instance.InBounds(gridPosition.x, gridPosition.y) || MapManager.instance.ObstacleMap.HasTile(gridPosition) || futurePosition == transform.position) {
       return false;
-
+    }
     return true;
   }
 }
