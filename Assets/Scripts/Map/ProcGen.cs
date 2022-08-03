@@ -40,7 +40,7 @@ sealed class ProcGen {
         TunnelBetween(rooms[rooms.Count - 1], newRoom);
       }
 
-      PlaceEntities(newRoom, maxMonstersPerRoom);
+      PlaceEntities(newRoom, maxMonstersPerRoom, maxItemsPerRoom);
 
       rooms.Add(newRoom);
     }
@@ -100,9 +100,9 @@ sealed class ProcGen {
     MapManager.instance.FloorMap.SetTile(pos, MapManager.instance.FloorTile);
   }
 
-  private void PlaceEntities(RectangularRoom newRoom, int maximumMonsters) {
+  private void PlaceEntities(RectangularRoom newRoom, int maximumMonsters, int maximumItems) {
     int numberOfMonsters = Random.Range(0, maximumMonsters + 1);
-    int numberOfItems = Random.Range(0, maximumMonsters + 1);
+    int numberOfItems = Random.Range(0, maximumItems + 1);
 
     for (int monster = 0; monster < numberOfMonsters;) {
       int x = Random.Range(newRoom.X, newRoom.X + newRoom.Width);
