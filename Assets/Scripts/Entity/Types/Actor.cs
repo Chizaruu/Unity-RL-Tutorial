@@ -12,6 +12,7 @@ public class Actor : Entity {
   public bool IsAlive { get => isAlive; set => isAlive = value; }
   public List<Vector3Int> FieldOfView { get => fieldOfView; }
   public Inventory Inventory { get => inventory; }
+  public AI AI { get => aI; set => aI = value; }
 
   private void OnValidate() {
     if (GetComponent<Inventory>()) {

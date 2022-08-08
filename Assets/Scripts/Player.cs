@@ -28,7 +28,7 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
 
   void Controls.IPlayerActions.OnExit(InputAction.CallbackContext context) {
     if (context.performed) {
-      UIManager.instance.ToggleMenu();
+      UIManager.instance.ToggleMenu(GetComponent<Actor>());
     }
   }
 

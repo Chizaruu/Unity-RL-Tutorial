@@ -43,7 +43,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4045285357597916935}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -104,7 +104,7 @@ MonoBehaviour:
   isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []
-  inventory: []
+  inventory: {fileID: 0}
   aI: {fileID: 2435539870580237300}
 --- !u!114 &7760322755128577293
 MonoBehaviour:

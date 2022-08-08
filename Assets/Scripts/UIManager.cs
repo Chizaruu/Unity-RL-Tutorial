@@ -29,10 +29,16 @@ public class UIManager : MonoBehaviour {
   [SerializeField] private bool isDropMenuOpen = false; //Read-only
   [SerializeField] private GameObject dropMenu;
   [SerializeField] private GameObject dropMenuContent;
+
+  [Header("Cast Menu UI")]
+  [SerializeField] private bool isCastMenuOpen = false; //Read-only
+  [SerializeField] private GameObject castMenu;
+  [SerializeField] private GameObject castMenuContent;
   public bool IsMenuOpen { get => isMenuOpen; }
   public bool IsMessageHistoryOpen { get => isMessageHistoryOpen; }
   public bool IsInventoryOpen { get => isInventoryOpen; }
   public bool IsDropMenuOpen { get => isDropMenuOpen; }
+  public bool IsCastMenuOpen { get => isCastMenuOpen; }
 
   private void Awake() {
     if (instance == null) {
@@ -53,7 +59,13 @@ public class UIManager : MonoBehaviour {
     hpSliderText.text = $"HP: {hp}/{maxHp}";
   }
 
-  public void ToggleMenu() {
+  public void ToggleMenu(Actor actor) {
+    if (isCastMenuOpen) {
+      ToggleCastMenu();
+      ToggleInventory(actor);
+      return;
+    }
+
     if (isMenuOpen) {
       isMenuOpen = !isMenuOpen;
 
@@ -80,7 +92,9 @@ public class UIManager : MonoBehaviour {
 
   public void ToggleInventory(Actor actor = null) {
     inventory.SetActive(!inventory.activeSelf);
-    isMenuOpen = inventory.activeSelf;
+    if (!isCastMenuOpen) {
+      isMenuOpen = inventory.activeSelf;
+    }
     isInventoryOpen = inventory.activeSelf;
 
     if (isMenuOpen) {
@@ -95,6 +109,36 @@ public class UIManager : MonoBehaviour {
 
     if (isMenuOpen) {
       UpdateMenu(actor, dropMenuContent);
+    }
+  }
+
+  public void ToggleCastMenu(Actor actor = null, Consumable consumable = null) {
+    castMenu.SetActive(!castMenu.activeSelf);
+    isMenuOpen = castMenu.activeSelf;
+    isCastMenuOpen = castMenu.activeSelf;
+    if (actor == null) {
+      return;
+    }
+
+    if (isMenuOpen) {
+      UpdateMenu(null, castMenuContent);
+
+      char c = 'a';
+      int castContentChildNum = 0;
+      for (int actorNum = 0; actorNum < GameManager.instance.Actors.Count; actorNum++) {
+        Actor target = GameManager.instance.Actors[actorNum];
+        Vector3Int targetPosition = MapManager.instance.FloorMap.WorldToCell(target.transform.position);
+        if (target.GetComponent<Player>() || !GetComponent<Actor>().FieldOfView.Contains(targetPosition)) {
+          continue;
+        }
+        GameObject castContentChild = castMenuContent.transform.GetChild(castContentChildNum).gameObject;
+        castContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {target.name}";
+        castContentChild.GetComponent<Button>().onClick.AddListener(() => {
+          Action.CastAction(actor, target, consumable);
+        });
+        castContentChild.SetActive(true);
+      }
+      eventSystem.SetSelectedGameObject(castMenuContent.transform.GetChild(0).gameObject);
     }
   }
 
@@ -138,12 +182,21 @@ public class UIManager : MonoBehaviour {
     }
   }
 
-  private void UpdateMenu(Actor actor, GameObject menuContent) {
+  private void UpdateMenu(Actor actor = null, GameObject menuContent = null) {
+    if (menuContent == null) {
+      Debug.Log("UpdateMenu: menuContent is null");
+      return;
+    }
+
     for (int i = 0; i < menuContent.transform.childCount; i++) {
       GameObject menuContentChild = menuContent.transform.GetChild(i).gameObject;
       menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
       menuContentChild.GetComponent<Button>().onClick.RemoveAllListeners();
       menuContentChild.SetActive(false);
+    }
+
+    if (menuContent != castMenuContent) {
+      return;
     }
 
     char c = 'a';

@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 
 static public class Action {
-  static public void SkipAction() {
+  static public void WaitAction() {
     GameManager.instance.EndTurn();
   }
 
@@ -80,7 +81,7 @@ static public class Action {
     bool itemUsed = false;
 
     if (item.GetComponent<Consumable>()) {
-      itemUsed = item.GetComponent<Consumable>().Activate(actor, item);
+      itemUsed = item.GetComponent<Consumable>().Activate(actor);
     }
 
     if (!itemUsed) {
@@ -89,5 +90,9 @@ static public class Action {
 
     UIManager.instance.ToggleInventory();
     GameManager.instance.EndTurn();
+  }
+
+  static public void CastAction(Actor actor, Actor target, Consumable consumable) {
+    consumable.Cast(target);
   }
 }

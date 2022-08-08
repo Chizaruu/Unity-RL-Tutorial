@@ -34,10 +34,10 @@ public class GameManager : MonoBehaviour {
     if (actors[actorNum].GetComponent<Player>()) {
       isPlayerTurn = true;
     } else {
-      if (actors[actorNum].GetComponent<HostileEnemy>()) {
-        actors[actorNum].GetComponent<HostileEnemy>().RunAI();
+      if (actors[actorNum].AI != null) {
+        actors[actorNum].AI.RunAI();
       } else {
-        Action.SkipAction();
+        Action.WaitAction();
       }
     }
   }
