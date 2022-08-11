@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour {
     hpSliderText.text = $"HP: {hp}/{maxHp}";
   }
 
-  public void ToggleMenu() {
+  public void ToggleMenu(Actor actor) {
     if (isMenuOpen) {
       isMenuOpen = !isMenuOpen;
 
@@ -139,24 +139,25 @@ public class UIManager : MonoBehaviour {
   }
 
   private void UpdateMenu(Actor actor, GameObject menuContent) {
-    for (int i = 0; i < menuContent.transform.childCount; i++) {
-      GameObject menuContentChild = menuContent.transform.GetChild(i).gameObject;
+    for (int resetNum = 0; resetNum < menuContent.transform.childCount; resetNum++) {
+      GameObject menuContentChild = menuContent.transform.GetChild(resetNum).gameObject;
       menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
       menuContentChild.GetComponent<Button>().onClick.RemoveAllListeners();
       menuContentChild.SetActive(false);
     }
 
     char c = 'a';
-    for (int i = 0; i < actor.Inventory.Items.Count; i++) {
-      GameObject menuContentChild = menuContent.transform.GetChild(i).gameObject;
-      menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {actor.Inventory.Items[i].name}";
+
+    for (int itemNum = 0; itemNum < actor.Inventory.Items.Count; itemNum++) {
+      GameObject menuContentChild = menuContent.transform.GetChild(itemNum).gameObject;
+      Item item = actor.Inventory.Items[itemNum];
+      menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {item.name}";
       menuContentChild.GetComponent<Button>().onClick.AddListener(() => {
         if (menuContent == inventoryContent) {
-          Action.UseAction(actor, i - 1);
+          Action.UseAction(actor, item);
         } else if (menuContent == dropMenuContent) {
-          Action.DropAction(actor, actor.Inventory.Items[i - 1]);
+          Action.DropAction(actor, item);
         }
-        UpdateMenu(actor, menuContent);
       });
       menuContentChild.SetActive(true);
     }
