@@ -3,13 +3,15 @@ using UnityEngine;
 [RequireComponent(typeof(Item))]
 public class Consumable : MonoBehaviour {
   public virtual bool Activate(Actor actor) => false;
-  public virtual void Cast(Actor target) { }
+  public virtual bool Cast(Actor actor, Vector3 target) => false;
+  public virtual bool Cast(Actor actor, Bounds target) => false;
 
-  public virtual void Cast(Actor actor, Actor target) {
-  }
+  public void Consume(Actor consumer) {
+    if (consumer.GetComponent<Inventory>().SelectedConsumable == this) {
+      consumer.GetComponent<Inventory>().SelectedConsumable = null;
+    }
 
-  public void Consume(Actor actor) {
-    actor.Inventory.Items.Remove(GetComponent<Item>());
-    Destroy(this.gameObject);
+    consumer.Inventory.Items.Remove(GetComponent<Item>());
+    Destroy(gameObject);
   }
 }

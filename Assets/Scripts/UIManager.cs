@@ -29,16 +29,10 @@ public class UIManager : MonoBehaviour {
   [SerializeField] private bool isDropMenuOpen = false; //Read-only
   [SerializeField] private GameObject dropMenu;
   [SerializeField] private GameObject dropMenuContent;
-
-  [Header("Cast Menu UI")]
-  [SerializeField] private bool isCastMenuOpen = false; //Read-only
-  [SerializeField] private GameObject castMenu;
-  [SerializeField] private GameObject castMenuContent;
   public bool IsMenuOpen { get => isMenuOpen; }
   public bool IsMessageHistoryOpen { get => isMessageHistoryOpen; }
   public bool IsInventoryOpen { get => isInventoryOpen; }
   public bool IsDropMenuOpen { get => isDropMenuOpen; }
-  public bool IsCastMenuOpen { get => isCastMenuOpen; }
 
   private void Awake() {
     if (instance == null) {
@@ -60,12 +54,6 @@ public class UIManager : MonoBehaviour {
   }
 
   public void ToggleMenu(Actor actor) {
-    if (isCastMenuOpen) {
-      ToggleCastMenu();
-      ToggleInventory(actor);
-      return;
-    }
-
     if (isMenuOpen) {
       isMenuOpen = !isMenuOpen;
 
@@ -92,9 +80,7 @@ public class UIManager : MonoBehaviour {
 
   public void ToggleInventory(Actor actor = null) {
     inventory.SetActive(!inventory.activeSelf);
-    if (!isCastMenuOpen) {
-      isMenuOpen = inventory.activeSelf;
-    }
+    isMenuOpen = inventory.activeSelf;
     isInventoryOpen = inventory.activeSelf;
 
     if (isMenuOpen) {
@@ -109,36 +95,6 @@ public class UIManager : MonoBehaviour {
 
     if (isMenuOpen) {
       UpdateMenu(actor, dropMenuContent);
-    }
-  }
-
-  public void ToggleCastMenu(Actor actor = null, Consumable consumable = null) {
-    castMenu.SetActive(!castMenu.activeSelf);
-    isMenuOpen = castMenu.activeSelf;
-    isCastMenuOpen = castMenu.activeSelf;
-    if (actor == null) {
-      return;
-    }
-
-    if (isMenuOpen) {
-      UpdateMenu(null, castMenuContent);
-
-      char c = 'a';
-      int castContentChildNum = 0;
-      for (int actorNum = 0; actorNum < GameManager.instance.Actors.Count; actorNum++) {
-        Actor target = GameManager.instance.Actors[actorNum];
-        Vector3Int targetPosition = MapManager.instance.FloorMap.WorldToCell(target.transform.position);
-        if (target.GetComponent<Player>() || !GetComponent<Actor>().FieldOfView.Contains(targetPosition)) {
-          continue;
-        }
-        GameObject castContentChild = castMenuContent.transform.GetChild(castContentChildNum).gameObject;
-        castContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {target.name}";
-        castContentChild.GetComponent<Button>().onClick.AddListener(() => {
-          Action.CastAction(actor, target, consumable);
-        });
-        castContentChild.SetActive(true);
-      }
-      eventSystem.SetSelectedGameObject(castMenuContent.transform.GetChild(0).gameObject);
     }
   }
 
@@ -182,34 +138,30 @@ public class UIManager : MonoBehaviour {
     }
   }
 
-  private void UpdateMenu(Actor actor = null, GameObject menuContent = null) {
-    if (menuContent == null) {
-      Debug.Log("UpdateMenu: menuContent is null");
-      return;
-    }
-
-    for (int i = 0; i < menuContent.transform.childCount; i++) {
-      GameObject menuContentChild = menuContent.transform.GetChild(i).gameObject;
+  private void UpdateMenu(Actor actor, GameObject menuContent) {
+    for (int resetNum = 0; resetNum < menuContent.transform.childCount; resetNum++) {
+      GameObject menuContentChild = menuContent.transform.GetChild(resetNum).gameObject;
       menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
       menuContentChild.GetComponent<Button>().onClick.RemoveAllListeners();
       menuContentChild.SetActive(false);
     }
 
-    if (menuContent != castMenuContent) {
-      return;
-    }
-
     char c = 'a';
-    for (int i = 0; i < actor.Inventory.Items.Count; i++) {
-      GameObject menuContentChild = menuContent.transform.GetChild(i).gameObject;
-      menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {actor.Inventory.Items[i].name}";
+
+    for (int itemNum = 0; itemNum < actor.Inventory.Items.Count; itemNum++) {
+      Debug.Log($"1st {itemNum}");
+      GameObject menuContentChild = menuContent.transform.GetChild(itemNum).gameObject;
+      Debug.Log($"2nd {itemNum}");
+      Item item = actor.Inventory.Items[itemNum];
+      menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {item.name}";
       menuContentChild.GetComponent<Button>().onClick.AddListener(() => {
         if (menuContent == inventoryContent) {
-          Action.UseAction(actor, i - 1);
+          Debug.Log($"3rd {itemNum}");
+          Action.UseAction(actor, item);
         } else if (menuContent == dropMenuContent) {
-          Action.DropAction(actor, actor.Inventory.Items[i - 1]);
+          Debug.Log($"4th {itemNum}");
+          Action.DropAction(actor, item);
         }
-        UpdateMenu(actor, menuContent);
       });
       menuContentChild.SetActive(true);
     }

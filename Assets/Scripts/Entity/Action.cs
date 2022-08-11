@@ -75,24 +75,33 @@ static public class Action {
     GameManager.instance.EndTurn();
   }
 
-  static public void UseAction(Actor actor, int index) {
-    Item item = actor.Inventory.Items[index];
-
+  static public void UseAction(Actor consumer, Item item) {
     bool itemUsed = false;
 
     if (item.GetComponent<Consumable>()) {
-      itemUsed = item.GetComponent<Consumable>().Activate(actor);
-    }
-
-    if (!itemUsed) {
-      return;
+      itemUsed = item.GetComponent<Consumable>().Activate(consumer);
     }
 
     UIManager.instance.ToggleInventory();
-    GameManager.instance.EndTurn();
+
+    if (itemUsed) {
+      GameManager.instance.EndTurn();
+    }
   }
 
-  static public void CastAction(Actor actor, Actor target, Consumable consumable) {
-    consumable.Cast(target);
+  static public void CastAction(Actor consumer, Vector3 targetPosition, Consumable consumable) {
+    bool castSuccess = consumable.Cast(consumer, targetPosition);
+
+    if (castSuccess) {
+      GameManager.instance.EndTurn();
+    }
+  }
+
+  static public void CastAction(Actor consumer, Bounds targetArea, Consumable consumable) {
+    bool castSuccess = consumable.Cast(consumer, targetArea);
+
+    if (castSuccess) {
+      GameManager.instance.EndTurn();
+    }
   }
 }

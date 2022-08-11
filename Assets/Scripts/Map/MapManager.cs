@@ -77,6 +77,15 @@ public class MapManager : MonoBehaviour {
       case "Potion of Health":
         Instantiate(Resources.Load<GameObject>("Potion of Health"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Potion of Health";
         break;
+      case "Fireball Scroll":
+        Instantiate(Resources.Load<GameObject>("Fireball Scroll"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Fireball Scroll";
+        break;
+      case "Confusion Scroll":
+        Instantiate(Resources.Load<GameObject>("Confusion Scroll"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Confusion Scroll";
+        break;
+      case "Lightning Scroll":
+        Instantiate(Resources.Load<GameObject>("Lightning Scroll"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Lightning Scroll";
+        break;
       default:
         Debug.LogError("Entity not found");
         break;
@@ -116,6 +125,14 @@ public class MapManager : MonoBehaviour {
         entity.GetComponent<SpriteRenderer>().enabled = false;
       }
     }
+  }
+
+  public bool IsValidPosition(Vector3 futurePosition) {
+    Vector3Int gridPosition = floorMap.WorldToCell(futurePosition);
+    if (!InBounds(gridPosition.x, gridPosition.y) || obstacleMap.HasTile(gridPosition)) {
+      return false;
+    }
+    return true;
   }
 
   private void AddTileMapToDictionary(Tilemap tilemap) {
