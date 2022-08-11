@@ -15,24 +15,10 @@ public class Fireball : Consumable {
     return false;
   }
 
-  public override bool Cast(Actor consumer, Vector3 targetLocation) {
-    Bounds targetBounds = new Bounds(targetLocation, Vector3.one * Radius * 2);
-    List<Actor> targets = new List<Actor>();
-
-    foreach (Actor target in GameManager.instance.Actors) {
-      if (targetBounds.Contains(target.transform.position)) {
-        targets.Add(target);
-      }
-    }
-
-    if (targets.Count == 0) {
-      UIManager.instance.AddMessage($"You cast a fireball, but it doesn't reach any targets.", "#FFFFFF");
-    } else {
-      foreach (Actor target in targets) {
-        UIManager.instance.AddMessage($"The fireball explodes, burning {target.name}!", "#FF0000");
-        UIManager.instance.AddMessage($"{target.name} takes {damage} damage.", "#FF0000");
-        target.GetComponent<Fighter>().Hp -= damage;
-      }
+  public override bool Cast(Actor consumer, List<Actor> targets) {
+    foreach (Actor target in targets) {
+      UIManager.instance.AddMessage($"The {target.name} is engulfed in a fiery explosion, taking {damage} damage!", "#FF0000");
+      target.GetComponent<Fighter>().Hp -= damage;
     }
 
     Consume(consumer);

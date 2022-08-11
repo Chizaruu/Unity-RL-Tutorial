@@ -149,17 +149,13 @@ public class UIManager : MonoBehaviour {
     char c = 'a';
 
     for (int itemNum = 0; itemNum < actor.Inventory.Items.Count; itemNum++) {
-      Debug.Log($"1st {itemNum}");
       GameObject menuContentChild = menuContent.transform.GetChild(itemNum).gameObject;
-      Debug.Log($"2nd {itemNum}");
       Item item = actor.Inventory.Items[itemNum];
       menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {item.name}";
       menuContentChild.GetComponent<Button>().onClick.AddListener(() => {
         if (menuContent == inventoryContent) {
-          Debug.Log($"3rd {itemNum}");
           Action.UseAction(actor, item);
         } else if (menuContent == dropMenuContent) {
-          Debug.Log($"4th {itemNum}");
           Action.DropAction(actor, item);
         }
       });

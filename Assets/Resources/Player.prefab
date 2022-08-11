@@ -186,8 +186,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 727f95c08f0b76b47b93c7ffbb649d52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveKeyHeld: 0
+  moveKeyDown: 0
   targetMode: 0
+  isSingleTarget: 0
   targetObject: {fileID: 1535259046649538380}
 --- !u!114 &7394922030631761700
 MonoBehaviour:

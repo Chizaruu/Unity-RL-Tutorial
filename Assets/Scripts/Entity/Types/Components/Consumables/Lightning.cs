@@ -14,11 +14,8 @@ public class Lightning : Consumable {
     return false;
   }
 
-  public override bool Cast(Actor consumer, Vector3 targetLocation) {
-    Actor target = GameManager.instance.GetBlockingActorAtLocation(targetLocation);
-
-    UIManager.instance.AddMessage($"You strike {target.name} with a lightning bolt.", "#FFFFFF");
-    UIManager.instance.AddMessage($"{target.name} takes {damage} damage.", "#FFFFFF");
+  public override bool Cast(Actor consumer, Actor target) {
+    UIManager.instance.AddMessage($"A lighting bolt strikes the {target.name} with a loud thunder, for {damage} damage!", "#FFFFFF");
     target.GetComponent<Fighter>().Hp -= damage;
     Consume(consumer);
     consumer.GetComponent<Player>().ToggleTargetMode();

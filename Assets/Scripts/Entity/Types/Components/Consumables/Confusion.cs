@@ -12,9 +12,7 @@ public class Confusion : Consumable {
     return false;
   }
 
-  public override bool Cast(Actor consumer, Vector3 targetLocation) {
-    Actor target = GameManager.instance.GetBlockingActorAtLocation(targetLocation);
-
+  public override bool Cast(Actor consumer, Actor target) {
     if (target.TryGetComponent(out ConfusedEnemy confusedEnemy)) {
       if (confusedEnemy.TurnsRemaining > 0) {
         UIManager.instance.AddMessage($"The {target.name} is already confused.", "#FF0000");

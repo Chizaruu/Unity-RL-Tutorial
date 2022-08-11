@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour {
     delayTime = SetTime();
   }
 
-  public Actor GetBlockingActorAtLocation(Vector3 location) {
+  public Actor GetActorAtLocation(Vector3 location) {
     foreach (Actor actor in actors) {
       if (actor.BlocksMovement && actor.transform.position == location) {
         return actor;
