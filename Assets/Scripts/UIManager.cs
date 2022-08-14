@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour {
     hpSliderText.text = $"HP: {hp}/{maxHp}";
   }
 
-  public void ToggleMenu(Actor actor) {
+  public void ToggleMenu() {
     if (isMenuOpen) {
       isMenuOpen = !isMenuOpen;
 

@@ -10,11 +10,6 @@ public class AI : MonoBehaviour {
 
   public virtual void RunAI() { }
 
-  public void ChangeAI(AI newAI) {
-    GetComponent<Actor>().AI = newAI;
-    GetComponent<Actor>().AI.RunAI();
-  }
-
   public void MoveAlongPath(Vector3Int targetPosition) {
     Vector3Int gridPosition = MapManager.instance.FloorMap.WorldToCell(transform.position);
     Vector2 direction = aStar.Compute((Vector2Int)gridPosition, (Vector2Int)targetPosition);
