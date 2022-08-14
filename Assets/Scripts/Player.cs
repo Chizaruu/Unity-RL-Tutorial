@@ -39,7 +39,7 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
   void Controls.IPlayerActions.OnExit(InputAction.CallbackContext context) {
     if (context.performed) {
       if (UIManager.instance.IsMenuOpen) {
-        UIManager.instance.ToggleMenu(GetComponent<Actor>());
+        UIManager.instance.ToggleMenu();
       } else if (targetMode) {
         ToggleTargetMode();
       }
