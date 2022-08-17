@@ -38,4 +38,15 @@ public class ConfusedEnemy : AI {
       turnsRemaining--;
     }
   }
+
+  public override AIState GetState() {
+    AIState state = new AIState();
+    state.type = "ConfusedEnemy";
+    state.currentAction = turnsRemaining;
+    return state;
+  }
+
+  public override void LoadState(AIState state) {
+    turnsRemaining = state.currentAction;
+  }
 }

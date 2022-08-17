@@ -98,4 +98,38 @@ public class GameManager : MonoBehaviour {
   }
 
   private float SetTime() => baseTime / actors.Count;
+
+  public GameState GetGameState() {
+    GameState state = new GameState();
+    state.actors = new List<ActorState>();
+    state.items = new List<ItemState>();
+
+    foreach (Entity entity in entities) {
+      if (entity is Actor) {
+        state.actors.Add(entity.GetState() as ActorState);
+      } else if (entity is Item) {
+        state.items.Add(entity.GetState() as ItemState);
+      }
+    }
+
+    return state;
+  }
+
+  public void LoadGameState(GameState state) {
+    foreach (ActorState actorState in state.actors) {
+      GameObject actor = MapManager.instance.CreateEntity(actorState.name, actorState.position);
+      actor.GetComponent<Actor>().LoadState(actorState);
+    }
+
+    foreach (ItemState itemState in state.items) {
+      GameObject item = MapManager.instance.CreateEntity(itemState.name, itemState.position);
+      item.GetComponent<Item>().LoadState(itemState);
+    }
+  }
+}
+
+[System.Serializable]
+public class GameState {
+  public List<ActorState> actors;
+  public List<ItemState> items;
 }

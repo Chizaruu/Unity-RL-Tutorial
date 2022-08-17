@@ -63,33 +63,10 @@ public class MapManager : MonoBehaviour {
   ///<summary>Return True if x and y are inside of the bounds of this map. </summary>
   public bool InBounds(int x, int y) => 0 <= x && x < width && 0 <= y && y < height;
 
-  public void CreateEntity(string entity, Vector2 position) {
-    switch (entity) {
-      case "Player":
-        Instantiate(Resources.Load<GameObject>("Player"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Player";
-        break;
-      case "Orc":
-        Instantiate(Resources.Load<GameObject>("Orc"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Orc";
-        break;
-      case "Troll":
-        Instantiate(Resources.Load<GameObject>("Troll"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Troll";
-        break;
-      case "Potion of Health":
-        Instantiate(Resources.Load<GameObject>("Potion of Health"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Potion of Health";
-        break;
-      case "Fireball Scroll":
-        Instantiate(Resources.Load<GameObject>("Fireball Scroll"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Fireball Scroll";
-        break;
-      case "Confusion Scroll":
-        Instantiate(Resources.Load<GameObject>("Confusion Scroll"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Confusion Scroll";
-        break;
-      case "Lightning Scroll":
-        Instantiate(Resources.Load<GameObject>("Lightning Scroll"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity).name = "Lightning Scroll";
-        break;
-      default:
-        Debug.LogError("Entity not found");
-        break;
-    }
+  public GameObject CreateEntity(string entity, Vector2 position) {
+    GameObject entityObject = Instantiate(Resources.Load<GameObject>($"{entity}"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+    entityObject.name = entity;
+    return entityObject;
   }
 
   public void UpdateFogMap(List<Vector3Int> playerFOV) {

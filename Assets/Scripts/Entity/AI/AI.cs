@@ -15,4 +15,13 @@ public class AI : MonoBehaviour {
     Vector2 direction = aStar.Compute((Vector2Int)gridPosition, (Vector2Int)targetPosition);
     Action.MovementAction(GetComponent<Actor>(), direction);
   }
+
+  public virtual AIState GetState() => new AIState();
+  public virtual void LoadState(AIState state) { }
+}
+
+[System.Serializable]
+public class AIState {
+  public string type;
+  public int currentAction;
 }

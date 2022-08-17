@@ -16,4 +16,13 @@ public class Entity : MonoBehaviour {
       transform.position += (Vector3)direction;
     }
   }
+
+  public virtual EntityState GetState() => new EntityState();
+}
+
+[System.Serializable]
+public class EntityState {
+  public string name;
+  public bool blocksMovement;
+  public Vector3 position;
 }

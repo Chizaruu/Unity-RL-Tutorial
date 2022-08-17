@@ -38,4 +38,12 @@ public class HostileEnemy : AI {
 
     Action.WaitAction();
   }
+
+  public override AIState GetState() {
+    AIState state = new AIState();
+    state.type = "HostileEnemy";
+    return state;
+  }
+
+  public override void LoadState(AIState state) { }
 }

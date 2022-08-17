@@ -203,11 +203,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
-  isAlive: 1
+  state:
+    isAlive: 1
+    position: {x: 0, y: 0, z: 0}
+    inventory: {fileID: 2368456351757360051}
+    aI: {fileID: 0}
   fieldOfViewRange: 8
   fieldOfView: []
-  inventory: {fileID: 2368456351757360051}
-  aI: {fileID: 0}
 --- !u!114 &3052805927703528690
 MonoBehaviour:
   m_ObjectHideFlags: 0

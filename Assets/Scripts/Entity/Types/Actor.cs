@@ -48,4 +48,36 @@ public class Actor : Entity {
       MapManager.instance.SetEntitiesVisibilities();
     }
   }
+
+  public override EntityState GetState() {
+    ActorState state = new ActorState();
+    state.name = name;
+    state.isAlive = isAlive;
+    state.currentAI = aI.GetState();
+    state.position = transform.position;
+
+    return state;
+  }
+
+  public void LoadState(ActorState state) {
+    name = state.name;
+    isAlive = state.isAlive;
+
+    if (state.currentAI != null) {
+      if (state.currentAI.type == "HostileEnemy") {
+        aI = GetComponent<HostileEnemy>();
+      } else if (state.currentAI.type == "ConfusedEnemy") {
+        aI = gameObject.AddComponent<ConfusedEnemy>();
+      }
+      aI.LoadState(state.currentAI);
+    }
+
+    transform.position = state.position;
+  }
+}
+
+[System.Serializable]
+public class ActorState : EntityState {
+  public bool isAlive;
+  public AIState currentAI;
 }
