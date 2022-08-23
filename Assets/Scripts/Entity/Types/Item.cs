@@ -35,7 +35,7 @@ public class Item : Entity {
       transform.SetParent(parent.transform);
       parent.GetComponent<Inventory>().Add(this, state.siblingIndex);
     }
-    transform.position = state.position;
+    transform.position = state.Position;
   }
 }
 

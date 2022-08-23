@@ -24,9 +24,9 @@ public class Entity : MonoBehaviour, IState<EntityState> {
 
 [System.Serializable]
 public class EntityState {
-  public string name;
-  public bool blocksMovement;
-  public Vector3 position;
+  [SerializeField] private string name;
+  [SerializeField] private bool blocksMovement;
+  [SerializeField] private Vector3 position;
 
   public string Name { get => name; set => name = value; }
   public bool BlocksMovement { get => blocksMovement; set => blocksMovement = value; }

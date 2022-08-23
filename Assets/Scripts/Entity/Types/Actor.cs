@@ -62,7 +62,7 @@ public class Actor : Entity {
   );
 
   public void LoadState(ActorState state) {
-    transform.position = state.position;
+    transform.position = state.Position;
     IsAlive = state.IsAlive;
     if (!IsAlive) {
       GameManager.instance.RemoveActor(this);

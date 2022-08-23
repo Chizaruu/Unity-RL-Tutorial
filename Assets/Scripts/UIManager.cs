@@ -47,7 +47,6 @@ public class UIManager : MonoBehaviour {
 
   private void Start() {
     saveButton.onClick.AddListener(() => {
-      SaveManager.instance.SaveState();
       SaveManager.instance.SaveGame();
     });
     AddMessage("Hello and welcome, adventurer, to yet another dungeon!", "#0da2ff"); //Light blue

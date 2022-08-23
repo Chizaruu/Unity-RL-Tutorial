@@ -118,12 +118,12 @@ public class GameManager : MonoBehaviour, IState<GameState> {
 
   public void LoadState(GameState state) {
     foreach (ActorState actorState in state.Actors) {
-      GameObject actor = MapManager.instance.CreateEntity(actorState.name, actorState.position);
+      GameObject actor = MapManager.instance.CreateEntity(actorState.Name, actorState.Position);
       actor.GetComponent<Actor>().LoadState(actorState);
     }
 
     foreach (ItemState itemState in state.Items) {
-      GameObject item = MapManager.instance.CreateEntity(itemState.name, itemState.position);
+      GameObject item = MapManager.instance.CreateEntity(itemState.Name, itemState.Position);
       item.GetComponent<Item>().LoadState(itemState);
     }
   }
@@ -131,12 +131,17 @@ public class GameManager : MonoBehaviour, IState<GameState> {
 
 [System.Serializable]
 public class GameState {
-  public List<EntityState> Entities { get; set; }
-  public List<ActorState> Actors { get; set; }
-  public List<ItemState> Items { get; set; }
+  [SerializeField] private List<EntityState> entities;
+  [SerializeField] private List<ActorState> actors;
+  [SerializeField] private List<ItemState> items;
+
+  public List<EntityState> Entities { get => entities; set => entities = value; }
+  public List<ActorState> Actors { get => actors; set => actors = value; }
+  public List<ItemState> Items { get => items; set => items = value; }
+
   public GameState(List<EntityState> entities, List<ActorState> actors, List<ItemState> items) {
-    Entities = entities;
-    Actors = actors;
-    Items = items;
+    this.entities = entities;
+    this.actors = actors;
+    this.items = items;
   }
 }

@@ -76,22 +76,29 @@ sealed class Fighter : MonoBehaviour, IState<FighterState> {
   }
 
   public void LoadState(FighterState state) {
-
+    maxHp = state.MaxHp;
+    hp = state.Hp;
+    defense = state.Defense;
+    power = state.Power;
+    target = GameManager.instance.Actors.Find(a => a.name == state.Target);
   }
 }
 
 public class FighterState {
-  public int MaxHp { get; set; }
-  public int Hp { get; set; }
-  public int Defense { get; set; }
-  public int Power { get; set; }
-  public string Target { get; set; }
+  [SerializeField] private int maxHp, hp, defense, power;
+  [SerializeField] private string target;
+
+  public int MaxHp { get => maxHp; set => maxHp = value; }
+  public int Hp { get => hp; set => hp = value; }
+  public int Defense { get => defense; set => defense = value; }
+  public int Power { get => power; set => power = value; }
+  public string Target { get => target; set => target = value; }
 
   public FighterState(int maxHp, int hp, int defense, int power, string target) {
-    MaxHp = maxHp;
-    Hp = hp;
-    Defense = defense;
-    Power = power;
-    Target = target;
+    this.maxHp = maxHp;
+    this.hp = hp;
+    this.defense = defense;
+    this.power = power;
+    this.target = target;
   }
 }

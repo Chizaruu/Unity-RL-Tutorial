@@ -40,6 +40,14 @@ public class SaveManager : MonoBehaviour, IState<SceneState> {
   }
 
   public void SaveGame() {
+    bool hasScene = save.Scenes.Find(x => x.Name == SceneManager.GetActiveScene().name) != null;
+    if (hasScene) {
+      Debug.Log("Scene already saved");
+      UpdateScene(SaveState());
+    } else {
+      AddScene(SaveState());
+    }
+
     string path = Path.Combine(Application.persistentDataPath, saveFileName);
     byte[] saveJson = SerializationUtility.SerializeValue(save, DataFormat.JSON); //Serialize the state to JSON
     File.WriteAllBytes(path, saveJson); //Save the state to a file
@@ -53,18 +61,20 @@ public class SaveManager : MonoBehaviour, IState<SceneState> {
     SceneManager.LoadScene(save.CurrentScene);
   }
 
-  public SceneState SaveState() {
-    SceneState sceneState = save.Scenes.Find(x => x.Name == SceneManager.GetActiveScene().name);
-    if (sceneState == null) {
-      sceneState = new SceneState(
-        SceneManager.GetActiveScene().name,
-        GameManager.instance.SaveState(),
-        MapManager.instance.SaveState()
-      );
-      save.Scenes.Add(sceneState);
-    }
-    return sceneState;
+  public void AddScene(SceneState sceneState) {
+    save.Scenes.Add(sceneState);
   }
+
+  public void UpdateScene(SceneState sceneState) {
+    int index = save.Scenes.FindIndex(x => x.Name == sceneState.Name);
+    save.Scenes[index] = sceneState;
+  }
+
+  public SceneState SaveState() => new SceneState(
+    SceneManager.GetActiveScene().name,
+    GameManager.instance.SaveState(),
+    MapManager.instance.SaveState()
+  );
 
   public void LoadState(SceneState sceneData) {
     GameManager.instance.LoadState(sceneData.GameState);
