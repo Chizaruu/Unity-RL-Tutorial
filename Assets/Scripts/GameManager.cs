@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour, IState<GameState> {
   public static GameManager instance;
 
   [Header("Time")]
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour {
   [SerializeField] private int actorNum = 0; //Read-only
   [SerializeField] private List<Entity> entities = new List<Entity>();
   [SerializeField] private List<Actor> actors = new List<Actor>();
+  [SerializeField] private List<Item> items = new List<Item>();
 
   [Header("Death")]
   [SerializeField] private Sprite deadSprite;
@@ -28,6 +30,8 @@ public class GameManager : MonoBehaviour {
     } else {
       Destroy(gameObject);
     }
+
+    SaveManager.instance.Save.CurrentScene = SceneManager.GetActiveScene().name;
   }
 
   private void StartTurn() {
@@ -88,6 +92,13 @@ public class GameManager : MonoBehaviour {
     delayTime = SetTime();
   }
 
+  public void AddItem(Item item) {
+    items.Add(item);
+  }
+  public void RemoveItem(Item item) {
+    items.Remove(item);
+  }
+
   public Actor GetActorAtLocation(Vector3 location) {
     foreach (Actor actor in actors) {
       if (actor.BlocksMovement && actor.transform.position == location) {
@@ -99,29 +110,19 @@ public class GameManager : MonoBehaviour {
 
   private float SetTime() => baseTime / actors.Count;
 
-  public GameState GetGameState() {
-    GameState state = new GameState();
-    state.actors = new List<ActorState>();
-    state.items = new List<ItemState>();
+  public GameState SaveState() => new GameState(
+    entities: entities.ConvertAll(e => e.SaveState()),
+    actors: actors.ConvertAll(actor => actor.SaveState() as ActorState),
+    items: items.ConvertAll(item => item.SaveState() as ItemState)
+  );
 
-    foreach (Entity entity in entities) {
-      if (entity is Actor) {
-        state.actors.Add(entity.GetState() as ActorState);
-      } else if (entity is Item) {
-        state.items.Add(entity.GetState() as ItemState);
-      }
-    }
-
-    return state;
-  }
-
-  public void LoadGameState(GameState state) {
-    foreach (ActorState actorState in state.actors) {
+  public void LoadState(GameState state) {
+    foreach (ActorState actorState in state.Actors) {
       GameObject actor = MapManager.instance.CreateEntity(actorState.name, actorState.position);
       actor.GetComponent<Actor>().LoadState(actorState);
     }
 
-    foreach (ItemState itemState in state.items) {
+    foreach (ItemState itemState in state.Items) {
       GameObject item = MapManager.instance.CreateEntity(itemState.name, itemState.position);
       item.GetComponent<Item>().LoadState(itemState);
     }
@@ -130,6 +131,12 @@ public class GameManager : MonoBehaviour {
 
 [System.Serializable]
 public class GameState {
-  public List<ActorState> actors;
-  public List<ItemState> items;
+  public List<EntityState> Entities { get; set; }
+  public List<ActorState> Actors { get; set; }
+  public List<ItemState> Items { get; set; }
+  public GameState(List<EntityState> entities, List<ActorState> actors, List<ItemState> items) {
+    Entities = entities;
+    Actors = actors;
+    Items = items;
+  }
 }

@@ -5,13 +5,10 @@ using UnityEngine.EventSystems;
 
 public class MainMenu : MonoBehaviour {
   [SerializeField] private EventSystem eventSystem;
-  [SerializeField] private string saveFilePath = "";
   [SerializeField] private Button continueButton;
 
   private void Start() {
-    saveFilePath = SaveManager.instance.GetSavePath();
-
-    if (saveFilePath == "") {
+    if (!SaveManager.instance.HasSaveAvailable()) {
       continueButton.interactable = false;
     } else {
       eventSystem.SetSelectedGameObject(continueButton.gameObject);
@@ -23,7 +20,7 @@ public class MainMenu : MonoBehaviour {
   }
 
   public void ContinueGame() {
-    SaveManager.instance.LoadGame(saveFilePath);
+    SaveManager.instance.LoadGame();
   }
 
   public void QuitGame() {

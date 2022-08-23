@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Actor), typeof(AStar))]
-public class AI : MonoBehaviour {
+public class AI : MonoBehaviour, IState<AIState> {
   [SerializeField] private AStar aStar;
 
   public AStar AStar { get => aStar; set => aStar = value; }
@@ -16,12 +16,20 @@ public class AI : MonoBehaviour {
     Action.MovementAction(GetComponent<Actor>(), direction);
   }
 
-  public virtual AIState GetState() => new AIState();
+  public virtual AIState SaveState() => new AIState();
   public virtual void LoadState(AIState state) { }
 }
 
 [System.Serializable]
 public class AIState {
-  public string type;
-  public int currentAction;
+  [SerializeField] private string type;
+  [SerializeField] private int currentAction;
+
+  public string Type { get => type; set => type = value; }
+  public int CurrentAction { get => currentAction; set => currentAction = value; }
+
+  public AIState(string type = "", int currentAction = 0) {
+    this.type = type;
+    this.currentAction = currentAction;
+  }
 }

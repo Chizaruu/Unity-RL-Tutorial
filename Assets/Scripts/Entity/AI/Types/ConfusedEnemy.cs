@@ -39,14 +39,12 @@ public class ConfusedEnemy : AI {
     }
   }
 
-  public override AIState GetState() {
-    AIState state = new AIState();
-    state.type = "ConfusedEnemy";
-    state.currentAction = turnsRemaining;
-    return state;
-  }
+  public override AIState SaveState() => new AIState(
+    type: "ConfusedEnemy",
+    currentAction: turnsRemaining
+  );
 
   public override void LoadState(AIState state) {
-    turnsRemaining = state.currentAction;
+    turnsRemaining = state.CurrentAction;
   }
 }

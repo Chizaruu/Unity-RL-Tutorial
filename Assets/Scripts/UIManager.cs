@@ -8,6 +8,9 @@ public class UIManager : MonoBehaviour {
   [SerializeField] private EventSystem eventSystem;
   [SerializeField] private bool isMenuOpen = false; //Read-only
 
+  [Header("Save Menu")]
+  [SerializeField] private Button saveButton;
+
   [Header("Health UI")]
   [SerializeField] private Slider hpSlider;
   [SerializeField] private TextMeshProUGUI hpSliderText;
@@ -42,7 +45,13 @@ public class UIManager : MonoBehaviour {
     }
   }
 
-  private void Start() => AddMessage("Hello and welcome, adventurer, to yet another dungeon!", "#0da2ff"); //Light blue
+  private void Start() {
+    saveButton.onClick.AddListener(() => {
+      SaveManager.instance.SaveState();
+      SaveManager.instance.SaveGame();
+    });
+    AddMessage("Hello and welcome, adventurer, to yet another dungeon!", "#0da2ff"); //Light blue
+  }
 
   public void SetHealthMax(int maxHp) {
     hpSlider.maxValue = maxHp;

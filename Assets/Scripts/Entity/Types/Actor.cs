@@ -25,16 +25,20 @@ public class Actor : Entity {
   }
 
   private void Start() {
+    algorithm = new AdamMilVisibility();
+
     AddToGameManager();
+    UpdateFieldOfView();
+  }
+
+  public override void AddToGameManager() {
+    base.AddToGameManager();
 
     if (GetComponent<Player>()) {
       GameManager.instance.InsertActor(this, 0);
     } else {
       GameManager.instance.AddActor(this);
     }
-
-    algorithm = new AdamMilVisibility();
-    UpdateFieldOfView();
   }
 
   public void UpdateFieldOfView() {
@@ -49,35 +53,39 @@ public class Actor : Entity {
     }
   }
 
-  public override EntityState GetState() {
-    ActorState state = new ActorState();
-    state.name = name;
-    state.isAlive = isAlive;
-    state.currentAI = aI.GetState();
-    state.position = transform.position;
-
-    return state;
-  }
+  public override EntityState SaveState() => new ActorState(
+    name: name,
+    blocksMovement: BlocksMovement,
+    position: transform.position,
+    isAlive: IsAlive,
+    currentAI: aI != null ? AI.SaveState() : null
+  );
 
   public void LoadState(ActorState state) {
-    name = state.name;
-    isAlive = state.isAlive;
-
-    if (state.currentAI != null) {
-      if (state.currentAI.type == "HostileEnemy") {
-        aI = GetComponent<HostileEnemy>();
-      } else if (state.currentAI.type == "ConfusedEnemy") {
-        aI = gameObject.AddComponent<ConfusedEnemy>();
-      }
-      aI.LoadState(state.currentAI);
+    transform.position = state.position;
+    IsAlive = state.IsAlive;
+    if (!IsAlive) {
+      GameManager.instance.RemoveActor(this);
     }
 
-    transform.position = state.position;
+    if (state.CurrentAI != null) {
+      if (state.CurrentAI.Type == "HostileEnemy") {
+        aI = GetComponent<HostileEnemy>();
+      } else if (state.CurrentAI.Type == "ConfusedEnemy") {
+        aI = gameObject.AddComponent<ConfusedEnemy>();
+      }
+      aI.LoadState(state.CurrentAI);
+    }
   }
 }
 
 [System.Serializable]
 public class ActorState : EntityState {
-  public bool isAlive;
-  public AIState currentAI;
+  public bool IsAlive { get; set; }
+  public AIState CurrentAI { get; set; }
+
+  public ActorState(string name, bool blocksMovement, Vector3 position, bool isAlive = true, AIState currentAI = null) : base(name, blocksMovement, position) {
+    IsAlive = isAlive;
+    CurrentAI = currentAI;
+  }
 }

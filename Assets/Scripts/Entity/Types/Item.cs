@@ -11,23 +11,22 @@ public class Item : Entity {
     }
   }
 
-  private void Start() {
-    AddToGameManager();
+  private void Start() => AddToGameManager();
+
+  public override void AddToGameManager() {
+    base.AddToGameManager();
+
+    GameManager.instance.AddItem(this);
   }
 
-  public override EntityState GetState() {
-    ItemState state = new ItemState();
-    state.name = name;
-
-    if (transform.parent != null) {
-      state.parent = transform.parent.name;
-      state.siblingIndex = transform.GetSiblingIndex();
-      state.position = transform.parent.position;
-    } else {
-      state.position = transform.position;
-    }
-
-    return state;
+  public override EntityState SaveState() {
+    return new ItemState(
+      name: name,
+      blocksMovement: BlocksMovement,
+      position: transform.position,
+      parent: transform.parent != null ? transform.parent.gameObject.name : null,
+      siblingIndex: transform.parent != null ? transform.GetSiblingIndex() : 0
+    );
   }
 
   public void LoadState(ItemState state) {
@@ -44,4 +43,12 @@ public class Item : Entity {
 public class ItemState : EntityState {
   public string parent;
   public int siblingIndex;
+
+  public string Parent { get => parent; set => parent = value; }
+  public int SiblingIndex { get => siblingIndex; set => siblingIndex = value; }
+
+  public ItemState(string name, bool blocksMovement, Vector3 position, string parent, int siblingIndex) : base(name, blocksMovement, position) {
+    this.parent = parent;
+    this.siblingIndex = siblingIndex;
+  }
 }

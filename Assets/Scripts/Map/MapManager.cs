@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 public class MapManager : MonoBehaviour {
@@ -48,12 +49,13 @@ public class MapManager : MonoBehaviour {
   }
 
   private void Start() {
-    ProcGen procGen = new ProcGen();
-    procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
+    if (SaveManager.instance.Save.Scenes.Find(scene => scene.Name == SceneManager.GetActiveScene().name) == null) {
+      ProcGen procGen = new ProcGen();
+      procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
+    }
 
     AddTileMapToDictionary(floorMap);
     AddTileMapToDictionary(obstacleMap);
-
     SetupFogMap();
 
     Camera.main.transform.position = new Vector3(40, 20.25f, -10);
@@ -119,7 +121,20 @@ public class MapManager : MonoBehaviour {
       }
 
       TileData tile = new TileData();
+      tile.Name = tilemap.GetTile(pos).name;
+      tile.Position = pos;
       tiles.Add(pos, tile);
+    }
+  }
+
+  private void SetupTileMap(MapState mapState) {
+    foreach (TileData tile in mapState.storedTiles) {
+
+      if (tile.Name == "Floor") {
+        floorMap.SetTile(tile.Position, floorTile);
+      } else if (tile.Name == "Wall") {
+        obstacleMap.SetTile(tile.Position, wallTile);
+      }
     }
   }
 
@@ -127,6 +142,22 @@ public class MapManager : MonoBehaviour {
     foreach (Vector3Int pos in tiles.Keys) {
       fogMap.SetTile(pos, fogTile);
       fogMap.SetTileFlags(pos, TileFlags.None);
+    }
+  }
+
+  public MapState SaveState() => new MapState(tiles);
+
+  public void LoadState(MapState mapState) => SetupTileMap(mapState);
+}
+
+[System.Serializable]
+public class MapState {
+  public List<TileData> storedTiles { get; set; }
+
+  public MapState(Dictionary<Vector3Int, TileData> tiles) {
+    storedTiles = new List<TileData>();
+    foreach (Vector3Int pos in tiles.Keys) {
+      storedTiles.Add(tiles[pos]);
     }
   }
 }
