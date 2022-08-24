@@ -42,7 +42,6 @@ public class SaveManager : MonoBehaviour, IState<SceneState> {
   public void SaveGame() {
     bool hasScene = save.Scenes.Find(x => x.Name == SceneManager.GetActiveScene().name) != null;
     if (hasScene) {
-      Debug.Log("Scene already saved");
       UpdateScene(SaveState());
     } else {
       AddScene(SaveState());

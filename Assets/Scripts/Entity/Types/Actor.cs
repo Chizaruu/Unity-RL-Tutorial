@@ -25,10 +25,14 @@ public class Actor : Entity {
   }
 
   private void Start() {
-    algorithm = new AdamMilVisibility();
-
     AddToGameManager();
-    UpdateFieldOfView();
+
+    if (isAlive) {
+      algorithm = new AdamMilVisibility();
+      UpdateFieldOfView();
+    } else if (GetComponent<Fighter>() != null) {
+      GetComponent<Fighter>().Die();
+    }
   }
 
   public override void AddToGameManager() {
@@ -54,6 +58,7 @@ public class Actor : Entity {
   }
 
   public override EntityState SaveState() => new ActorState(
+    type: EntityState.EntityType.Actor,
     name: name,
     blocksMovement: BlocksMovement,
     position: transform.position,
@@ -81,11 +86,14 @@ public class Actor : Entity {
 
 [System.Serializable]
 public class ActorState : EntityState {
-  public bool IsAlive { get; set; }
-  public AIState CurrentAI { get; set; }
+  [SerializeField] private bool isAlive;
+  [SerializeField] private AIState currentAI;
 
-  public ActorState(string name, bool blocksMovement, Vector3 position, bool isAlive = true, AIState currentAI = null) : base(name, blocksMovement, position) {
-    IsAlive = isAlive;
-    CurrentAI = currentAI;
+  public ActorState(EntityType type = EntityType.Other, string name = "", bool blocksMovement = false, Vector3 position = default, bool isAlive = true, AIState currentAI = null) : base(type, name, blocksMovement, position) {
+    this.isAlive = isAlive;
+    this.currentAI = currentAI;
   }
+
+  public bool IsAlive { get => isAlive; set => isAlive = value; }
+  public AIState CurrentAI { get => currentAI; set => currentAI = value; }
 }

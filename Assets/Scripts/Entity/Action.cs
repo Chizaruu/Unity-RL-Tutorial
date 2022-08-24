@@ -62,8 +62,6 @@ static public class Action {
       actor.Inventory.Add(item);
 
       UIManager.instance.AddMessage($"You picked up the {item.name}!", "#FFFFFF");
-
-      GameManager.instance.RemoveEntity(item);
       GameManager.instance.EndTurn();
     }
   }

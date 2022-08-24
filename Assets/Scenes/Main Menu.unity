@@ -502,6 +502,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   saveFileName: saveThe.koala
+  save:
+    currentScene: 
+    scenes: []
 --- !u!4 &687417216
 Transform:
   m_ObjectHideFlags: 0

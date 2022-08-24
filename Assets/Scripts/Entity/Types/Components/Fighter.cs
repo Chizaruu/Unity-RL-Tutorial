@@ -29,11 +29,14 @@ sealed class Fighter : MonoBehaviour, IState<FighterState> {
     }
   }
 
-  private void Die() {
-    if (GetComponent<Player>()) {
-      UIManager.instance.AddMessage("You died!", "#ff0000"); //Red
-    } else {
-      UIManager.instance.AddMessage($"{name} is dead!", "#ffa500"); //Light Orange
+  public void Die() {
+    if (GetComponent<Actor>().IsAlive) {
+      if (GetComponent<Player>()) {
+        UIManager.instance.AddMessage("You died!", "#ff0000"); //Red
+      } else {
+        UIManager.instance.AddMessage($"{name} is dead!", "#ffa500"); //Light Orange
+      }
+      GetComponent<Actor>().IsAlive = false;
     }
 
     SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
@@ -43,7 +46,6 @@ sealed class Fighter : MonoBehaviour, IState<FighterState> {
 
     name = $"Remains of {name}";
     GetComponent<Actor>().BlocksMovement = false;
-    GetComponent<Actor>().IsAlive = false;
     if (!GetComponent<Player>()) {
       GameManager.instance.RemoveActor(this.GetComponent<Actor>());
     }

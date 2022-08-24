@@ -146,6 +146,10 @@ public class MapManager : MonoBehaviour {
       Vector3Int gridPosition = floorMap.WorldToCell(pos);
       fogMap.SetTile(gridPosition, fogTile);
       fogMap.SetTileFlags(gridPosition, TileFlags.None);
+
+      if (tiles[pos].IsExplored) {
+        fogMap.SetColor(gridPosition, new Color(1.0f, 1.0f, 1.0f, 0.5f));
+      }
     }
   }
 

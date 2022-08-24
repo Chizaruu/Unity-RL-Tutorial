@@ -13,27 +13,18 @@ public class Item : Entity {
 
   private void Start() => AddToGameManager();
 
-  public override void AddToGameManager() {
-    base.AddToGameManager();
-
-    GameManager.instance.AddItem(this);
-  }
-
-  public override EntityState SaveState() {
-    return new ItemState(
+  public override EntityState SaveState() => new ItemState(
+      type: EntityState.EntityType.Item,
       name: name,
       blocksMovement: BlocksMovement,
       position: transform.position,
-      parent: transform.parent != null ? transform.parent.gameObject.name : null,
-      siblingIndex: transform.parent != null ? transform.GetSiblingIndex() : 0
+      parent: transform.parent != null ? transform.parent.gameObject.name : ""
     );
-  }
 
   public void LoadState(ItemState state) {
-    if (state.parent != "") {
-      GameObject parent = GameObject.Find(state.parent);
-      transform.SetParent(parent.transform);
-      parent.GetComponent<Inventory>().Add(this, state.siblingIndex);
+    if (state.Parent != "") {
+      GameObject parent = GameObject.Find(state.Parent);
+      parent.GetComponent<Inventory>().Add(this);
     }
     transform.position = state.Position;
   }
@@ -41,14 +32,11 @@ public class Item : Entity {
 
 [System.Serializable]
 public class ItemState : EntityState {
-  public string parent;
-  public int siblingIndex;
+  [SerializeField] private string parent;
 
   public string Parent { get => parent; set => parent = value; }
-  public int SiblingIndex { get => siblingIndex; set => siblingIndex = value; }
 
-  public ItemState(string name, bool blocksMovement, Vector3 position, string parent, int siblingIndex) : base(name, blocksMovement, position) {
+  public ItemState(EntityState.EntityType type = EntityState.EntityType.Other, string name = "", bool blocksMovement = false, Vector3 position = new Vector3(), string parent = "") : base(type, name, blocksMovement, position) {
     this.parent = parent;
-    this.siblingIndex = siblingIndex;
   }
 }

@@ -13,9 +13,8 @@ public class GameManager : MonoBehaviour, IState<GameState> {
   [Header("Entities")]
   [SerializeField] private bool isPlayerTurn = true; //Read-only
   [SerializeField] private int actorNum = 0; //Read-only
-  [SerializeField] private List<Entity> entities = new List<Entity>();
-  [SerializeField] private List<Actor> actors = new List<Actor>();
-  [SerializeField] private List<Item> items = new List<Item>();
+  [SerializeField] private List<Entity> entities;
+  [SerializeField] private List<Actor> actors;
 
   [Header("Death")]
   [SerializeField] private Sprite deadSprite;
@@ -32,6 +31,22 @@ public class GameManager : MonoBehaviour, IState<GameState> {
     }
 
     SaveManager.instance.Save.CurrentScene = SceneManager.GetActiveScene().name;
+    SceneManager.sceneLoaded += OnSceneLoaded;
+  }
+
+  private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+    bool isNewScene = !SaveManager.instance.Save.Scenes.Exists(x => x.Name == scene.name);
+    if (isNewScene) {
+      entities = new List<Entity>();
+      actors = new List<Actor>();
+    } else {
+      SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
+      LoadState(sceneState.GameState);
+    }
+  }
+
+  private void Start() {
+    MapManager.instance.SetEntitiesVisibilities();
   }
 
   private void StartTurn() {
@@ -72,6 +87,13 @@ public class GameManager : MonoBehaviour, IState<GameState> {
     entities.Add(entity);
   }
 
+  public void InsertEntity(Entity entity, int index) {
+    if (!entity.gameObject.activeSelf) {
+      entity.gameObject.SetActive(true);
+    }
+    entities.Insert(index, entity);
+  }
+
   public void RemoveEntity(Entity entity) {
     entity.gameObject.SetActive(false);
     entities.Remove(entity);
@@ -92,13 +114,6 @@ public class GameManager : MonoBehaviour, IState<GameState> {
     delayTime = SetTime();
   }
 
-  public void AddItem(Item item) {
-    items.Add(item);
-  }
-  public void RemoveItem(Item item) {
-    items.Remove(item);
-  }
-
   public Actor GetActorAtLocation(Vector3 location) {
     foreach (Actor actor in actors) {
       if (actor.BlocksMovement && actor.transform.position == location) {
@@ -110,21 +125,25 @@ public class GameManager : MonoBehaviour, IState<GameState> {
 
   private float SetTime() => baseTime / actors.Count;
 
-  public GameState SaveState() => new GameState(
-    entities: entities.ConvertAll(e => e.SaveState()),
-    actors: actors.ConvertAll(actor => actor.SaveState() as ActorState),
-    items: items.ConvertAll(item => item.SaveState() as ItemState)
-  );
+  public GameState SaveState() => new GameState(entities: entities.ConvertAll(e => e.SaveState()));
 
   public void LoadState(GameState state) {
-    foreach (ActorState actorState in state.Actors) {
-      GameObject actor = MapManager.instance.CreateEntity(actorState.Name, actorState.Position);
-      actor.GetComponent<Actor>().LoadState(actorState);
-    }
-
-    foreach (ItemState itemState in state.Items) {
-      GameObject item = MapManager.instance.CreateEntity(itemState.Name, itemState.Position);
-      item.GetComponent<Item>().LoadState(itemState);
+    foreach (EntityState entityState in state.Entities) {
+      if (entityState.Type == EntityState.EntityType.Actor) {
+        ActorState actorState = entityState as ActorState;
+        Actor actor;
+        if (actorState.Name.Contains("Remains of")) {
+          string lastWord = actorState.Name.Substring(actorState.Name.LastIndexOf(' ') + 1);
+          actor = MapManager.instance.CreateEntity($"{lastWord}", actorState.Position).GetComponent<Actor>();
+        } else {
+          actor = MapManager.instance.CreateEntity(actorState.Name, actorState.Position).GetComponent<Actor>();
+        }
+        actor.LoadState(actorState);
+      } else if (entityState.Type == EntityState.EntityType.Item) {
+        ItemState itemState = entityState as ItemState;
+        Item item = MapManager.instance.CreateEntity(itemState.Name, itemState.Position).GetComponent<Item>();
+        item.LoadState(itemState);
+      }
     }
   }
 }
@@ -132,16 +151,10 @@ public class GameManager : MonoBehaviour, IState<GameState> {
 [System.Serializable]
 public class GameState {
   [SerializeField] private List<EntityState> entities;
-  [SerializeField] private List<ActorState> actors;
-  [SerializeField] private List<ItemState> items;
 
   public List<EntityState> Entities { get => entities; set => entities = value; }
-  public List<ActorState> Actors { get => actors; set => actors = value; }
-  public List<ItemState> Items { get => items; set => items = value; }
 
-  public GameState(List<EntityState> entities, List<ActorState> actors, List<ItemState> items) {
+  public GameState(List<EntityState> entities) {
     this.entities = entities;
-    this.actors = actors;
-    this.items = items;
   }
 }

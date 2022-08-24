@@ -12,8 +12,8 @@ public class Consumable : MonoBehaviour {
       consumer.GetComponent<Inventory>().SelectedConsumable = null;
     }
 
-    GameManager.instance.RemoveItem(GetComponent<Item>());
     consumer.Inventory.Items.Remove(GetComponent<Item>());
+    GameManager.instance.RemoveEntity(GetComponent<Item>());
     Destroy(gameObject);
   }
 }

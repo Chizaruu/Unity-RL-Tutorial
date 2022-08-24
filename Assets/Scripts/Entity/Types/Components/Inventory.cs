@@ -13,19 +13,13 @@ public class Inventory : MonoBehaviour {
   public void Add(Item item) {
     items.Add(item);
     item.transform.SetParent(transform);
-  }
-
-  public void Add(Item item, int index) {
-    items.Insert(index, item);
-    item.transform.SetParent(transform);
-    item.transform.SetSiblingIndex(index);
+    item.transform.GetComponent<SpriteRenderer>().enabled = false;
   }
 
   public void Drop(Item item) {
     items.Remove(item);
     item.transform.SetParent(null);
     item.GetComponent<SpriteRenderer>().enabled = true;
-    item.AddToGameManager();
     UIManager.instance.AddMessage($"You dropped the {item.name}.", "#FF0000");
   }
 }
