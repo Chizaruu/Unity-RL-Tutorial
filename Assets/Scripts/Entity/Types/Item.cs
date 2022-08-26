@@ -14,14 +14,18 @@ public class Item : Entity {
   private void Start() => AddToGameManager();
 
   public override EntityState SaveState() => new ItemState(
-      type: EntityState.EntityType.Item,
       name: name,
       blocksMovement: BlocksMovement,
+      isVisible: MapManager.instance.VisibleTiles.Contains(MapManager.instance.FloorMap.WorldToCell(transform.position)),
       position: transform.position,
       parent: transform.parent != null ? transform.parent.gameObject.name : ""
     );
 
   public void LoadState(ItemState state) {
+    if (!state.IsVisible) {
+      GetComponent<SpriteRenderer>().enabled = false;
+    }
+
     if (state.Parent != "") {
       GameObject parent = GameObject.Find(state.Parent);
       parent.GetComponent<Inventory>().Add(this);
@@ -36,7 +40,7 @@ public class ItemState : EntityState {
 
   public string Parent { get => parent; set => parent = value; }
 
-  public ItemState(EntityState.EntityType type = EntityState.EntityType.Other, string name = "", bool blocksMovement = false, Vector3 position = new Vector3(), string parent = "") : base(type, name, blocksMovement, position) {
+  public ItemState(EntityType type = EntityType.Item, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(), string parent = "") : base(type, name, blocksMovement, isVisible, position) {
     this.parent = parent;
   }
 }

@@ -7,6 +7,7 @@ public class Actor : Entity {
   [SerializeField] private List<Vector3Int> fieldOfView = new List<Vector3Int>();
   [SerializeField] private Inventory inventory;
   [SerializeField] private AI aI;
+  [SerializeField] private Fighter fighter;
   AdamMilVisibility algorithm;
 
   public bool IsAlive { get => isAlive; set => isAlive = value; }
@@ -22,6 +23,10 @@ public class Actor : Entity {
     if (GetComponent<AI>()) {
       aI = GetComponent<AI>();
     }
+
+    if (GetComponent<Fighter>()) {
+      fighter = GetComponent<Fighter>();
+    }
   }
 
   private void Start() {
@@ -30,8 +35,8 @@ public class Actor : Entity {
     if (isAlive) {
       algorithm = new AdamMilVisibility();
       UpdateFieldOfView();
-    } else if (GetComponent<Fighter>() != null) {
-      GetComponent<Fighter>().Die();
+    } else if (fighter != null) {
+      fighter.Die();
     }
   }
 
@@ -58,19 +63,25 @@ public class Actor : Entity {
   }
 
   public override EntityState SaveState() => new ActorState(
-    type: EntityState.EntityType.Actor,
     name: name,
     blocksMovement: BlocksMovement,
-    position: transform.position,
     isAlive: IsAlive,
-    currentAI: aI != null ? AI.SaveState() : null
+    isVisible: MapManager.instance.VisibleTiles.Contains(MapManager.instance.FloorMap.WorldToCell(transform.position)),
+    position: transform.position,
+    currentAI: aI != null ? AI.SaveState() : null,
+    fighterState: fighter != null ? fighter.SaveState() : null
   );
 
   public void LoadState(ActorState state) {
     transform.position = state.Position;
-    IsAlive = state.IsAlive;
+    isAlive = state.IsAlive;
+
     if (!IsAlive) {
       GameManager.instance.RemoveActor(this);
+    }
+
+    if (!state.IsVisible) {
+      GetComponent<SpriteRenderer>().enabled = false;
     }
 
     if (state.CurrentAI != null) {
@@ -81,6 +92,10 @@ public class Actor : Entity {
       }
       aI.LoadState(state.CurrentAI);
     }
+
+    if (state.FighterState != null) {
+      fighter.LoadState(state.FighterState);
+    }
   }
 }
 
@@ -88,12 +103,15 @@ public class Actor : Entity {
 public class ActorState : EntityState {
   [SerializeField] private bool isAlive;
   [SerializeField] private AIState currentAI;
-
-  public ActorState(EntityType type = EntityType.Other, string name = "", bool blocksMovement = false, Vector3 position = default, bool isAlive = true, AIState currentAI = null) : base(type, name, blocksMovement, position) {
-    this.isAlive = isAlive;
-    this.currentAI = currentAI;
-  }
+  [SerializeField] private FighterState fighterState;
 
   public bool IsAlive { get => isAlive; set => isAlive = value; }
   public AIState CurrentAI { get => currentAI; set => currentAI = value; }
+  public FighterState FighterState { get => fighterState; set => fighterState = value; }
+
+  public ActorState(EntityType type = EntityType.Actor, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(), bool isAlive = true, AIState currentAI = null, FighterState fighterState = null) : base(type, name, blocksMovement, isVisible, position) {
+    this.isAlive = isAlive;
+    this.currentAI = currentAI;
+    this.fighterState = fighterState;
+  }
 }

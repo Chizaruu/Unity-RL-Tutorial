@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
@@ -27,8 +28,8 @@ public class MapManager : MonoBehaviour {
 
   [Header("Features")]
   [SerializeField] private List<RectangularRoom> rooms;
-  [SerializeField] private List<Vector3Int> visibleTiles = new List<Vector3Int>();
-  [SerializeField] private Dictionary<Vector3, TileData> tiles;
+  [SerializeField] private List<Vector3Int> visibleTiles;
+  [SerializeField] private Dictionary<Vector3Int, TileData> tiles;
   private Dictionary<Vector2Int, Node> nodes = new Dictionary<Vector2Int, Node>();
 
   public int Width { get => width; }
@@ -38,6 +39,7 @@ public class MapManager : MonoBehaviour {
   public Tilemap FloorMap { get => floorMap; }
   public Tilemap ObstacleMap { get => obstacleMap; }
   public Tilemap FogMap { get => fogMap; }
+  public List<Vector3Int> VisibleTiles { get => visibleTiles; }
   public Dictionary<Vector2Int, Node> Nodes { get => nodes; set => nodes = value; }
 
   private void Awake() {
@@ -54,7 +56,8 @@ public class MapManager : MonoBehaviour {
     bool isNewScene = !SaveManager.instance.Save.Scenes.Exists(x => x.Name == scene.name);
     if (isNewScene) {
       rooms = new List<RectangularRoom>();
-      tiles = new Dictionary<Vector3, TileData>();
+      tiles = new Dictionary<Vector3Int, TileData>();
+      visibleTiles = new List<Vector3Int>();
 
       ProcGen procGen = new ProcGen();
       procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
@@ -142,13 +145,12 @@ public class MapManager : MonoBehaviour {
   }
 
   private void SetupFogMap() {
-    foreach (Vector3 pos in tiles.Keys) {
-      Vector3Int gridPosition = floorMap.WorldToCell(pos);
-      fogMap.SetTile(gridPosition, fogTile);
-      fogMap.SetTileFlags(gridPosition, TileFlags.None);
+    foreach (Vector3Int pos in tiles.Keys) {
+      fogMap.SetTile(pos, fogTile);
+      fogMap.SetTileFlags(pos, TileFlags.None);
 
       if (tiles[pos].IsExplored) {
-        fogMap.SetColor(gridPosition, new Color(1.0f, 1.0f, 1.0f, 0.5f));
+        fogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f));
       }
     }
   }
@@ -157,15 +159,13 @@ public class MapManager : MonoBehaviour {
 
   public void LoadState(MapState mapState) {
     rooms = mapState.StoredRooms;
-    tiles = mapState.StoredTiles;
+    tiles = mapState.StoredTiles.ToDictionary(x => new Vector3Int((int)x.Key.x, (int)x.Key.y, (int)x.Key.z), x => x.Value);
 
-    foreach (Vector3 pos in tiles.Keys) {
-      Vector3Int gridPosition = floorMap.WorldToCell(pos);
-
+    foreach (Vector3Int pos in tiles.Keys) {
       if (tiles[pos].Name == floorTile.name) {
-        floorMap.SetTile(gridPosition, floorTile);
+        floorMap.SetTile(pos, floorTile);
       } else if (tiles[pos].Name == wallTile.name) {
-        obstacleMap.SetTile(gridPosition, wallTile);
+        obstacleMap.SetTile(pos, wallTile);
       }
     }
   }
@@ -178,8 +178,8 @@ public class MapState {
   public Dictionary<Vector3, TileData> StoredTiles { get => storedTiles; set => storedTiles = value; }
   public List<RectangularRoom> StoredRooms { get => storedRooms; set => storedRooms = value; }
 
-  public MapState(Dictionary<Vector3, TileData> tiles, List<RectangularRoom> rooms) {
-    storedTiles = tiles;
+  public MapState(Dictionary<Vector3Int, TileData> tiles, List<RectangularRoom> rooms) {
+    storedTiles = tiles.ToDictionary(x => (Vector3)x.Key, x => x.Value);
     storedRooms = rooms;
   }
 }

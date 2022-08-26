@@ -29,8 +29,6 @@ public class GameManager : MonoBehaviour, IState<GameState> {
     } else {
       Destroy(gameObject);
     }
-
-    SaveManager.instance.Save.CurrentScene = SceneManager.GetActiveScene().name;
     SceneManager.sceneLoaded += OnSceneLoaded;
   }
 
@@ -40,13 +38,10 @@ public class GameManager : MonoBehaviour, IState<GameState> {
       entities = new List<Entity>();
       actors = new List<Actor>();
     } else {
+      SaveManager.instance.Save.CurrentScene = scene.name;
       SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
       LoadState(sceneState.GameState);
     }
-  }
-
-  private void Start() {
-    MapManager.instance.SetEntitiesVisibilities();
   }
 
   private void StartTurn() {

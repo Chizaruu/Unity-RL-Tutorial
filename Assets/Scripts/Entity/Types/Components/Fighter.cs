@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
-sealed class Fighter : MonoBehaviour, IState<FighterState> {
+public class Fighter : MonoBehaviour, IState<FighterState> {
   [SerializeField] private int maxHp, hp, defense, power;
   [SerializeField] private Actor target;
 
@@ -67,15 +67,13 @@ sealed class Fighter : MonoBehaviour, IState<FighterState> {
     return amountRecovered;
   }
 
-  public FighterState SaveState() {
-    return new FighterState(
+  public FighterState SaveState() => new FighterState(
       maxHp: maxHp,
       hp: hp,
       defense: defense,
       power: power,
       target: target != null ? target.name : null
     );
-  }
 
   public void LoadState(FighterState state) {
     maxHp = state.MaxHp;

@@ -76,8 +76,8 @@ public class SaveManager : MonoBehaviour, IState<SceneState> {
   );
 
   public void LoadState(SceneState sceneData) {
-    GameManager.instance.LoadState(sceneData.GameState);
     MapManager.instance.LoadState(sceneData.MapState);
+    GameManager.instance.LoadState(sceneData.GameState);
   }
 }
 
