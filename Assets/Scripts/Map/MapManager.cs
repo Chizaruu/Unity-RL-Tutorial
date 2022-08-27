@@ -164,7 +164,9 @@ public class MapManager : MonoBehaviour {
   public void LoadState(MapState mapState) {
     rooms = mapState.StoredRooms;
     tiles = mapState.StoredTiles.ToDictionary(x => new Vector3Int((int)x.Key.x, (int)x.Key.y, (int)x.Key.z), x => x.Value);
-    visibleTiles = tiles.Where(x => x.Value.IsVisible).Select(x => x.Key).ToList();
+    if (visibleTiles.Count > 0) {
+      visibleTiles.Clear();
+    }
 
     foreach (Vector3Int pos in tiles.Keys) {
       if (tiles[pos].Name == floorTile.name) {
@@ -174,7 +176,6 @@ public class MapManager : MonoBehaviour {
       }
     }
     SetupFogMap();
-    UpdateFogMap(visibleTiles);
   }
 }
 
