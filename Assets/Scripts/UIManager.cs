@@ -121,6 +121,7 @@ public class UIManager : MonoBehaviour {
 
   public void Load() {
     SaveManager.instance.LoadGame();
+    ToggleMenu();
   }
 
   public void Quit() {
