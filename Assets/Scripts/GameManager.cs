@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour, IState<GameState> {
       entities = new List<Entity>();
       actors = new List<Actor>();
     } else {
-      SaveManager.instance.Save.CurrentScene = scene.name;
       SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
       LoadState(sceneState.GameState);
     }
@@ -123,6 +122,14 @@ public class GameManager : MonoBehaviour, IState<GameState> {
   public GameState SaveState() => new GameState(entities: entities.ConvertAll(e => e.SaveState()));
 
   public void LoadState(GameState state) {
+    if (entities.Count > 0) {
+      foreach (Entity entity in entities) {
+        Destroy(entity.gameObject);
+      }
+      entities.Clear();
+      actors.Clear();
+    }
+
     foreach (EntityState entityState in state.Entities) {
       if (entityState.Type == EntityState.EntityType.Actor) {
         ActorState actorState = entityState as ActorState;

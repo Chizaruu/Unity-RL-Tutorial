@@ -39,12 +39,32 @@ public class ConfusedEnemy : AI {
     }
   }
 
-  public override AIState SaveState() => new AIState(
+  public override AIState SaveState() => new ConfusedState(
     type: "ConfusedEnemy",
-    currentAction: turnsRemaining
+    previousAI: previousAI,
+    turnsRemaining: turnsRemaining
   );
 
-  public override void LoadState(AIState state) {
-    turnsRemaining = state.CurrentAction;
+  public void LoadState(ConfusedState state) {
+    Debug.Log($"Loading ConfusedEnemy state: {state.Type}");
+    Debug.Log($"Previous AI: {state.PreviousAI}");
+    Debug.Log($"Turns Remaining: {state.TurnsRemaining}");
+
+    if (state.PreviousAI == "HostileEnemy") {
+      previousAI = GetComponent<HostileEnemy>();
+    }
+    turnsRemaining = state.TurnsRemaining;
+  }
+}
+
+public class ConfusedState : AIState {
+  [SerializeField] private string previousAI;
+  [SerializeField] private int turnsRemaining;
+  public string PreviousAI { get => previousAI; set => previousAI = value; }
+  public int TurnsRemaining { get => turnsRemaining; set => turnsRemaining = value; }
+
+  public ConfusedState(string type = "", AI previousAI = null, int turnsRemaining = 0) : base(type) {
+    this.previousAI = previousAI.GetType().ToString();
+    this.turnsRemaining = turnsRemaining;
   }
 }

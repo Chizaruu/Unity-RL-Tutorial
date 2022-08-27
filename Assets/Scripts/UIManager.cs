@@ -8,9 +8,6 @@ public class UIManager : MonoBehaviour {
   [SerializeField] private EventSystem eventSystem;
   [SerializeField] private bool isMenuOpen = false; //Read-only
 
-  [Header("Save Menu")]
-  [SerializeField] private Button saveButton;
-
   [Header("Health UI")]
   [SerializeField] private Slider hpSlider;
   [SerializeField] private TextMeshProUGUI hpSliderText;
@@ -32,10 +29,15 @@ public class UIManager : MonoBehaviour {
   [SerializeField] private bool isDropMenuOpen = false; //Read-only
   [SerializeField] private GameObject dropMenu;
   [SerializeField] private GameObject dropMenuContent;
+
+  [Header("Escape Menu UI")]
+  [SerializeField] private bool isEscapeMenuOpen = false; //Read-only
+  [SerializeField] private GameObject escapeMenu;
   public bool IsMenuOpen { get => isMenuOpen; }
   public bool IsMessageHistoryOpen { get => isMessageHistoryOpen; }
   public bool IsInventoryOpen { get => isInventoryOpen; }
   public bool IsDropMenuOpen { get => isDropMenuOpen; }
+  public bool IsEscapeMenuOpen { get => isEscapeMenuOpen; }
 
   private void Awake() {
     if (instance == null) {
@@ -45,12 +47,7 @@ public class UIManager : MonoBehaviour {
     }
   }
 
-  private void Start() {
-    saveButton.onClick.AddListener(() => {
-      SaveManager.instance.SaveGame();
-    });
-    AddMessage("Hello and welcome, adventurer, to yet another dungeon!", "#0da2ff"); //Light blue
-  }
+  private void Start() => AddMessage("Hello and welcome, adventurer, to yet another dungeon!", "#0da2ff"); //Light blue
 
   public void SetHealthMax(int maxHp) {
     hpSlider.maxValue = maxHp;
@@ -65,18 +62,22 @@ public class UIManager : MonoBehaviour {
     if (isMenuOpen) {
       isMenuOpen = !isMenuOpen;
 
-      if (isMessageHistoryOpen) {
-        ToggleMessageHistory();
+      switch (true) {
+        case bool _ when isMessageHistoryOpen:
+          ToggleMessageHistory();
+          break;
+        case bool _ when isInventoryOpen:
+          ToggleInventory();
+          break;
+        case bool _ when isDropMenuOpen:
+          ToggleDropMenu();
+          break;
+        case bool _ when isEscapeMenuOpen:
+          ToggleEscapeMenu();
+          break;
+        default:
+          break;
       }
-
-      if (isInventoryOpen) {
-        ToggleInventory();
-      }
-
-      if (isDropMenuOpen) {
-        ToggleDropMenu();
-      }
-      return;
     }
   }
 
@@ -104,6 +105,26 @@ public class UIManager : MonoBehaviour {
     if (isMenuOpen) {
       UpdateMenu(actor, dropMenuContent);
     }
+  }
+
+  public void ToggleEscapeMenu() {
+    escapeMenu.SetActive(!escapeMenu.activeSelf);
+    isMenuOpen = escapeMenu.activeSelf;
+    isEscapeMenuOpen = escapeMenu.activeSelf;
+
+    eventSystem.SetSelectedGameObject(escapeMenu.transform.GetChild(0).gameObject);
+  }
+
+  public void Save() {
+    SaveManager.instance.SaveGame();
+  }
+
+  public void Load() {
+    SaveManager.instance.LoadGame();
+  }
+
+  public void Quit() {
+    Application.Quit();
   }
 
   public void AddMessage(string newMessage, string colorHex) {

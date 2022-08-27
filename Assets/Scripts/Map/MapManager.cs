@@ -64,6 +64,7 @@ public class MapManager : MonoBehaviour {
 
       AddTileMapToDictionary(floorMap);
       AddTileMapToDictionary(obstacleMap);
+      SetupFogMap();
     } else {
       SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
       LoadState(sceneState.MapState);
@@ -71,7 +72,6 @@ public class MapManager : MonoBehaviour {
   }
 
   private void Start() {
-    SetupFogMap();
     Camera.main.transform.position = new Vector3(40, 20.25f, -10);
     Camera.main.orthographicSize = 27;
   }
@@ -145,6 +145,10 @@ public class MapManager : MonoBehaviour {
   }
 
   private void SetupFogMap() {
+    foreach (Vector3Int pos in fogMap.cellBounds.allPositionsWithin) {
+      fogMap.SetColor(pos, Color.white);
+    }
+
     foreach (Vector3Int pos in tiles.Keys) {
       fogMap.SetTile(pos, fogTile);
       fogMap.SetTileFlags(pos, TileFlags.None);
@@ -168,6 +172,7 @@ public class MapManager : MonoBehaviour {
         obstacleMap.SetTile(pos, wallTile);
       }
     }
+    SetupFogMap();
   }
 }
 

@@ -89,8 +89,10 @@ public class Actor : Entity {
         aI = GetComponent<HostileEnemy>();
       } else if (state.CurrentAI.Type == "ConfusedEnemy") {
         aI = gameObject.AddComponent<ConfusedEnemy>();
+
+        ConfusedState confusedState = state.CurrentAI as ConfusedState;
+        GetComponent<ConfusedEnemy>().LoadState(confusedState);
       }
-      aI.LoadState(state.CurrentAI);
     }
 
     if (state.FighterState != null) {

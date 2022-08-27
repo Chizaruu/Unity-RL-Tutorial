@@ -40,7 +40,9 @@ public class SaveManager : MonoBehaviour, IState<SceneState> {
   }
 
   public void SaveGame() {
-    bool hasScene = save.Scenes.Find(x => x.Name == SceneManager.GetActiveScene().name) != null;
+    save.CurrentScene = SceneManager.GetActiveScene().name;
+
+    bool hasScene = save.Scenes.Find(x => x.Name == save.CurrentScene) != null;
     if (hasScene) {
       UpdateScene(SaveState());
     } else {
@@ -57,7 +59,12 @@ public class SaveManager : MonoBehaviour, IState<SceneState> {
     byte[] saveJson = File.ReadAllBytes(path); //Load the state from the file
     save = SerializationUtility.DeserializeValue<SaveData>(saveJson, DataFormat.JSON); //Deserialize the state from JSON
 
-    SceneManager.LoadScene(save.CurrentScene);
+    SceneState sceneState = save.Scenes.Find(x => x.Name == SceneManager.GetActiveScene().name);
+    if (sceneState != null) {
+      LoadState(sceneState);
+    } else {
+      SceneManager.LoadScene(save.CurrentScene);
+    }
   }
 
   public void AddScene(SceneState sceneState) {

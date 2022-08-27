@@ -23,13 +23,10 @@ public class AI : MonoBehaviour, IState<AIState> {
 [System.Serializable]
 public class AIState {
   [SerializeField] private string type;
-  [SerializeField] private int currentAction;
 
   public string Type { get => type; set => type = value; }
-  public int CurrentAction { get => currentAction; set => currentAction = value; }
 
-  public AIState(string type = "", int currentAction = 0) {
+  public AIState(string type = "") {
     this.type = type;
-    this.currentAction = currentAction;
   }
 }
