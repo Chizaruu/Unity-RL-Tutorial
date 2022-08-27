@@ -145,16 +145,16 @@ public class MapManager : MonoBehaviour {
   }
 
   private void SetupFogMap() {
-    foreach (Vector3Int pos in fogMap.cellBounds.allPositionsWithin) {
-      fogMap.SetColor(pos, Color.white);
-    }
-
     foreach (Vector3Int pos in tiles.Keys) {
-      fogMap.SetTile(pos, fogTile);
-      fogMap.SetTileFlags(pos, TileFlags.None);
+      if (!fogMap.HasTile(pos)) {
+        fogMap.SetTile(pos, fogTile);
+        fogMap.SetTileFlags(pos, TileFlags.None);
+      }
 
       if (tiles[pos].IsExplored) {
         fogMap.SetColor(pos, new Color(1.0f, 1.0f, 1.0f, 0.5f));
+      } else {
+        fogMap.SetColor(pos, Color.white);
       }
     }
   }
@@ -164,6 +164,7 @@ public class MapManager : MonoBehaviour {
   public void LoadState(MapState mapState) {
     rooms = mapState.StoredRooms;
     tiles = mapState.StoredTiles.ToDictionary(x => new Vector3Int((int)x.Key.x, (int)x.Key.y, (int)x.Key.z), x => x.Value);
+    visibleTiles = tiles.Where(x => x.Value.IsVisible).Select(x => x.Key).ToList();
 
     foreach (Vector3Int pos in tiles.Keys) {
       if (tiles[pos].Name == floorTile.name) {
@@ -173,6 +174,7 @@ public class MapManager : MonoBehaviour {
       }
     }
     SetupFogMap();
+    UpdateFogMap(visibleTiles);
   }
 }
 
