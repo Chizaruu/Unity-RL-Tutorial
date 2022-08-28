@@ -46,10 +46,6 @@ public class ConfusedEnemy : AI {
   );
 
   public void LoadState(ConfusedState state) {
-    Debug.Log($"Loading ConfusedEnemy state: {state.Type}");
-    Debug.Log($"Previous AI: {state.PreviousAI}");
-    Debug.Log($"Turns Remaining: {state.TurnsRemaining}");
-
     if (state.PreviousAI == "HostileEnemy") {
       previousAI = GetComponent<HostileEnemy>();
     }

@@ -91,7 +91,7 @@ public class Actor : Entity {
         aI = gameObject.AddComponent<ConfusedEnemy>();
 
         ConfusedState confusedState = state.CurrentAI as ConfusedState;
-        GetComponent<ConfusedEnemy>().LoadState(confusedState);
+        ((ConfusedEnemy)aI).LoadState(confusedState);
       }
     }
 
