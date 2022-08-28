@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public class SaveManager : MonoBehaviour, IState<SceneState> {
+public class SaveManager : MonoBehaviour {
   public static SaveManager instance;
 
   [SerializeField] private string saveFileName = "saveThe.koala";

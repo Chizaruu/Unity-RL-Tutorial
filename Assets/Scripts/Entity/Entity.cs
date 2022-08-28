@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// A generic class to represent players, enemies, items, etc.
 /// </summary>
-public class Entity : MonoBehaviour, IState<EntityState> {
+public class Entity : MonoBehaviour {
   [SerializeField] private bool blocksMovement;
 
   public bool BlocksMovement { get => blocksMovement; set => blocksMovement = value; }
@@ -23,8 +23,6 @@ public class Entity : MonoBehaviour, IState<EntityState> {
   }
 
   public virtual EntityState SaveState() => new EntityState();
-
-  public void LoadState(EntityState state) { }
 }
 
 [System.Serializable]

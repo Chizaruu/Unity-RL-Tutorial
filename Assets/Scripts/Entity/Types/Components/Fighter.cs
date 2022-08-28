@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
-public class Fighter : MonoBehaviour, IState<FighterState> {
+public class Fighter : MonoBehaviour {
   [SerializeField] private int maxHp, hp, defense, power;
   [SerializeField] private Actor target;
 

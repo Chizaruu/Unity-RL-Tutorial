@@ -42,6 +42,4 @@ public class HostileEnemy : AI {
   public override AIState SaveState() => new AIState(
     type: "HostileEnemy"
   );
-
-  public override void LoadState(AIState state) { }
 }
