@@ -38,4 +38,8 @@ public class HostileEnemy : AI {
 
     Action.WaitAction();
   }
+
+  public override AIState SaveState() => new AIState(
+    type: "HostileEnemy"
+  );
 }
