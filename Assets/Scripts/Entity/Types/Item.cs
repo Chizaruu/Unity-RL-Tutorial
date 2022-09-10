@@ -28,6 +28,7 @@ public class Item : Entity {
 
     if (state.Parent != "") {
       GameObject parent = GameObject.Find(state.Parent);
+      Debug.Log(parent.name + " " + parent.transform.position);
       parent.GetComponent<Inventory>().Add(this);
     }
     transform.position = state.Position;

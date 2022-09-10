@@ -23,6 +23,7 @@ public class Entity : MonoBehaviour {
   }
 
   public virtual EntityState SaveState() => new EntityState();
+  public virtual void LoadState(EntityState state) { }
 }
 
 [System.Serializable]
