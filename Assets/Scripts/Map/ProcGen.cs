@@ -44,8 +44,19 @@ sealed class ProcGen {
 
       rooms.Add(newRoom);
     }
-    //The first room, where the player starts.
-    MapManager.instance.CreateEntity("Player", rooms[0].Center());
+
+    //Add the stairs to the last room.
+    MapManager.instance.FloorMap.SetTile((Vector3Int)rooms[rooms.Count - 1].RandomPoint(), MapManager.instance.DownStairsTile);
+
+    //Add the player to the first room.
+    Vector3Int playerPos = (Vector3Int)rooms[0].RandomPoint();
+
+    while (GameManager.instance.GetActorAtLocation(playerPos) != null) {
+      playerPos = (Vector3Int)rooms[0].RandomPoint();
+    }
+
+    MapManager.instance.FloorMap.SetTile(playerPos, MapManager.instance.UpStairsTile);
+    MapManager.instance.CreateEntity("Player", (Vector2Int)playerPos);
   }
 
   /// <summary>

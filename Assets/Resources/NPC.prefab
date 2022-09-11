@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -5659955251864319106}
   - component: {fileID: 9068088526719773172}
   - component: {fileID: 3125749561450854138}
+  - component: {fileID: 3503943130817339647}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Untagged
@@ -100,13 +101,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
-  state:
-    isAlive: 1
-    position: {x: 0, y: 0, z: 0}
-    inventory: {fileID: 0}
-    aI: {fileID: 9068088526719773172}
+  isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []
+  inventory: {fileID: 0}
+  aI: {fileID: 9068088526719773172}
+  fighter: {fileID: 0}
+  level: {fileID: 3503943130817339647}
 --- !u!114 &9068088526719773172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,3 +133,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65d9f1c4171fd948b642e2ca501161a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3503943130817339647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4045285357597916935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11d70f02dea0075458dd292c1f43eb24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentLevel: 1
+  currentXp: 0
+  levelUpBase: 200
+  levelUpFactor: 150
+  xpGiven: 0

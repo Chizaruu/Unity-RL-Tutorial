@@ -16,7 +16,15 @@ public class RectangularRoom {
     this.height = height;
   }
 
+  /// <summary>
+  ///  Return the center of the room
+  /// </summary>
   public Vector2Int Center() => new Vector2Int(x + width / 2, y + height / 2);
+
+  /// <summary>
+  /// Return a random inner position inside the room
+  /// </summary>
+  public Vector2Int RandomPoint() => new Vector2Int(Random.Range(x + 1, x + width - 1), Random.Range(y + 1, y + height - 1));
 
   /// <summary>
   ///  Return the area of this room as a Bounds.
