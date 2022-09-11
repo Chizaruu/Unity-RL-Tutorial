@@ -30,6 +30,7 @@ public class Item : Entity {
       GameObject parent = GameObject.Find(state.Parent);
       parent.GetComponent<Inventory>().Add(this);
     }
+
     transform.position = state.Position;
   }
 }
