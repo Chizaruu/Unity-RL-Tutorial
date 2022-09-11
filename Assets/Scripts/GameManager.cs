@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour {
   public GameState SaveState() {
     foreach (Item item in actors[0].Inventory.Items) {
       if (entities.Contains(item)) {
-        continue; //This is a hacky way to prevent the player from duplicating item references in the save file
+        continue;
       }
       AddEntity(item);
     }
@@ -137,30 +137,41 @@ public class GameManager : MonoBehaviour {
   }
 
   public void LoadState(GameState state) {
+    isPlayerTurn = false; //Prevents player from moving during load
     if (entities.Count > 0) {
       foreach (Entity entity in entities) {
         Destroy(entity.gameObject);
       }
+
       entities.Clear();
       actors.Clear();
     }
 
-    foreach (EntityState entityState in state.Entities) {
-      string entityName = entityState.Name.Contains("Remains of") ?
-        entityState.Name.Substring(entityState.Name.LastIndexOf(' ') + 1) : entityState.Name;
+    StartCoroutine(LoadEntityStates(state.Entities));
+  }
 
-      if (entityState.Type == EntityState.EntityType.Actor) {
-        ActorState actorState = entityState as ActorState;
+  private IEnumerator LoadEntityStates(List<EntityState> entityStates) {
+    int entityState = 0;
+    while (entityState < entityStates.Count) {
+      yield return new WaitForEndOfFrame();
+      string entityName = entityStates[entityState].Name.Contains("Remains of") ?
+      entityStates[entityState].Name.Substring(entityStates[entityState].Name.LastIndexOf(' ') + 1) : entityStates[entityState].Name;
+
+      if (entityStates[entityState].Type == EntityState.EntityType.Actor) {
+        ActorState actorState = entityStates[entityState] as ActorState;
         Actor actor = MapManager.instance.CreateEntity(entityName, actorState.Position).GetComponent<Actor>();
 
         actor.LoadState(actorState);
-      } else if (entityState.Type == EntityState.EntityType.Item) {
-        ItemState itemState = entityState as ItemState;
+      } else if (entityStates[entityState].Type == EntityState.EntityType.Item) {
+        ItemState itemState = entityStates[entityState] as ItemState;
         Item item = MapManager.instance.CreateEntity(entityName, itemState.Position).GetComponent<Item>();
 
         item.LoadState(itemState);
       }
+
+      entityState++;
     }
+    isPlayerTurn = true; //Allows player to move after load
   }
 }
 
