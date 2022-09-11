@@ -1,10 +1,31 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 static public class Action {
   static public void WaitAction() {
     GameManager.instance.EndTurn();
+  }
+
+  static public void TakeStairsAction(Actor actor) {
+    Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(actor.transform.position);
+    string tileName = MapManager.instance.FloorMap.GetTile(pos).name;
+
+    if (tileName != MapManager.instance.UpStairsTile.name && tileName != MapManager.instance.DownStairsTile.name) {
+      UIManager.instance.AddMessage("There are no stairs here.", "#0da2ff");
+      return;
+    }
+
+    if (SaveManager.instance.CurrentFloor == 1 && tileName == MapManager.instance.UpStairsTile.name) {
+      UIManager.instance.AddMessage("A mysterious force prevents you from going back.", "#0da2ff");
+      return;
+    }
+
+    SaveManager.instance.SaveGame();
+    SaveManager.instance.CurrentFloor += tileName == MapManager.instance.UpStairsTile.name ? -1 : 1;
+
+    MapManager.instance.GenerateDungeon();
+
   }
 
   static public bool BumpAction(Actor actor, Vector2 direction) {

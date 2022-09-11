@@ -18,8 +18,9 @@ public class Fighter : MonoBehaviour {
     }
   }
 
-  public int Defense { get => defense; }
-  public int Power { get => power; }
+  public int MaxHp { get => maxHp; set => maxHp = value; }
+  public int Defense { get => defense; set => defense = value; }
+  public int Power { get => power; set => power = value; }
   public Actor Target { get => target; set => target = value; }
 
   private void Start() {
@@ -34,6 +35,7 @@ public class Fighter : MonoBehaviour {
       if (GetComponent<Player>()) {
         UIManager.instance.AddMessage("You died!", "#ff0000"); //Red
       } else {
+        GameManager.instance.Actors[0].GetComponent<Level>().AddExperience(GetComponent<Level>().XPGiven); //Give XP to player
         UIManager.instance.AddMessage($"{name} is dead!", "#ffa500"); //Light Orange
       }
       GetComponent<Actor>().IsAlive = false;

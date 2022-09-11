@@ -104,6 +104,8 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
             Action.CastAction(GetComponent<Actor>(), targets, GetComponent<Inventory>().SelectedConsumable);
           }
         }
+      } else if (CanAct()) {
+        Action.TakeStairsAction(GetComponent<Actor>());
       }
     }
   }

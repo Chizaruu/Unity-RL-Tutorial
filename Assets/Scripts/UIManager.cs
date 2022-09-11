@@ -47,7 +47,13 @@ public class UIManager : MonoBehaviour {
     }
   }
 
-  private void Start() => AddMessage("Hello and welcome, adventurer, to yet another dungeon!", "#0da2ff"); //Light blue
+  private void Start() {
+    if (SaveManager.instance.CurrentFloor == 1) {
+      AddMessage("Hello and welcome, adventurer, to yet another dungeon!", "#0da2ff"); //Light blue
+    } else {
+      AddMessage("Welcome back, adventurer!", "#0da2ff"); //Light blue
+    }
+  }
 
   public void SetHealthMax(int maxHp) {
     hpSlider.maxValue = maxHp;

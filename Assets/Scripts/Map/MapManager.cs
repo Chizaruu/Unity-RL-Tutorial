@@ -20,6 +20,8 @@ public class MapManager : MonoBehaviour {
   [SerializeField] private TileBase floorTile;
   [SerializeField] private TileBase wallTile;
   [SerializeField] private TileBase fogTile;
+  [SerializeField] private TileBase upStairsTile;
+  [SerializeField] private TileBase downStairsTile;
 
   [Header("Tilemaps")]
   [SerializeField] private Tilemap floorMap;
@@ -36,6 +38,8 @@ public class MapManager : MonoBehaviour {
   public int Height { get => height; }
   public TileBase FloorTile { get => floorTile; }
   public TileBase WallTile { get => wallTile; }
+  public TileBase UpStairsTile { get => upStairsTile; }
+  public TileBase DownStairsTile { get => downStairsTile; }
   public Tilemap FloorMap { get => floorMap; }
   public Tilemap ObstacleMap { get => obstacleMap; }
   public Tilemap FogMap { get => fogMap; }
@@ -177,6 +181,10 @@ public class MapManager : MonoBehaviour {
         floorMap.SetTile(pos, floorTile);
       } else if (tiles[pos].Name == wallTile.name) {
         obstacleMap.SetTile(pos, wallTile);
+      } else if (tiles[pos].Name == upStairsTile.name) {
+        floorMap.SetTile(pos, upStairsTile);
+      } else if (tiles[pos].Name == downStairsTile.name) {
+        floorMap.SetTile(pos, downStairsTile);
       }
     }
     SetupFogMap();
