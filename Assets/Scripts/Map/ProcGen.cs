@@ -44,11 +44,8 @@ sealed class ProcGen {
 
       rooms.Add(newRoom);
     }
-
     //The first room, where the player starts.
-    GameManager.instance.EntityToBeCreated = "Player";
-    GameManager.instance.EntityToBeCreatedPosition = new Vector3(rooms[0].Center().x + 0.5f, rooms[0].Center().y + 0.5f, 0);
-    GameManager.instance.ActorPool.Get(); //Create the player.
+    MapManager.instance.CreateEntity("Player", rooms[0].Center());
   }
 
   /// <summary>
@@ -124,13 +121,10 @@ sealed class ProcGen {
       }
 
       if (Random.value < 0.8f) {
-        GameManager.instance.EntityToBeCreated = "Orc";
+        MapManager.instance.CreateEntity("Orc", new Vector2(x, y));
       } else {
-        GameManager.instance.EntityToBeCreated = "Troll";
+        MapManager.instance.CreateEntity("Troll", new Vector2(x, y));
       }
-      GameManager.instance.EntityToBeCreatedPosition = new Vector2(x + 0.5f, y + 0.5f);
-      GameManager.instance.ActorPool.Get(); //Create the monster.
-
       monster++;
     }
 
@@ -152,16 +146,14 @@ sealed class ProcGen {
 
       float randomValue = Random.value;
       if (randomValue < 0.7f) {
-        GameManager.instance.EntityToBeCreated = "Potion of Health";
+        MapManager.instance.CreateEntity("Potion of Health", new Vector2(x, y));
       } else if (randomValue < 0.8f) {
-        GameManager.instance.EntityToBeCreated = "Fireball Scroll";
+        MapManager.instance.CreateEntity("Fireball Scroll", new Vector2(x, y));
       } else if (randomValue < 0.9f) {
-        GameManager.instance.EntityToBeCreated = "Confusion Scroll";
+        MapManager.instance.CreateEntity("Confusion Scroll", new Vector2(x, y));
       } else {
-        GameManager.instance.EntityToBeCreated = "Lightning Scroll";
+        MapManager.instance.CreateEntity("Lightning Scroll", new Vector2(x, y));
       }
-      GameManager.instance.EntityToBeCreatedPosition = new Vector2(x + 0.5f, y + 0.5f);
-      GameManager.instance.ItemPool.Get(); //Create the item.
 
       item++;
     }

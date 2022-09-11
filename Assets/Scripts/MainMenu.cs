@@ -16,12 +16,7 @@ public class MainMenu : MonoBehaviour {
   }
 
   public void NewGame() {
-    if (SaveManager.instance.HasSaveAvailable()) {
-      SaveManager.instance.DeleteSave();
-    }
-
-    SaveManager.instance.CurrentFloor = 1;
-    SceneManager.LoadScene("Dungeon");
+    SceneManager.LoadScene("Floor 1");
   }
 
   public void ContinueGame() {

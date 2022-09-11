@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
@@ -16,22 +15,12 @@ public class GameManager : MonoBehaviour {
   [SerializeField] private int actorNum = 0; //Read-only
   [SerializeField] private List<Entity> entities;
   [SerializeField] private List<Actor> actors;
-  public bool IsPlayerTurn { get => isPlayerTurn; }
-  public List<Entity> Entities { get => entities; }
-  public List<Actor> Actors { get => actors; }
-
-  [Header("Entity GameObject Pools")]
-  [SerializeField] private string entityToBeCreated;
-  [SerializeField] private Vector3 entityToBeCreatedPosition;
-  [SerializeField] private ObjectPool<GameObject> actorPool;
-  [SerializeField] private ObjectPool<GameObject> itemPool;
-  public string EntityToBeCreated { get => entityToBeCreated; set => entityToBeCreated = value; }
-  public Vector3 EntityToBeCreatedPosition { get => entityToBeCreatedPosition; set => entityToBeCreatedPosition = value; }
-  public ObjectPool<GameObject> ActorPool { get => actorPool; }
-  public ObjectPool<GameObject> ItemPool { get => itemPool; }
 
   [Header("Death")]
   [SerializeField] private Sprite deadSprite;
+  public bool IsPlayerTurn { get => isPlayerTurn; }
+  public List<Entity> Entities { get => entities; }
+  public List<Actor> Actors { get => actors; }
   public Sprite DeadSprite { get => deadSprite; }
 
   private void Awake() {
@@ -41,18 +30,16 @@ public class GameManager : MonoBehaviour {
       Destroy(gameObject);
     }
     SceneManager.sceneLoaded += OnSceneLoaded;
-    actorPool = new ObjectPool<GameObject>(CreateEntity, OnTakeEntityFromPool, OnReturnEntityToPool);
-    itemPool = new ObjectPool<GameObject>(CreateEntity, OnTakeEntityFromPool, OnReturnEntityToPool);
   }
 
   private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-    SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.FloorNumber == SaveManager.instance.CurrentFloor);
-
-    if (sceneState is not null) {
-      LoadState(sceneState.GameState);
-    } else {
+    bool isNewScene = !SaveManager.instance.Save.Scenes.Exists(x => x.Name == scene.name);
+    if (isNewScene) {
       entities = new List<Entity>();
       actors = new List<Actor>();
+    } else {
+      SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
+      LoadState(sceneState.GameState);
     }
   }
 
@@ -86,26 +73,6 @@ public class GameManager : MonoBehaviour {
     yield return new WaitForSeconds(delayTime);
     StartTurn();
   }
-
-  //Entity Pool Methods (Create, Take, Return) 
-  //Start
-  private GameObject CreateEntity() {
-    GameObject entityObject = Instantiate(Resources.Load<GameObject>($"{entityToBeCreated}"), entityToBeCreatedPosition, Quaternion.identity);
-    entityObject.name = entityToBeCreated;
-    return entityObject;
-  }
-
-  private void OnTakeEntityFromPool(GameObject entity) {
-    entity.name = entityToBeCreated;
-    entity.transform.position = entityToBeCreatedPosition;
-    entity.SetActive(true);
-
-  }
-
-  private void OnReturnEntityToPool(GameObject entity) {
-    entity.SetActive(false);
-  }
-  //End
 
   public void AddEntity(Entity entity) {
     if (!entity.gameObject.activeSelf) {
@@ -152,58 +119,34 @@ public class GameManager : MonoBehaviour {
 
   private float SetTime() => baseTime / actors.Count;
 
-  public GameState SaveState() {
-    foreach (Item item in actors[0].Inventory.Items) {
-      if (entities.Contains(item)) {
-        continue; //This is a hacky way to prevent the player from duplicating item references in the save file
-      }
-      AddEntity(item);
-    }
-
-    GameState gameState = new GameState(entities: entities.ConvertAll(x => x.SaveState()));
-
-    foreach (Item item in actors[0].Inventory.Items) {
-      RemoveEntity(item);
-    }
-
-    return gameState;
-  }
+  public GameState SaveState() => new GameState(entities: entities.ConvertAll(e => e.SaveState()));
 
   public void LoadState(GameState state) {
     if (entities.Count > 0) {
       foreach (Entity entity in entities) {
-        if (entity is Actor actor) {
-          actorPool.Release(entity.gameObject);
-        } else if (entity is Item item) {
-          itemPool.Release(entity.gameObject);
-        }
+        Destroy(entity.gameObject);
       }
-      Debug.Log("Actor Pool Count: " + actorPool.CountInactive);
-      Debug.Log("Item Pool Count: " + itemPool.CountInactive);
       entities.Clear();
       actors.Clear();
     }
 
     foreach (EntityState entityState in state.Entities) {
-      entityToBeCreated = entityState.Name.Contains("Remains of") ?
-        entityState.Name.Substring(entityState.Name.LastIndexOf(' ') + 1) : entityState.Name;
-      entityToBeCreatedPosition = entityState.Position;
-
       if (entityState.Type == EntityState.EntityType.Actor) {
         ActorState actorState = entityState as ActorState;
-        Actor actor = actorPool.Get().GetComponent<Actor>();
-
+        Actor actor;
+        if (actorState.Name.Contains("Remains of")) {
+          string lastWord = actorState.Name.Substring(actorState.Name.LastIndexOf(' ') + 1);
+          actor = MapManager.instance.CreateEntity($"{lastWord}", actorState.Position).GetComponent<Actor>();
+        } else {
+          actor = MapManager.instance.CreateEntity(actorState.Name, actorState.Position).GetComponent<Actor>();
+        }
         actor.LoadState(actorState);
       } else if (entityState.Type == EntityState.EntityType.Item) {
         ItemState itemState = entityState as ItemState;
-        Item item = itemPool.Get().GetComponent<Item>();
-
+        Item item = MapManager.instance.CreateEntity(itemState.Name, itemState.Position).GetComponent<Item>();
         item.LoadState(itemState);
       }
     }
-
-    entityToBeCreated = "";
-    entityToBeCreatedPosition = Vector3.zero;
   }
 }
 

@@ -53,12 +53,21 @@ public class MapManager : MonoBehaviour {
   }
 
   private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-    SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.FloorNumber == SaveManager.instance.CurrentFloor);
+    bool isNewScene = !SaveManager.instance.Save.Scenes.Exists(x => x.Name == scene.name);
+    if (isNewScene) {
+      rooms = new List<RectangularRoom>();
+      tiles = new Dictionary<Vector3Int, TileData>();
+      visibleTiles = new List<Vector3Int>();
 
-    if (sceneState is not null) {
-      LoadState(sceneState.MapState);
+      ProcGen procGen = new ProcGen();
+      procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
+
+      AddTileMapToDictionary(floorMap);
+      AddTileMapToDictionary(obstacleMap);
+      SetupFogMap();
     } else {
-      GenerateDungeon();
+      SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
+      LoadState(sceneState.MapState);
     }
   }
 
@@ -67,21 +76,14 @@ public class MapManager : MonoBehaviour {
     Camera.main.orthographicSize = 27;
   }
 
-  public void GenerateDungeon() {
-    rooms = new List<RectangularRoom>();
-    tiles = new Dictionary<Vector3Int, TileData>();
-    visibleTiles = new List<Vector3Int>();
-
-    ProcGen procGen = new ProcGen();
-    procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
-
-    AddTileMapToDictionary(floorMap);
-    AddTileMapToDictionary(obstacleMap);
-    SetupFogMap();
-  }
-
   ///<summary>Return True if x and y are inside of the bounds of this map. </summary>
   public bool InBounds(int x, int y) => 0 <= x && x < width && 0 <= y && y < height;
+
+  public GameObject CreateEntity(string entity, Vector2 position) {
+    GameObject entityObject = Instantiate(Resources.Load<GameObject>($"{entity}"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+    entityObject.name = entity;
+    return entityObject;
+  }
 
   public void UpdateFogMap(List<Vector3Int> playerFOV) {
     foreach (Vector3Int pos in visibleTiles) {
