@@ -53,27 +53,31 @@ public class MapManager : MonoBehaviour {
   }
 
   private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-    bool isNewScene = !SaveManager.instance.Save.Scenes.Exists(x => x.Name == scene.name);
-    if (isNewScene) {
-      rooms = new List<RectangularRoom>();
-      tiles = new Dictionary<Vector3Int, TileData>();
-      visibleTiles = new List<Vector3Int>();
+    SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.FloorNumber == SaveManager.instance.CurrentFloor);
 
-      ProcGen procGen = new ProcGen();
-      procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
-
-      AddTileMapToDictionary(floorMap);
-      AddTileMapToDictionary(obstacleMap);
-      SetupFogMap();
-    } else {
-      SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
+    if (sceneState is not null) {
       LoadState(sceneState.MapState);
+    } else {
+      GenerateDungeon();
     }
   }
 
   private void Start() {
     Camera.main.transform.position = new Vector3(40, 20.25f, -10);
     Camera.main.orthographicSize = 27;
+  }
+
+  public void GenerateDungeon() {
+    rooms = new List<RectangularRoom>();
+    tiles = new Dictionary<Vector3Int, TileData>();
+    visibleTiles = new List<Vector3Int>();
+
+    ProcGen procGen = new ProcGen();
+    procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
+
+    AddTileMapToDictionary(floorMap);
+    AddTileMapToDictionary(obstacleMap);
+    SetupFogMap();
   }
 
   ///<summary>Return True if x and y are inside of the bounds of this map. </summary>

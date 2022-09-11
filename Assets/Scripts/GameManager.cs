@@ -33,13 +33,13 @@ public class GameManager : MonoBehaviour {
   }
 
   private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-    bool isNewScene = !SaveManager.instance.Save.Scenes.Exists(x => x.Name == scene.name);
-    if (isNewScene) {
+    SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.FloorNumber == SaveManager.instance.CurrentFloor);
+
+    if (sceneState is not null) {
+      LoadState(sceneState.GameState);
+    } else {
       entities = new List<Entity>();
       actors = new List<Actor>();
-    } else {
-      SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.Name == scene.name);
-      LoadState(sceneState.GameState);
     }
   }
 
@@ -119,7 +119,22 @@ public class GameManager : MonoBehaviour {
 
   private float SetTime() => baseTime / actors.Count;
 
-  public GameState SaveState() => new GameState(entities: entities.ConvertAll(e => e.SaveState()));
+  public GameState SaveState() {
+    foreach (Item item in actors[0].Inventory.Items) {
+      if (entities.Contains(item)) {
+        continue; //This is a hacky way to prevent the player from duplicating item references in the save file
+      }
+      AddEntity(item);
+    }
+
+    GameState gameState = new GameState(entities: entities.ConvertAll(x => x.SaveState()));
+
+    foreach (Item item in actors[0].Inventory.Items) {
+      RemoveEntity(item);
+    }
+
+    return gameState;
+  }
 
   public void LoadState(GameState state) {
     if (entities.Count > 0) {
@@ -131,19 +146,18 @@ public class GameManager : MonoBehaviour {
     }
 
     foreach (EntityState entityState in state.Entities) {
+      string entityName = entityState.Name.Contains("Remains of") ?
+        entityState.Name.Substring(entityState.Name.LastIndexOf(' ') + 1) : entityState.Name;
+
       if (entityState.Type == EntityState.EntityType.Actor) {
         ActorState actorState = entityState as ActorState;
-        Actor actor;
-        if (actorState.Name.Contains("Remains of")) {
-          string lastWord = actorState.Name.Substring(actorState.Name.LastIndexOf(' ') + 1);
-          actor = MapManager.instance.CreateEntity($"{lastWord}", actorState.Position).GetComponent<Actor>();
-        } else {
-          actor = MapManager.instance.CreateEntity(actorState.Name, actorState.Position).GetComponent<Actor>();
-        }
+        Actor actor = MapManager.instance.CreateEntity(entityName, actorState.Position).GetComponent<Actor>();
+
         actor.LoadState(actorState);
       } else if (entityState.Type == EntityState.EntityType.Item) {
         ItemState itemState = entityState as ItemState;
-        Item item = MapManager.instance.CreateEntity(itemState.Name, itemState.Position).GetComponent<Item>();
+        Item item = MapManager.instance.CreateEntity(entityName, itemState.Position).GetComponent<Item>();
+
         item.LoadState(itemState);
       }
     }
