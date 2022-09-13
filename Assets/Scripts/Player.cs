@@ -38,12 +38,12 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
 
   void Controls.IPlayerActions.OnExit(InputAction.CallbackContext context) {
     if (context.performed) {
-      if (!UIManager.instance.IsEscapeMenuOpen && !UIManager.instance.IsMenuOpen) {
+      if (targetMode) {
+        ToggleTargetMode();
+      } else if (!UIManager.instance.IsEscapeMenuOpen && !UIManager.instance.IsMenuOpen) {
         UIManager.instance.ToggleEscapeMenu();
       } else if (UIManager.instance.IsMenuOpen) {
         UIManager.instance.ToggleMenu();
-      } else if (targetMode) {
-        ToggleTargetMode();
       }
     }
   }

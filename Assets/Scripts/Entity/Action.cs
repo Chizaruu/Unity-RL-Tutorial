@@ -24,8 +24,12 @@ static public class Action {
     SaveManager.instance.SaveGame();
     SaveManager.instance.CurrentFloor += tileName == MapManager.instance.UpStairsTile.name ? -1 : 1;
 
-    MapManager.instance.GenerateDungeon();
-
+    if (SaveManager.instance.Save.Scenes.Exists(x => x.FloorNumber == SaveManager.instance.CurrentFloor)) {
+      SaveManager.instance.LoadScene(false);
+    } else {
+      GameManager.instance.Reset(false);
+      MapManager.instance.GenerateDungeon();
+    }
   }
 
   static public bool BumpAction(Actor actor, Vector2 direction) {

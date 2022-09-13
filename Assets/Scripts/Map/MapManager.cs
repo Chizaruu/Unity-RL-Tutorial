@@ -62,7 +62,7 @@ public class MapManager : MonoBehaviour {
     if (sceneState is not null) {
       LoadState(sceneState.MapState);
     } else {
-      GenerateDungeon();
+      GenerateDungeon(true);
     }
   }
 
@@ -71,10 +71,14 @@ public class MapManager : MonoBehaviour {
     Camera.main.orthographicSize = 27;
   }
 
-  public void GenerateDungeon() {
-    rooms = new List<RectangularRoom>();
-    tiles = new Dictionary<Vector3Int, TileData>();
-    visibleTiles = new List<Vector3Int>();
+  public void GenerateDungeon(bool isNewGame = false) {
+    if (floorMap.cellBounds.size.x > 0) {
+      Reset();
+    } else {
+      rooms = new List<RectangularRoom>();
+      tiles = new Dictionary<Vector3Int, TileData>();
+      visibleTiles = new List<Vector3Int>();
+    }
 
     ProcGen procGen = new ProcGen();
     procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
@@ -82,6 +86,10 @@ public class MapManager : MonoBehaviour {
     AddTileMapToDictionary(floorMap);
     AddTileMapToDictionary(obstacleMap);
     SetupFogMap();
+
+    if (!isNewGame) {
+      GameManager.instance.RefreshPlayer();
+    }
   }
 
   ///<summary>Return True if x and y are inside of the bounds of this map. </summary>
@@ -167,9 +175,24 @@ public class MapManager : MonoBehaviour {
     }
   }
 
+  private void Reset() {
+    rooms.Clear();
+    tiles.Clear();
+    visibleTiles.Clear();
+    nodes.Clear();
+
+    floorMap.ClearAllTiles();
+    obstacleMap.ClearAllTiles();
+    fogMap.ClearAllTiles();
+  }
+
   public MapState SaveState() => new MapState(tiles, rooms);
 
   public void LoadState(MapState mapState) {
+    if (floorMap.cellBounds.size.x > 0) {
+      Reset();
+    }
+
     rooms = mapState.StoredRooms;
     tiles = mapState.StoredTiles.ToDictionary(x => new Vector3Int((int)x.Key.x, (int)x.Key.y, (int)x.Key.z), x => x.Value);
     if (visibleTiles.Count > 0) {

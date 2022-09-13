@@ -122,7 +122,7 @@ public class UIManager : MonoBehaviour {
   }
 
   public void Save() {
-    SaveManager.instance.SaveGame();
+    SaveManager.instance.SaveGame(false);
   }
 
   public void Load() {
