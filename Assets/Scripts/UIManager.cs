@@ -110,12 +110,12 @@ public class UIManager : MonoBehaviour {
 
   public void ToggleMessageHistory() {
     isMessageHistoryOpen = !isMessageHistoryOpen;
-    ToggleBooleans(messageHistory, isMessageHistoryOpen);
+    SetBooleans(messageHistory, isMessageHistoryOpen);
   }
 
   public void ToggleInventory(Actor actor = null) {
     isInventoryOpen = !isInventoryOpen;
-    ToggleBooleans(inventory, isInventoryOpen);
+    SetBooleans(inventory, isInventoryOpen);
 
     if (isMenuOpen) {
       UpdateMenu(actor, inventoryContent);
@@ -124,7 +124,7 @@ public class UIManager : MonoBehaviour {
 
   public void ToggleDropMenu(Actor actor = null) {
     isDropMenuOpen = !isDropMenuOpen;
-    ToggleBooleans(dropMenu, isDropMenuOpen);
+    SetBooleans(dropMenu, isDropMenuOpen);
 
     if (isMenuOpen) {
       UpdateMenu(actor, dropMenuContent);
@@ -133,14 +133,14 @@ public class UIManager : MonoBehaviour {
 
   public void ToggleEscapeMenu() {
     isEscapeMenuOpen = !isEscapeMenuOpen;
-    ToggleBooleans(escapeMenu, isEscapeMenuOpen);
+    SetBooleans(escapeMenu, isEscapeMenuOpen);
 
     eventSystem.SetSelectedGameObject(escapeMenu.transform.GetChild(0).gameObject);
   }
 
   public void ToggleLevelUpMenu(Actor actor) {
     isLevelUpMenuOpen = !isLevelUpMenuOpen;
-    ToggleBooleans(levelUpMenu, isLevelUpMenuOpen);
+    SetBooleans(levelUpMenu, isLevelUpMenuOpen);
 
     GameObject constitutionButton = levelUpMenuContent.transform.GetChild(0).gameObject;
     GameObject strengthButton = levelUpMenuContent.transform.GetChild(1).gameObject;
@@ -172,7 +172,7 @@ public class UIManager : MonoBehaviour {
 
   public void ToggleCharacterInformationMenu(Actor actor = null) {
     isCharacterInformationMenuOpen = !isCharacterInformationMenuOpen;
-    ToggleBooleans(characterInformationMenu, isCharacterInformationMenuOpen);
+    SetBooleans(characterInformationMenu, isCharacterInformationMenuOpen);
 
     if (actor is not null) {
       characterInformationMenu.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"Level: {actor.GetComponent<Level>().CurrentLevel}";
@@ -183,7 +183,7 @@ public class UIManager : MonoBehaviour {
     }
   }
 
-  private void ToggleBooleans(GameObject menu, bool menuBool) {
+  private void SetBooleans(GameObject menu, bool menuBool) {
     isMenuOpen = menuBool;
     menu.SetActive(menuBool);
   }
