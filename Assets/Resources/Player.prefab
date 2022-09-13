@@ -257,6 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentLevel: 1
   currentXp: 0
+  xpToNextLevel: 350
   levelUpBase: 200
   levelUpFactor: 150
   xpGiven: 0

@@ -30,6 +30,9 @@ static public class Action {
       GameManager.instance.Reset(false);
       MapManager.instance.GenerateDungeon();
     }
+
+    UIManager.instance.AddMessage("You take the stairs.", "#0da2ff");
+    UIManager.instance.SetDungeonFloorText(SaveManager.instance.CurrentFloor);
   }
 
   static public bool BumpAction(Actor actor, Vector2 direction) {

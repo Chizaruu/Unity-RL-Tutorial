@@ -2,13 +2,13 @@ using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
 public class Level : MonoBehaviour {
-  [SerializeField] private int currentLevel = 1, currentXp, levelUpBase = 200, levelUpFactor = 150, xpGiven;
-
+  [SerializeField] private int currentLevel = 1, currentXp, xpToNextLevel, levelUpBase = 200, levelUpFactor = 150, xpGiven;
   public int XPGiven { get => xpGiven; set => xpGiven = value; }
 
-  public int ExperienceToNextLevel() => levelUpBase + currentLevel * levelUpFactor;
+  private void OnValidate() => xpToNextLevel = ExperienceToNextLevel();
 
-  public bool RequiresLevelUp() => currentXp >= ExperienceToNextLevel();
+  private int ExperienceToNextLevel() => levelUpBase + currentLevel * levelUpFactor;
+  private bool RequiresLevelUp() => currentXp >= xpToNextLevel;
 
   public void AddExperience(int xp) {
     if (xp == 0 || levelUpBase == 0) return;
@@ -17,12 +17,16 @@ public class Level : MonoBehaviour {
 
     UIManager.instance.AddMessage($"You gain {xp} experience points.", "#FFFFFF");
 
-    if (RequiresLevelUp()) UIManager.instance.AddMessage($"You advance to level {++currentLevel}!", "#00FF00"); //Green
+    if (RequiresLevelUp()) {
+      UIManager.instance.ToggleLevelUpMenu(GetComponent<Actor>());
+      UIManager.instance.AddMessage($"You advance to level {currentLevel + 1}!", "#00FF00"); //Green
+    }
   }
 
-  public void IncreaseLevel() {
-    currentXp -= ExperienceToNextLevel();
+  private void IncreaseLevel() {
+    currentXp -= xpToNextLevel;
     currentLevel++;
+    xpToNextLevel = ExperienceToNextLevel();
   }
 
   public void IncreaseMaxHp(int amount = 20) {
@@ -30,7 +34,6 @@ public class Level : MonoBehaviour {
     GetComponent<Actor>().Fighter.Hp += amount;
 
     UIManager.instance.AddMessage($"Your health improves!", "#00FF00"); //Green
-
     IncreaseLevel();
   }
 
@@ -38,7 +41,6 @@ public class Level : MonoBehaviour {
     GetComponent<Actor>().Fighter.Power += amount;
 
     UIManager.instance.AddMessage($"You feel stronger!", "#00FF00"); //Green
-
     IncreaseLevel();
   }
 
@@ -46,33 +48,32 @@ public class Level : MonoBehaviour {
     GetComponent<Actor>().Fighter.Defense += amount;
 
     UIManager.instance.AddMessage($"Your movements are getting swifter!", "#00FF00"); //Green
-
     IncreaseLevel();
   }
 
   public LevelState SaveState() => new LevelState(
     currentLevel: currentLevel,
     currentXp: currentXp,
-    levelUpBase: levelUpBase
+    xpToNextLevel: xpToNextLevel
   );
 
   public void LoadState(LevelState state) {
     currentLevel = state.CurrentLevel;
     currentXp = state.CurrentXp;
-    levelUpBase = state.LevelUpBase;
+    xpToNextLevel = state.XpToNextLevel;
   }
 }
 
 public class LevelState {
-  [SerializeField] private int currentLevel = 1, currentXp, levelUpBase = 200;
+  [SerializeField] private int currentLevel = 1, currentXp, xpToNextLevel;
 
   public int CurrentLevel { get => currentLevel; set => currentLevel = value; }
   public int CurrentXp { get => currentXp; set => currentXp = value; }
-  public int LevelUpBase { get => levelUpBase; set => levelUpBase = value; }
+  public int XpToNextLevel { get => xpToNextLevel; set => xpToNextLevel = value; }
 
-  public LevelState(int currentLevel, int currentXp, int levelUpBase) {
+  public LevelState(int currentLevel, int currentXp, int xpToNextLevel) {
     this.currentLevel = currentLevel;
     this.currentXp = currentXp;
-    this.levelUpBase = levelUpBase;
+    this.xpToNextLevel = xpToNextLevel;
   }
 }

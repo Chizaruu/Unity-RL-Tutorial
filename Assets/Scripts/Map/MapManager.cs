@@ -81,7 +81,7 @@ public class MapManager : MonoBehaviour {
     }
 
     ProcGen procGen = new ProcGen();
-    procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms);
+    procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms, isNewGame);
 
     AddTileMapToDictionary(floorMap);
     AddTileMapToDictionary(obstacleMap);

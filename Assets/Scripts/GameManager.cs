@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour {
     SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.FloorNumber == SaveManager.instance.CurrentFloor);
 
     if (sceneState is not null) {
-      LoadState(sceneState.GameState);
+      LoadState(sceneState.GameState, true);
     } else {
       entities = new List<Entity>();
       actors = new List<Actor>();
@@ -125,9 +125,6 @@ public class GameManager : MonoBehaviour {
 
   public GameState SaveState() {
     foreach (Item item in actors[0].Inventory.Items) {
-      if (entities.Contains(item)) {
-        continue;
-      }
       AddEntity(item);
     }
 
@@ -140,7 +137,7 @@ public class GameManager : MonoBehaviour {
     return gameState;
   }
 
-  public void LoadState(GameState state, bool canRemovePlayer = true) {
+  public void LoadState(GameState state, bool canRemovePlayer) {
     isPlayerTurn = false; //Prevents player from moving during load
 
     Reset(canRemovePlayer);
@@ -186,7 +183,7 @@ public class GameManager : MonoBehaviour {
     isPlayerTurn = true; //Allows player to move after load
   }
 
-  public void Reset(bool canRemovePlayer = false) {
+  public void Reset(bool canRemovePlayer) {
     if (entities.Count > 0) {
       foreach (Entity entity in entities) {
         if (!canRemovePlayer && entity.GetComponent<Player>()) {

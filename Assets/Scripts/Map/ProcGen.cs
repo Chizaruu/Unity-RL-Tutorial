@@ -5,7 +5,7 @@ sealed class ProcGen {
   /// <summary>
   /// Generate a new dungeon map.
   /// </summary>
-  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, int maxMonstersPerRoom, int maxItemsPerRoom, List<RectangularRoom> rooms) {
+  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, int maxMonstersPerRoom, int maxItemsPerRoom, List<RectangularRoom> rooms, bool isNewGame) {
     // Generate the rooms.
     for (int roomNum = 0; roomNum < maxRooms; roomNum++) {
       int roomWidth = Random.Range(roomMinSize, roomMaxSize);
@@ -57,7 +57,7 @@ sealed class ProcGen {
 
     MapManager.instance.FloorMap.SetTile(playerPos, MapManager.instance.UpStairsTile);
 
-    if (GameManager.instance.Actors[0].GetComponent<Player>() is not null) {
+    if (!isNewGame) {
       GameManager.instance.Actors[0].transform.position = new Vector3(playerPos.x + 0.5f, playerPos.y + 0.5f, 0);
     } else {
       MapManager.instance.CreateEntity("Player", (Vector2Int)playerPos);
