@@ -76,6 +76,7 @@ public class SaveManager : MonoBehaviour {
   public void LoadScene(bool canRemovePlayer = true) {
     SceneState sceneState = save.Scenes.Find(x => x.FloorNumber == currentFloor);
     if (sceneState is not null) {
+      UIManager.instance.SetDungeonLevelText(currentFloor);
       LoadState(sceneState, canRemovePlayer);
     } else {
       Debug.LogError("No save data for this floor");
