@@ -7,7 +7,7 @@ public class UIManager : MonoBehaviour {
   public static UIManager instance;
   [SerializeField] private EventSystem eventSystem;
   [SerializeField] private bool isMenuOpen = false; //Read-only
-  [SerializeField] private TextMeshProUGUI dungeonLevelText;
+  [SerializeField] private TextMeshProUGUI dungeonFloorText;
 
   [Header("Health UI")]
   [SerializeField] private Slider hpSlider;
@@ -65,8 +65,8 @@ public class UIManager : MonoBehaviour {
     hpSliderText.text = $"HP: {hp}/{maxHp}";
   }
 
-  public void SetDungeonLevelText(int level) {
-    dungeonLevelText.text = $"Dungeon level: {level}";
+  public void SetDungeonFloorText(int floor) {
+    dungeonFloorText.text = $"Dungeon floor: {floor}";
   }
 
   public void ToggleMenu() {
