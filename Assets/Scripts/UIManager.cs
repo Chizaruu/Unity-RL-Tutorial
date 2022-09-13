@@ -112,10 +112,6 @@ public class UIManager : MonoBehaviour {
     isMessageHistoryOpen = !isMessageHistoryOpen;
     ToggleBooleans(messageHistory, isMessageHistoryOpen);
   }
-  public void ToggleCharacterInformationMenu() {
-    isCharacterInformationMenuOpen = !isCharacterInformationMenuOpen;
-    ToggleBooleans(characterInformationMenu, isCharacterInformationMenuOpen);
-  }
 
   public void ToggleInventory(Actor actor = null) {
     isInventoryOpen = !isInventoryOpen;
@@ -172,6 +168,19 @@ public class UIManager : MonoBehaviour {
     }
 
     eventSystem.SetSelectedGameObject(levelUpMenuContent.transform.GetChild(0).gameObject);
+  }
+
+  public void ToggleCharacterInformationMenu(Actor actor = null) {
+    isCharacterInformationMenuOpen = !isCharacterInformationMenuOpen;
+    ToggleBooleans(characterInformationMenu, isCharacterInformationMenuOpen);
+
+    if (actor is not null) {
+      characterInformationMenu.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"Level: {actor.GetComponent<Level>().CurrentLevel}";
+      characterInformationMenu.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"XP: {actor.GetComponent<Level>().CurrentXp}";
+      characterInformationMenu.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = $"XP for next level: {actor.GetComponent<Level>().XpToNextLevel}";
+      characterInformationMenu.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = $"Attack: {actor.GetComponent<Fighter>().Power}";
+      characterInformationMenu.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = $"Defense: {actor.GetComponent<Fighter>().Defense}";
+    }
   }
 
   private void ToggleBooleans(GameObject menu, bool menuBool) {

@@ -3,6 +3,10 @@ using UnityEngine;
 [RequireComponent(typeof(Actor))]
 public class Level : MonoBehaviour {
   [SerializeField] private int currentLevel = 1, currentXp, xpToNextLevel, levelUpBase = 200, levelUpFactor = 150, xpGiven;
+
+  public int CurrentLevel { get => currentLevel; }
+  public int CurrentXp { get => currentXp; }
+  public int XpToNextLevel { get => xpToNextLevel; }
   public int XPGiven { get => xpGiven; set => xpGiven = value; }
 
   private void OnValidate() => xpToNextLevel = ExperienceToNextLevel();

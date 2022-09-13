@@ -110,6 +110,14 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions {
     }
   }
 
+  public void OnInfo(InputAction.CallbackContext context) {
+    if (context.performed) {
+      if (CanAct() || UIManager.instance.IsCharacterInformationMenuOpen) {
+        UIManager.instance.ToggleCharacterInformationMenu(GetComponent<Actor>());
+      }
+    }
+  }
+
   public void ToggleTargetMode(bool isArea = false, int radius = 1) {
     targetMode = !targetMode;
 
