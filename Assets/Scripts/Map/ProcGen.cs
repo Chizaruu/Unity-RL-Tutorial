@@ -5,7 +5,7 @@ sealed class ProcGen {
   /// <summary>
   /// Generate a new dungeon map.
   /// </summary>
-  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, int maxMonstersPerRoom, int maxItemsPerRoom, List<RectangularRoom> rooms) {
+  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, int maxMonstersPerRoom, int maxItemsPerRoom, List<RectangularRoom> rooms, bool isNewGame) {
     // Generate the rooms.
     for (int roomNum = 0; roomNum < maxRooms; roomNum++) {
       int roomWidth = Random.Range(roomMinSize, roomMaxSize);
@@ -44,8 +44,24 @@ sealed class ProcGen {
 
       rooms.Add(newRoom);
     }
-    //The first room, where the player starts.
-    MapManager.instance.CreateEntity("Player", rooms[0].Center());
+
+    //Add the stairs to the last room.
+    MapManager.instance.FloorMap.SetTile((Vector3Int)rooms[rooms.Count - 1].RandomPoint(), MapManager.instance.DownStairsTile);
+
+    //Add the player to the first room.
+    Vector3Int playerPos = (Vector3Int)rooms[0].RandomPoint();
+
+    while (GameManager.instance.GetActorAtLocation(playerPos) is not null) {
+      playerPos = (Vector3Int)rooms[0].RandomPoint();
+    }
+
+    MapManager.instance.FloorMap.SetTile(playerPos, MapManager.instance.UpStairsTile);
+
+    if (!isNewGame) {
+      GameManager.instance.Actors[0].transform.position = new Vector3(playerPos.x + 0.5f, playerPos.y + 0.5f, 0);
+    } else {
+      MapManager.instance.CreateEntity("Player", (Vector2Int)playerPos);
+    }
   }
 
   /// <summary>

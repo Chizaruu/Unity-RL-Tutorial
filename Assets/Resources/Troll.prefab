@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1657599316176765477}
   - component: {fileID: 4906761112842409411}
   - component: {fileID: 3125749561450854138}
+  - component: {fileID: 9192059058365056716}
   m_Layer: 0
   m_Name: Troll
   m_TagString: Untagged
@@ -101,13 +102,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
-  state:
-    isAlive: 1
-    position: {x: 0, y: 0, z: 0}
-    inventory: {fileID: 0}
-    aI: {fileID: 4906761112842409411}
+  isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []
+  inventory: {fileID: 0}
+  aI: {fileID: 4906761112842409411}
+  fighter: {fileID: 1657599316176765477}
+  level: {fileID: 9192059058365056716}
 --- !u!114 &1657599316176765477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,3 +153,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65d9f1c4171fd948b642e2ca501161a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &9192059058365056716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4045285357597916935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11d70f02dea0075458dd292c1f43eb24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentLevel: 1
+  currentXp: 0
+  levelUpBase: 200
+  levelUpFactor: 150
+  xpGiven: 100
