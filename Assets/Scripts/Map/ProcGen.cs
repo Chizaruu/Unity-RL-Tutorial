@@ -1,18 +1,80 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using SysRandom = System.Random;
+using UnityRandom = UnityEngine.Random;
 
 sealed class ProcGen {
+  private List<Tuple<int, int>> maxItemsByFloor = new List<Tuple<int, int>> {
+    new Tuple<int, int>(1, 1),
+    new Tuple<int, int>(4, 2),
+    new Tuple<int, int>(7, 3),
+    new Tuple<int, int>(10, 4),
+  };
+  private List<Tuple<int, int>> maxMonstersByFloor = new List<Tuple<int, int>> {
+    new Tuple<int, int>(1, 2),
+    new Tuple<int, int>(4, 3),
+    new Tuple<int, int>(6, 5),
+    new Tuple<int, int>(8, 7),
+    new Tuple<int, int>(10, 10),
+  };
+
+  private Dictionary<int, Tuple<int, string, int>> itemChances = new Dictionary<int, Tuple<int, string, int>> {
+    [0] = new Tuple<int, string, int>(0, "Potion of Health", 35),
+    [1] = new Tuple<int, string, int>(2, "Confusion Scroll", 10),
+    [2] = new Tuple<int, string, int>(4, "Lightning Scroll", 25),
+    [3] = new Tuple<int, string, int>(6, "Fireball Scroll", 25),
+  };
+
+  private Dictionary<int, Tuple<int, string, int>> monsterChances = new Dictionary<int, Tuple<int, string, int>> {
+    [0] = new Tuple<int, string, int>(1, "Orc", 80),
+    [1] = new Tuple<int, string, int>(3, "Troll", 15),
+    [2] = new Tuple<int, string, int>(5, "Troll", 30),
+    [3] = new Tuple<int, string, int>(7, "Troll", 60),
+  };
+
+  public int GetMaxValueForFloor(List<Tuple<int, int>> values, int floor) {
+    int currentValue = 0;
+
+    foreach (Tuple<int, int> value in values) {
+      if (floor >= value.Item1) {
+        currentValue = value.Item2;
+      }
+    }
+
+    return currentValue;
+  }
+
+  public List<string> GetEntitiesAtRandom(Dictionary<int, Tuple<int, string, int>> chances, int numberOfEntities, int floor) {
+    List<string> entities = new List<string>();
+    List<int> weightedChances = new List<int>();
+
+    foreach (KeyValuePair<int, Tuple<int, string, int>> chance in chances) {
+      if (floor >= chance.Value.Item1) {
+        entities.Add(chance.Value.Item2);
+        weightedChances.Add(chance.Value.Item3);
+      }
+    }
+
+    SysRandom rnd = new SysRandom();
+    List<string> chosenEntities = rnd.Choices(entities, weightedChances, numberOfEntities);
+
+    return chosenEntities;
+  }
+
   /// <summary>
   /// Generate a new dungeon map.
   /// </summary>
-  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, int maxMonstersPerRoom, int maxItemsPerRoom, List<RectangularRoom> rooms, bool isNewGame) {
+
+  public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, List<RectangularRoom> rooms, bool isNewGame) {
     // Generate the rooms.
     for (int roomNum = 0; roomNum < maxRooms; roomNum++) {
-      int roomWidth = Random.Range(roomMinSize, roomMaxSize);
-      int roomHeight = Random.Range(roomMinSize, roomMaxSize);
+      int roomWidth = UnityRandom.Range(roomMinSize, roomMaxSize);
+      int roomHeight = UnityRandom.Range(roomMinSize, roomMaxSize);
 
-      int roomX = Random.Range(0, mapWidth - roomWidth - 1);
-      int roomY = Random.Range(0, mapHeight - roomHeight - 1);
+      int roomX = UnityRandom.Range(0, mapWidth - roomWidth - 1);
+      int roomY = UnityRandom.Range(0, mapHeight - roomHeight - 1);
 
       RectangularRoom newRoom = new RectangularRoom(roomX, roomY, roomWidth, roomHeight);
 
@@ -40,7 +102,7 @@ sealed class ProcGen {
         TunnelBetween(rooms[rooms.Count - 1], newRoom);
       }
 
-      PlaceEntities(newRoom, maxMonstersPerRoom, maxItemsPerRoom);
+      PlaceEntities(newRoom, SaveManager.instance.CurrentFloor);
 
       rooms.Add(newRoom);
     }
@@ -72,7 +134,7 @@ sealed class ProcGen {
     Vector2Int newRoomCenter = newRoom.Center();
     Vector2Int tunnelCorner;
 
-    if (Random.value < 0.5f) {
+    if (UnityRandom.value < 0.5f) {
       //Move horizontally, then vertically.
       tunnelCorner = new Vector2Int(newRoomCenter.x, oldRoomCenter.y);
     } else {
@@ -116,62 +178,23 @@ sealed class ProcGen {
     MapManager.instance.FloorMap.SetTile(pos, MapManager.instance.FloorTile);
   }
 
-  private void PlaceEntities(RectangularRoom newRoom, int maximumMonsters, int maximumItems) {
-    int numberOfMonsters = Random.Range(0, maximumMonsters + 1);
-    int numberOfItems = Random.Range(0, maximumItems + 1);
+  private void PlaceEntities(RectangularRoom newRoom, int floorNumber) {
+    int numberOfMonsters = UnityRandom.Range(0, GetMaxValueForFloor(maxMonstersByFloor, floorNumber) + 1);
+    int numberOfItems = UnityRandom.Range(0, GetMaxValueForFloor(maxItemsByFloor, floorNumber) + 1);
 
-    for (int monster = 0; monster < numberOfMonsters;) {
-      int x = Random.Range(newRoom.X, newRoom.X + newRoom.Width);
-      int y = Random.Range(newRoom.Y, newRoom.Y + newRoom.Height);
+    List<string> monsterNames = GetEntitiesAtRandom(monsterChances, numberOfMonsters, floorNumber);
+    List<string> itemNames = GetEntitiesAtRandom(itemChances, numberOfItems, floorNumber);
 
-      if (x == newRoom.X || x == newRoom.X + newRoom.Width - 1 || y == newRoom.Y || y == newRoom.Y + newRoom.Height - 1) {
-        continue;
+    List<string> entityNames = monsterNames.Concat(itemNames).ToList();
+
+    foreach (string entityName in entityNames) {
+      Vector3Int entityPos = (Vector3Int)newRoom.RandomPoint();
+
+      while (GameManager.instance.GetActorAtLocation(entityPos) is not null) {
+        entityPos = (Vector3Int)newRoom.RandomPoint();
       }
 
-      for (int actor = 0; actor < GameManager.instance.Actors.Count; actor++) {
-        Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(GameManager.instance.Actors[actor].transform.position);
-
-        if (pos.x == x && pos.y == y) {
-          return;
-        }
-      }
-
-      if (Random.value < 0.8f) {
-        MapManager.instance.CreateEntity("Orc", new Vector2(x, y));
-      } else {
-        MapManager.instance.CreateEntity("Troll", new Vector2(x, y));
-      }
-      monster++;
-    }
-
-    for (int item = 0; item < numberOfItems;) {
-      int x = Random.Range(newRoom.X, newRoom.X + newRoom.Width);
-      int y = Random.Range(newRoom.Y, newRoom.Y + newRoom.Height);
-
-      if (x == newRoom.X || x == newRoom.X + newRoom.Width - 1 || y == newRoom.Y || y == newRoom.Y + newRoom.Height - 1) {
-        continue;
-      }
-
-      for (int entity = 0; entity < GameManager.instance.Entities.Count; entity++) {
-        Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(GameManager.instance.Entities[entity].transform.position);
-
-        if (pos.x == x && pos.y == y) {
-          return;
-        }
-      }
-
-      float randomValue = Random.value;
-      if (randomValue < 0.7f) {
-        MapManager.instance.CreateEntity("Potion of Health", new Vector2(x, y));
-      } else if (randomValue < 0.8f) {
-        MapManager.instance.CreateEntity("Fireball Scroll", new Vector2(x, y));
-      } else if (randomValue < 0.9f) {
-        MapManager.instance.CreateEntity("Confusion Scroll", new Vector2(x, y));
-      } else {
-        MapManager.instance.CreateEntity("Lightning Scroll", new Vector2(x, y));
-      }
-
-      item++;
+      MapManager.instance.CreateEntity(entityName, (Vector2Int)entityPos);
     }
   }
 }

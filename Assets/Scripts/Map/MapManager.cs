@@ -13,8 +13,6 @@ public class MapManager : MonoBehaviour {
   [SerializeField] private int roomMaxSize = 10;
   [SerializeField] private int roomMinSize = 6;
   [SerializeField] private int maxRooms = 30;
-  [SerializeField] private int maxMonstersPerRoom = 2;
-  [SerializeField] private int maxItemsPerRoom = 2;
 
   [Header("Tiles")]
   [SerializeField] private TileBase floorTile;
@@ -81,7 +79,7 @@ public class MapManager : MonoBehaviour {
     }
 
     ProcGen procGen = new ProcGen();
-    procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, maxMonstersPerRoom, maxItemsPerRoom, rooms, isNewGame);
+    procGen.GenerateDungeon(width, height, roomMaxSize, roomMinSize, maxRooms, rooms, isNewGame);
 
     AddTileMapToDictionary(floorMap);
     AddTileMapToDictionary(obstacleMap);
