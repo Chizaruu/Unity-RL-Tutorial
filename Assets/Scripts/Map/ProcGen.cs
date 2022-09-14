@@ -20,18 +20,18 @@ sealed class ProcGen {
     new Tuple<int, int>(10, 10),
   };
 
-  private Dictionary<int, Tuple<int, string, int>> itemChances = new Dictionary<int, Tuple<int, string, int>> {
-    [0] = new Tuple<int, string, int>(0, "Potion of Health", 35),
-    [1] = new Tuple<int, string, int>(2, "Confusion Scroll", 10),
-    [2] = new Tuple<int, string, int>(4, "Lightning Scroll", 25),
-    [3] = new Tuple<int, string, int>(6, "Fireball Scroll", 25),
+  private List<Tuple<int, string, int>> itemChances = new List<Tuple<int, string, int>> {
+    new Tuple<int, string, int>(0, "Potion of Health", 35),
+    new Tuple<int, string, int>(2, "Confusion Scroll", 10),
+    new Tuple<int, string, int>(4, "Lightning Scroll", 25),
+    new Tuple<int, string, int>(6, "Fireball Scroll", 25),
   };
 
-  private Dictionary<int, Tuple<int, string, int>> monsterChances = new Dictionary<int, Tuple<int, string, int>> {
-    [0] = new Tuple<int, string, int>(1, "Orc", 80),
-    [1] = new Tuple<int, string, int>(3, "Troll", 15),
-    [2] = new Tuple<int, string, int>(5, "Troll", 30),
-    [3] = new Tuple<int, string, int>(7, "Troll", 60),
+  private List<Tuple<int, string, int>> monsterChances = new List<Tuple<int, string, int>> {
+    new Tuple<int, string, int>(1, "Orc", 80),
+    new Tuple<int, string, int>(3, "Troll", 15),
+    new Tuple<int, string, int>(5, "Troll", 30),
+    new Tuple<int, string, int>(7, "Troll", 60),
   };
 
   public int GetMaxValueForFloor(List<Tuple<int, int>> values, int floor) {
@@ -46,14 +46,14 @@ sealed class ProcGen {
     return currentValue;
   }
 
-  public List<string> GetEntitiesAtRandom(Dictionary<int, Tuple<int, string, int>> chances, int numberOfEntities, int floor) {
+  public List<string> GetEntitiesAtRandom(List<Tuple<int, string, int>> chances, int numberOfEntities, int floor) {
     List<string> entities = new List<string>();
     List<int> weightedChances = new List<int>();
 
-    foreach (KeyValuePair<int, Tuple<int, string, int>> chance in chances) {
-      if (floor >= chance.Value.Item1) {
-        entities.Add(chance.Value.Item2);
-        weightedChances.Add(chance.Value.Item3);
+    foreach (Tuple<int, string, int> chance in chances) {
+      if (floor >= chance.Item1) {
+        entities.Add(chance.Item2);
+        weightedChances.Add(chance.Item3);
       }
     }
 
