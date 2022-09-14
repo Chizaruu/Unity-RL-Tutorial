@@ -85,10 +85,6 @@ public class Equipment : MonoBehaviour {
   }
 
   public void ToggleEquip(Item equippableItem, bool addMessage) {
-    if (equippableItem.Equippable is null) {
-      return;
-    }
-
     string slot = equippableItem.Equippable.EquipmentType == EquipmentType.Weapon ? "weapon" : "armor";
 
     if (slot == Weapon.name) {

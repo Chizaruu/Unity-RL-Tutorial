@@ -23,8 +23,8 @@ sealed class ProcGen {
   private List<Tuple<int, string, int>> itemChances = new List<Tuple<int, string, int>> {
     new Tuple<int, string, int>(0, "Potion of Health", 35),
     new Tuple<int, string, int>(2, "Confusion Scroll", 10),
-    new Tuple<int, string, int>(4, "Lightning Scroll", 25),
-    new Tuple<int, string, int>(6, "Fireball Scroll", 25),
+    new Tuple<int, string, int>(4, "Lightning Scroll", 25), new Tuple<int, string, int>(4, "Sword", 5),
+    new Tuple<int, string, int>(6, "Fireball Scroll", 25), new Tuple<int, string, int>(6, "Chain Mail", 15),
   };
 
   private List<Tuple<int, string, int>> monsterChances = new List<Tuple<int, string, int>> {

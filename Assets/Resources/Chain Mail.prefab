@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5441647730969380176}
   - component: {fileID: 2352693973019486928}
   m_Layer: 0
-  m_Name: ChainMail
+  m_Name: Chain Mail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

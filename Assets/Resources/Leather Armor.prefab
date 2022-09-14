@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5441647730969380176}
   - component: {fileID: 5290023445087810449}
   m_Layer: 0
-  m_Name: LeatherArmor
+  m_Name: Leather Armor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

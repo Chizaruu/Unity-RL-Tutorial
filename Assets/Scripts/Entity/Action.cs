@@ -54,7 +54,7 @@ static public class Action {
   }
 
   static public void MeleeAction(Actor actor, Actor target) {
-    int damage = actor.GetComponent<Fighter>().Power - target.GetComponent<Fighter>().Defense;
+    int damage = actor.GetComponent<Fighter>().Power() - target.GetComponent<Fighter>().Defense();
 
     string attackDesc = $"{actor.name} attacks {target.name}";
 
@@ -113,6 +113,18 @@ static public class Action {
     if (itemUsed) {
       GameManager.instance.EndTurn();
     }
+  }
+
+  static public void EquipAction(Actor actor, Item item) {
+    if (item.Equippable is null) {
+      UIManager.instance.AddMessage($"The {item.name} cannot be equipped.", "#808080");
+      return;
+    }
+
+    actor.Equipment.ToggleEquip(item, true);
+
+    UIManager.instance.ToggleInventory();
+    GameManager.instance.EndTurn();
   }
 
   static public void CastAction(Actor consumer, Actor target, Consumable consumable) {
