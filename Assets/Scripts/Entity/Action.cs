@@ -104,7 +104,7 @@ static public class Action {
   static public void UseAction(Actor consumer, Item item) {
     bool itemUsed = false;
 
-    if (item.GetComponent<Consumable>()) {
+    if (item.Consumable is not null) {
       itemUsed = item.GetComponent<Consumable>().Activate(consumer);
     }
 
