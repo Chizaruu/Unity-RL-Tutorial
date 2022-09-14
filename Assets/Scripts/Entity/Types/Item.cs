@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 public class Item : Entity {
   [SerializeField] private Consumable consumable;
+  [SerializeField] private Equippable equippable;
 
   public Consumable Consumable { get => consumable; }
+  public Equippable Equippable { get => equippable; }
 
   private void OnValidate() {
     if (GetComponent<Consumable>()) {
