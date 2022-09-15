@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 3052805927703528690}
   - component: {fileID: 2368456351757360051}
   - component: {fileID: -1773519499549426853}
+  - component: {fileID: 3980022478726739198}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -208,6 +209,7 @@ MonoBehaviour:
   fieldOfViewRange: 8
   fieldOfView: []
   inventory: {fileID: 2368456351757360051}
+  equipment: {fileID: 3980022478726739198}
   aI: {fileID: 0}
   fighter: {fileID: 3052805927703528690}
   level: {fileID: -1773519499549426853}
@@ -225,8 +227,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHp: 30
   hp: 30
-  defense: 2
-  power: 5
+  baseDefense: 1
+  basePower: 2
   target: {fileID: 0}
 --- !u!114 &2368456351757360051
 MonoBehaviour:
@@ -261,6 +263,20 @@ MonoBehaviour:
   levelUpBase: 200
   levelUpFactor: 150
   xpGiven: 0
+--- !u!114 &3980022478726739198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2353431262086747075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9752b102a4375c4e9d037ff7f5e0f56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 0}
+  armor: {fileID: 0}
 --- !u!1 &7515245505423294807
 GameObject:
   m_ObjectHideFlags: 0

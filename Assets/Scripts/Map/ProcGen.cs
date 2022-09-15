@@ -23,8 +23,8 @@ sealed class ProcGen {
   private List<Tuple<int, string, int>> itemChances = new List<Tuple<int, string, int>> {
     new Tuple<int, string, int>(0, "Potion of Health", 35),
     new Tuple<int, string, int>(2, "Confusion Scroll", 10),
-    new Tuple<int, string, int>(4, "Lightning Scroll", 25),
-    new Tuple<int, string, int>(6, "Fireball Scroll", 25),
+    new Tuple<int, string, int>(4, "Lightning Scroll", 25), new Tuple<int, string, int>(4, "Sword", 5),
+    new Tuple<int, string, int>(6, "Fireball Scroll", 25), new Tuple<int, string, int>(6, "Chain Mail", 15),
   };
 
   private List<Tuple<int, string, int>> monsterChances = new List<Tuple<int, string, int>> {
@@ -122,7 +122,17 @@ sealed class ProcGen {
     if (!isNewGame) {
       GameManager.instance.Actors[0].transform.position = new Vector3(playerPos.x + 0.5f, playerPos.y + 0.5f, 0);
     } else {
-      MapManager.instance.CreateEntity("Player", (Vector2Int)playerPos);
+      GameObject player = MapManager.instance.CreateEntity("Player", (Vector2Int)playerPos);
+      Actor playerActor = player.GetComponent<Actor>();
+
+      Item starterWeapon = MapManager.instance.CreateEntity("Dagger", (Vector2Int)playerPos).GetComponent<Item>();
+      Item starterArmor = MapManager.instance.CreateEntity("Leather Armor", (Vector2Int)playerPos).GetComponent<Item>();
+
+      playerActor.Inventory.Add(starterWeapon);
+      playerActor.Inventory.Add(starterArmor);
+
+      playerActor.Equipment.EquipToSlot("Weapon", starterWeapon, false);
+      playerActor.Equipment.EquipToSlot("Armor", starterArmor, false);
     }
   }
 

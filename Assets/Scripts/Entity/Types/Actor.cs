@@ -6,6 +6,7 @@ public class Actor : Entity {
   [SerializeField] private int fieldOfViewRange = 8;
   [SerializeField] private List<Vector3Int> fieldOfView = new List<Vector3Int>();
   [SerializeField] private Inventory inventory;
+  [SerializeField] private Equipment equipment;
   [SerializeField] private AI aI;
   [SerializeField] private Fighter fighter;
   [SerializeField] private Level level;
@@ -14,6 +15,7 @@ public class Actor : Entity {
   public bool IsAlive { get => isAlive; set => isAlive = value; }
   public List<Vector3Int> FieldOfView { get => fieldOfView; }
   public Inventory Inventory { get => inventory; }
+  public Equipment Equipment { get => equipment; }
   public AI AI { get => aI; set => aI = value; }
   public Fighter Fighter { get => fighter; set => fighter = value; }
   public Level Level { get => level; set => level = value; }
@@ -33,6 +35,10 @@ public class Actor : Entity {
 
     if (GetComponent<Level>()) {
       level = GetComponent<Level>();
+    }
+
+    if (GetComponent<Equipment>()) {
+      equipment = GetComponent<Equipment>();
     }
   }
 

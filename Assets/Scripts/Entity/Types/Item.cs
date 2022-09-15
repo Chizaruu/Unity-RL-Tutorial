@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 public class Item : Entity {
   [SerializeField] private Consumable consumable;
+  [SerializeField] private Equippable equippable;
 
   public Consumable Consumable { get => consumable; }
+  public Equippable Equippable { get => equippable; }
 
   private void OnValidate() {
     if (GetComponent<Consumable>()) {
@@ -26,9 +29,13 @@ public class Item : Entity {
       GetComponent<SpriteRenderer>().enabled = false;
     }
 
-    if (state.Parent != "") {
+    if (state.Parent is not "") {
       GameObject parent = GameObject.Find(state.Parent);
       parent.GetComponent<Inventory>().Add(this);
+
+      if (equippable is not null && state.Name.Contains("(E)")) {
+        parent.GetComponent<Equipment>().EquipToSlot(equippable.EquipmentType.ToString(), this, false);
+      }
     }
 
     transform.position = state.Position;

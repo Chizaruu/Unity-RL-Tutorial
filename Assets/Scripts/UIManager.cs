@@ -147,8 +147,8 @@ public class UIManager : MonoBehaviour {
     GameObject agilityButton = levelUpMenuContent.transform.GetChild(2).gameObject;
 
     constitutionButton.GetComponent<TextMeshProUGUI>().text = $"a) Constitution (+20 HP, from {actor.GetComponent<Fighter>().MaxHp})";
-    strengthButton.GetComponent<TextMeshProUGUI>().text = $"b) Strength (+1 attack, from {actor.GetComponent<Fighter>().Power})";
-    agilityButton.GetComponent<TextMeshProUGUI>().text = $"c) Agility (+1 defense, from {actor.GetComponent<Fighter>().Defense})";
+    strengthButton.GetComponent<TextMeshProUGUI>().text = $"b) Strength (+1 attack, from {actor.GetComponent<Fighter>().Power()})";
+    agilityButton.GetComponent<TextMeshProUGUI>().text = $"c) Agility (+1 defense, from {actor.GetComponent<Fighter>().Defense()})";
 
     foreach (Transform child in levelUpMenuContent.transform) {
       child.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -178,8 +178,8 @@ public class UIManager : MonoBehaviour {
       characterInformationMenu.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"Level: {actor.GetComponent<Level>().CurrentLevel}";
       characterInformationMenu.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"XP: {actor.GetComponent<Level>().CurrentXp}";
       characterInformationMenu.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = $"XP for next level: {actor.GetComponent<Level>().XpToNextLevel}";
-      characterInformationMenu.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = $"Attack: {actor.GetComponent<Fighter>().Power}";
-      characterInformationMenu.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = $"Defense: {actor.GetComponent<Fighter>().Defense}";
+      characterInformationMenu.transform.GetChild(3).GetComponent<TextMeshProUGUI>().text = $"Attack: {actor.GetComponent<Fighter>().Power()}";
+      characterInformationMenu.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = $"Defense: {actor.GetComponent<Fighter>().Defense()}";
     }
   }
 
@@ -259,7 +259,11 @@ public class UIManager : MonoBehaviour {
       menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {item.name}";
       menuContentChild.GetComponent<Button>().onClick.AddListener(() => {
         if (menuContent == inventoryContent) {
-          Action.UseAction(actor, item);
+          if (item.Consumable is not null) {
+            Action.UseAction(actor, item);
+          } else if (item.Equippable is not null) {
+            Action.EquipAction(actor, item);
+          }
         } else if (menuContent == dropMenuContent) {
           Action.DropAction(actor, item);
         }

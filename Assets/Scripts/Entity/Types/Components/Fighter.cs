@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
 public class Fighter : MonoBehaviour {
-  [SerializeField] private int maxHp, hp, defense, power;
+  [SerializeField] private int maxHp, hp, baseDefense, basePower;
   [SerializeField] private Actor target;
 
   public int Hp {
@@ -18,10 +18,42 @@ public class Fighter : MonoBehaviour {
     }
   }
 
-  public int MaxHp { get => maxHp; set => maxHp = value; }
-  public int Defense { get => defense; set => defense = value; }
-  public int Power { get => power; set => power = value; }
+  public int MaxHp {
+    get => maxHp; set {
+      maxHp = value;
+      if (GetComponent<Player>()) {
+        UIManager.instance.SetHealthMax(maxHp);
+      }
+    }
+  }
+
+  public int BaseDefense { get => baseDefense; set => baseDefense = value; }
+  public int BasePower { get => basePower; set => basePower = value; }
   public Actor Target { get => target; set => target = value; }
+
+  public int Power() {
+    return basePower + PowerBonus();
+  }
+
+  public int Defense() {
+    return baseDefense + DefenseBonus();
+  }
+
+  public int DefenseBonus() {
+    if (GetComponent<Equipment>() is not null) {
+      return GetComponent<Equipment>().DefenseBonus();
+    }
+
+    return 0;
+  }
+
+  public int PowerBonus() {
+    if (GetComponent<Equipment>() is not null) {
+      return GetComponent<Equipment>().PowerBonus();
+    }
+
+    return 0;
+  }
 
   private void Start() {
     if (GetComponent<Player>()) {
@@ -72,16 +104,16 @@ public class Fighter : MonoBehaviour {
   public FighterState SaveState() => new FighterState(
       maxHp: maxHp,
       hp: hp,
-      defense: defense,
-      power: power,
+      defense: baseDefense,
+      power: basePower,
       target: target != null ? target.name : null
     );
 
   public void LoadState(FighterState state) {
     maxHp = state.MaxHp;
     hp = state.Hp;
-    defense = state.Defense;
-    power = state.Power;
+    baseDefense = state.Defense;
+    basePower = state.Power;
     target = GameManager.instance.Actors.Find(a => a.name == state.Target);
   }
 }
