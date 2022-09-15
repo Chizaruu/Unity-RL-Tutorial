@@ -45,11 +45,11 @@ public class Equipment : MonoBehaviour {
   }
 
   public void UnequipMessage(string name) {
-    UIManager.instance.AddMessage($"You remove the {name}.", "#0da2ff");
+    UIManager.instance.AddMessage($"You remove the {name}.", "#da8ee7");
   }
 
   public void EquipMessage(string name) {
-    UIManager.instance.AddMessage($"You equip the {name}.", "#0da2ff");
+    UIManager.instance.AddMessage($"You equip the {name}.", "#a000c8");
   }
 
   public void EquipToSlot(string slot, Item item, bool addMessage) {
