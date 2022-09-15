@@ -259,7 +259,11 @@ public class UIManager : MonoBehaviour {
       menuContentChild.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"({c++}) {item.name}";
       menuContentChild.GetComponent<Button>().onClick.AddListener(() => {
         if (menuContent == inventoryContent) {
-          Action.UseAction(actor, item);
+          if (item.Consumable is not null) {
+            Action.UseAction(actor, item);
+          } else if (item.Equippable is not null) {
+            Action.EquipAction(actor, item);
+          }
         } else if (menuContent == dropMenuContent) {
           Action.DropAction(actor, item);
         }

@@ -36,6 +36,10 @@ public class Actor : Entity {
     if (GetComponent<Level>()) {
       level = GetComponent<Level>();
     }
+
+    if (GetComponent<Equipment>()) {
+      equipment = GetComponent<Equipment>();
+    }
   }
 
   private void Start() {

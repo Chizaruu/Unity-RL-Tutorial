@@ -95,6 +95,10 @@ static public class Action {
   }
 
   static public void DropAction(Actor actor, Item item) {
+    if (actor.Equipment.ItemIsEquipped(item)) {
+      actor.Equipment.ToggleEquip(item);
+    }
+
     actor.Inventory.Drop(item);
 
     UIManager.instance.ToggleDropMenu();
@@ -121,7 +125,7 @@ static public class Action {
       return;
     }
 
-    actor.Equipment.ToggleEquip(item, true);
+    actor.Equipment.ToggleEquip(item);
 
     UIManager.instance.ToggleInventory();
     GameManager.instance.EndTurn();

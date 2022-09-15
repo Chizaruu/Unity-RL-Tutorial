@@ -44,7 +44,7 @@ public class Equipment : MonoBehaviour {
     return item.Equippable == weapon || item.Equippable == armor;
   }
 
-  public void UnEquipMessage(string name) {
+  public void UnequipMessage(string name) {
     UIManager.instance.AddMessage($"You remove the {name}.", "#0da2ff");
   }
 
@@ -53,13 +53,13 @@ public class Equipment : MonoBehaviour {
   }
 
   public void EquipToSlot(string slot, Item item, bool addMessage) {
-    Equippable currentItem = slot == "weapon" ? weapon : armor;
+    Equippable currentItem = slot == "Weapon" ? weapon : armor;
 
     if (currentItem is not null) {
-      UnEquipMessage(currentItem.name);
+      UnequipFromSlot(slot, addMessage);
     }
 
-    if (slot == "weapon") {
+    if (slot == "Weapon") {
       weapon = item.Equippable;
     } else {
       armor = item.Equippable;
@@ -68,26 +68,29 @@ public class Equipment : MonoBehaviour {
     if (addMessage) {
       EquipMessage(item.name);
     }
+
+    item.name = $"{item.name} (E)";
   }
 
   public void UnequipFromSlot(string slot, bool addMessage) {
-    Equippable currentItem = slot == "weapon" ? weapon : armor;
+    Equippable currentItem = slot == "Weapon" ? weapon : armor;
+    currentItem.name = currentItem.name.Replace(" (E)", "");
 
     if (addMessage) {
-      UnEquipMessage(currentItem.name);
+      UnequipMessage(currentItem.name);
     }
 
-    if (slot == "weapon") {
+    if (slot == "Weapon") {
       weapon = null;
     } else {
       armor = null;
     }
   }
 
-  public void ToggleEquip(Item equippableItem, bool addMessage) {
-    string slot = equippableItem.Equippable.EquipmentType == EquipmentType.Weapon ? "weapon" : "armor";
+  public void ToggleEquip(Item equippableItem, bool addMessage = true) {
+    string slot = equippableItem.Equippable.EquipmentType == EquipmentType.Weapon ? "Weapon" : "Armor";
 
-    if (slot == Weapon.name) {
+    if (ItemIsEquipped(equippableItem)) {
       UnequipFromSlot(slot, addMessage);
     } else {
       EquipToSlot(slot, equippableItem, addMessage);
