@@ -1,8 +1,12 @@
 # Welcome to the Unity-RL-Tutorial
 
+[![Discord](https://img.shields.io/discord/1106106269837819914?color=D1495B&logo=discord&logoColor=FFFFFF&style=flat)](https://discord.gg/VU8EhUY7bX)
+
 An Aussie's guide to completing your first roguelike in Unity!  
 
 In this tutorial, you will learn how to create a classic roguelike game using Unity. This tutorial assumes that you have some basic knowledge of Unity and C# programming, but don't worry if you don't, I will guide you through every step of the way.
+
+If you find my tutorial useful, please consider giving it a Star 🌟 to show your support. Thank you!
 
 ## Getting Started
 
