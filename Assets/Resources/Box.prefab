@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4045285357597916935
+--- !u!1 &1990278263156423401
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,43 +8,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4347136763259795765}
-  - component: {fileID: 5596009288642769278}
-  - component: {fileID: 4124841376909511336}
-  - component: {fileID: 7760322755128577293}
-  - component: {fileID: 2435539870580237300}
-  - component: {fileID: 3125749561450854138}
-  - component: {fileID: 4847947800509122718}
-  - component: {fileID: 4512926728142353472}
+  - component: {fileID: 1687059165440595066}
+  - component: {fileID: 3695615520301308878}
   m_Layer: 0
-  m_Name: Orc
+  m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4347136763259795765
+--- !u!4 &1687059165440595066
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4045285357597916935}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_GameObject: {fileID: 1990278263156423401}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.5, y: 1.5, z: 0}
+  m_LocalScale: {x: 4, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 4347136763259795765}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5596009288642769278
+--- !u!212 &3695615520301308878
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4045285357597916935}
+  m_GameObject: {fileID: 1990278263156423401}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -79,8 +73,8 @@ SpriteRenderer:
   m_SortingLayerID: 1161121641
   m_SortingLayer: 1
   m_SortingOrder: 2
-  m_Sprite: {fileID: -1076480580, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
-  m_Color: {r: 0.24705882, g: 0.49803922, b: 0.24705882, a: 1}
+  m_Sprite: {fileID: 1076388189, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
+  m_Color: {r: 0.5188679, g: 0.32733917, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -90,7 +84,43 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4124841376909511336
+--- !u!1 &4045285357597916935
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4347136763259795765}
+  - component: {fileID: 2240680719201403495}
+  - component: {fileID: 1657599316176765477}
+  - component: {fileID: 9192059058365056716}
+  - component: {fileID: 4442182830498546135}
+  m_Layer: 0
+  m_Name: Box
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4347136763259795765
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4045285357597916935}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0.5}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 1687059165440595066}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2240680719201403495
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,18 +133,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
-  spriteRenderer: {fileID: 5596009288642769278}
-  size: {x: 1, y: 1}
+  spriteRenderer: {fileID: 3695615520301308878}
+  size: {x: 4, y: 4}
   occupiedTiles: []
   isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []
   inventory: {fileID: 0}
-  equipment: {fileID: 4512926728142353472}
-  aI: {fileID: 2435539870580237300}
-  fighter: {fileID: 7760322755128577293}
-  level: {fileID: 4847947800509122718}
---- !u!114 &7760322755128577293
+  equipment: {fileID: 4442182830498546135}
+  aI: {fileID: 0}
+  fighter: {fileID: 1657599316176765477}
+  level: {fileID: 9192059058365056716}
+--- !u!114 &1657599316176765477
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -126,39 +156,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51a48956c5f0c5844a225ac0181751a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHp: 10
-  hp: 10
+  maxHp: 55
+  hp: 55
   baseDefense: 0
-  basePower: 3
+  basePower: 0
   target: {fileID: 0}
---- !u!114 &2435539870580237300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4045285357597916935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e7129c6056a2d347bfe85754f0409c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aStar: {fileID: 3125749561450854138}
-  fighter: {fileID: 7760322755128577293}
-  isFighting: 0
---- !u!114 &3125749561450854138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4045285357597916935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f65d9f1c4171fd948b642e2ca501161a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &4847947800509122718
+--- !u!114 &9192059058365056716
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,8 +178,8 @@ MonoBehaviour:
   xpToNextLevel: 350
   levelUpBase: 200
   levelUpFactor: 150
-  xpGiven: 30
---- !u!114 &4512926728142353472
+  xpGiven: 100
+--- !u!114 &4442182830498546135
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

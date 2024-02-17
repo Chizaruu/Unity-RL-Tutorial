@@ -103,11 +103,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
+  spriteRenderer: {fileID: 5596009288642769278}
+  size: {x: 1, y: 1}
+  occupiedTiles: []
   isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []
   inventory: {fileID: 0}
-  equipment: {fileID: 0}
+  equipment: {fileID: 4442182830498546135}
   aI: {fileID: 4906761112842409411}
   fighter: {fileID: 1657599316176765477}
   level: {fileID: 9192059058365056716}

@@ -36,14 +36,25 @@ static public class Action {
   }
 
   static public bool BumpAction(Actor actor, Vector2 direction) {
-    Actor target = GameManager.instance.GetActorAtLocation(actor.transform.position + (Vector3)direction);
-
-    if (target) {
-      MeleeAction(actor, target);
-      return false;
-    } else {
+    if (actor.Size.x > 1 || actor.Size.y > 1) {
+      for (int i = 0; i < actor.OccupiedTiles.Length; i++) {
+          Actor target = GameManager.instance.GetActorAtLocation(actor.OccupiedTiles[i] + (Vector3)direction);
+          if (target != null && target != actor) {
+              MeleeAction(actor, target);
+              return false;
+          }
+      }
       MovementAction(actor, direction);
       return true;
+    } else {
+        Actor target = GameManager.instance.GetActorAtLocation(actor.transform.position + (Vector3)direction);
+        if (target) {
+            MeleeAction(actor, target);
+            return false;
+        } else {
+            MovementAction(actor, direction);
+            return true;
+        }
     }
   }
 

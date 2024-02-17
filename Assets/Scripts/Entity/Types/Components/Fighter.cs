@@ -73,7 +73,7 @@ public class Fighter : MonoBehaviour {
       GetComponent<Actor>().IsAlive = false;
     }
 
-    SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+    SpriteRenderer spriteRenderer = GetComponent<Actor>().SpriteRenderer;
     spriteRenderer.sprite = GameManager.instance.DeadSprite;
     spriteRenderer.color = new Color(191, 0, 0, 1);
     spriteRenderer.sortingOrder = 0;

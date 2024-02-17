@@ -11,14 +11,16 @@ public class AStar : MonoBehaviour {
   /// <param name="current">Start position</param>
   /// <param name="goal">End position</param>
   /// <returns>List of directions to move to get to the end</returns>
-  public Vector2 Compute(Vector2Int start, Vector2Int goal) {
+  public Vector2 Compute(Vector2Int start, Vector2Int goal)
+  {
     currentNode = GetNode(start);
     openList = new HashSet<Node>();
     closedList = new HashSet<Node>();
     openList.Add(currentNode);
     Stack<Vector2Int> path = null;
 
-    while (openList.Count > 0 && path == null) {
+    while (openList.Count > 0 && path == null)
+    {
       List<Node> neighbours = FindNeighbours(currentNode.position, start);
       ExamineNeighbours(neighbours, currentNode, goal);
       UpdateCurrentTile(ref currentNode);
@@ -26,7 +28,8 @@ public class AStar : MonoBehaviour {
     }
     Vector2 stepDirection = new Vector2(path.Peek().x - start.x, path.Peek().y - start.y);
 
-    if (GameManager.instance.GetActorAtLocation(transform.position + (Vector3)stepDirection)) {
+    Actor actor = GameManager.instance.GetActorAtLocation(transform.position + (Vector3)stepDirection);
+    if (actor != null && actor != GetComponent<Actor>()) {
       return Vector2.zero;
     }
 
