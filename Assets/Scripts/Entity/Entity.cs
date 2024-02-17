@@ -5,8 +5,14 @@ using UnityEngine;
 /// </summary>
 public class Entity : MonoBehaviour {
   [SerializeField] private bool blocksMovement;
-
+  [SerializeField] private SpriteRenderer spriteRenderer;
+  [SerializeField] private Vector2Int size = new Vector2Int(1, 1);
+  [SerializeField] private Vector3[] occupiedTiles;
+  
   public bool BlocksMovement { get => blocksMovement; set => blocksMovement = value; }
+  public SpriteRenderer SpriteRenderer { get => spriteRenderer; set => spriteRenderer = value; }
+  public Vector2Int Size { get => size; set => size = value; }
+  public Vector3[] OccupiedTiles { get => occupiedTiles; set => occupiedTiles = value; }
 
   public virtual void AddToGameManager() {
     if (GetComponent<Player>()) {
@@ -16,10 +22,38 @@ public class Entity : MonoBehaviour {
     }
   }
 
-  public void Move(Vector2 direction) {
-    if (MapManager.instance.IsValidPosition(transform.position + (Vector3)direction)) {
-      transform.position += (Vector3)direction;
+  public void Move(Vector2 direction)
+  {
+    if (!CanMove(direction)) { return; }
+    transform.position += (Vector3)direction;
+
+    if (size.x > 1 || size.y > 1)
+    {
+      occupiedTiles = GetOccupiedTiles();
     }
+  }
+
+  private bool CanMove(Vector2 direction) {
+    if (size.x > 1 || size.y > 1) {
+      foreach (Vector3 occupiedTile in OccupiedTiles) {
+        Vector3 potentialOccupiedTile = occupiedTile + (Vector3)direction;
+        Actor actor = GameManager.instance.GetActorAtLocation(potentialOccupiedTile);
+        if (!MapManager.instance.IsValidPosition(potentialOccupiedTile) || actor != null && actor != this) {
+          return false;
+        }
+      }
+    } else if (!MapManager.instance.IsValidPosition(transform.position + (Vector3)direction)) {
+      return false;
+    }
+    return true;
+  }
+
+  public Vector3[] GetOccupiedTiles() {
+    Vector3[] tiles = new Vector3[(int)size.x * (int)size.y];
+    for (int i = 0; i < tiles.Length; i++) {
+      tiles[i] = new Vector3(transform.position.x + i % (int)size.x, transform.position.y + i / (int)size.x);
+    }
+    return tiles;
   }
 
   public virtual EntityState SaveState() => new EntityState();

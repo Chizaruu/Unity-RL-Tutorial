@@ -101,10 +101,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
+  spriteRenderer: {fileID: 5596009288642769278}
+  size: {x: 1, y: 1}
+  occupiedTiles: []
   isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []
   inventory: {fileID: 0}
+  equipment: {fileID: 0}
   aI: {fileID: 9068088526719773172}
   fighter: {fileID: 0}
   level: {fileID: 3503943130817339647}
@@ -147,6 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentLevel: 1
   currentXp: 0
+  xpToNextLevel: 350
   levelUpBase: 200
   levelUpFactor: 150
   xpGiven: 0

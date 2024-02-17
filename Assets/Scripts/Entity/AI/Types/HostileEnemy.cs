@@ -24,13 +24,29 @@ public class HostileEnemy : AI {
           isFighting = true;
         }
 
-        float targetDistance = Vector3.Distance(transform.position, fighter.Target.transform.position);
+        Actor actor = GetComponent<Actor>();
+        float targetDistance;
+        Vector3 closestTilePosition = transform.position;
+  
+        if(actor.Size.x > 1 || actor.Size.y > 1) {
+          float closestDistance = float.MaxValue;
+          for(int i = 0; i < actor.OccupiedTiles.Length; i++) {
+            float distance = Vector3.Distance(actor.OccupiedTiles[i], fighter.Target.transform.position);
+            if(distance < closestDistance) {
+              closestDistance = distance;
+              closestTilePosition = actor.OccupiedTiles[i];
+            }
+          }
+          targetDistance = closestDistance;
+        } else {
+          targetDistance = Vector3.Distance(transform.position, fighter.Target.transform.position);
+        }
 
         if (targetDistance <= 1.5f) {
           Action.MeleeAction(GetComponent<Actor>(), fighter.Target);
           return;
         } else { //If not in range, move towards target
-          MoveAlongPath(targetPosition);
+          MoveAlongPath(closestTilePosition, targetPosition);
           return;
         }
       }

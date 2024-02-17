@@ -205,6 +205,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 1
+  spriteRenderer: {fileID: 6134931932134907322}
+  size: {x: 1, y: 1}
+  occupiedTiles: []
   isAlive: 1
   fieldOfViewRange: 8
   fieldOfView: []

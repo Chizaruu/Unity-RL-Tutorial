@@ -99,7 +99,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blocksMovement: 0
+  spriteRenderer: {fileID: 3799066079496829687}
+  size: {x: 1, y: 1}
+  occupiedTiles: []
   consumable: {fileID: 2429755986844959524}
+  equippable: {fileID: 0}
 --- !u!114 &2429755986844959524
 MonoBehaviour:
   m_ObjectHideFlags: 0
