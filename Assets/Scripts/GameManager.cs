@@ -10,10 +10,10 @@ public class GameManager : MonoBehaviour {
   [Header("Time")]
   [SerializeField] private float baseTime = 0.075f;
   [SerializeField] private float delayTime; //Read-only
+   private Queue<Actor> actorQueue;
 
   [Header("Entities")]
   [SerializeField] private bool isPlayerTurn = true; //Read-only
-  [SerializeField] private int actorNum = 0; //Read-only
   [SerializeField] private List<Entity> entities;
   [SerializeField] private List<Actor> actors;
 
@@ -39,17 +39,19 @@ public class GameManager : MonoBehaviour {
     if (sceneState is not null) {
       LoadState(sceneState.GameState, true);
     } else {
+      actorQueue = new Queue<Actor>();
       entities = new List<Entity>();
       actors = new List<Actor>();
     }
   }
 
   private void StartTurn() {
-    if (actors[actorNum].GetComponent<Player>()) {
+    Actor actor = actorQueue.Peek();
+    if(actor.GetComponent<Player>()) {
       isPlayerTurn = true;
     } else {
-      if (actors[actorNum].AI != null) {
-        actors[actorNum].AI.RunAI();
+      if (actor.AI != null) {
+        actor.AI.RunAI();
       } else {
         Action.WaitAction();
       }
@@ -57,15 +59,13 @@ public class GameManager : MonoBehaviour {
   }
 
   public void EndTurn() {
-    if (actors[actorNum].GetComponent<Player>()) {
+    Actor actor = actorQueue.Dequeue();
+
+    if (actor.GetComponent<Player>()) {
       isPlayerTurn = false;
     }
 
-    if (actorNum == actors.Count - 1) {
-      actorNum = 0;
-    } else {
-      actorNum++;
-    }
+    actorQueue.Enqueue(actor);
 
     StartCoroutine(TurnDelay());
   }
@@ -101,16 +101,22 @@ public class GameManager : MonoBehaviour {
   public void AddActor(Actor actor) {
     actors.Add(actor);
     delayTime = SetTime();
+    actorQueue.Enqueue(actor);
   }
 
   public void InsertActor(Actor actor, int index) {
     actors.Insert(index, actor);
     delayTime = SetTime();
+    actorQueue.Enqueue(actor);
   }
 
   public void RemoveActor(Actor actor) {
+    if(actor.GetComponent<Player>()) {
+      return;
+    }
     actors.Remove(actor);
     delayTime = SetTime();
+    actorQueue = new Queue<Actor>(actorQueue.Where(x => x != actor));
   }
 
   public void RefreshPlayer() {
@@ -241,9 +247,11 @@ public class GameManager : MonoBehaviour {
       if (canRemovePlayer) {
         entities.Clear();
         actors.Clear();
+        actorQueue.Clear();
       } else {
         entities.RemoveRange(1, entities.Count - 1);
         actors.RemoveRange(1, actors.Count - 1);
+        actorQueue = new Queue<Actor>(actorQueue.Where(x => x.GetComponent<Player>()));
       }
     }
   }
