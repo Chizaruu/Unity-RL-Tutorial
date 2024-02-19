@@ -1,22 +1,26 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-static public class Action {
-  static public void WaitAction() {
+static public class Action
+{
+  static public void WaitAction()
+  {
     GameManager.instance.EndTurn();
   }
 
-  static public void TakeStairsAction(Actor actor) {
+  static public void TakeStairsAction(Actor actor)
+  {
     Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(actor.transform.position);
     string tileName = MapManager.instance.FloorMap.GetTile(pos).name;
 
-    if (tileName != MapManager.instance.UpStairsTile.name && tileName != MapManager.instance.DownStairsTile.name) {
+    if (tileName != MapManager.instance.UpStairsTile.name && tileName != MapManager.instance.DownStairsTile.name)
+    {
       UIManager.instance.AddMessage("There are no stairs here.", "#0da2ff");
       return;
     }
 
-    if (SaveManager.instance.CurrentFloor == 1 && tileName == MapManager.instance.UpStairsTile.name) {
+    if (SaveManager.instance.CurrentFloor == 1 && tileName == MapManager.instance.UpStairsTile.name)
+    {
       UIManager.instance.AddMessage("A mysterious force prevents you from going back.", "#0da2ff");
       return;
     }
@@ -24,9 +28,12 @@ static public class Action {
     SaveManager.instance.SaveGame();
     SaveManager.instance.CurrentFloor += tileName == MapManager.instance.UpStairsTile.name ? -1 : 1;
 
-    if (SaveManager.instance.Save.Scenes.Exists(x => x.FloorNumber == SaveManager.instance.CurrentFloor)) {
+    if (SaveManager.instance.Save.Scenes.Exists(x => x.FloorNumber == SaveManager.instance.CurrentFloor))
+    {
       SaveManager.instance.LoadScene(false);
-    } else {
+    }
+    else
+    {
       GameManager.instance.Reset(false);
       MapManager.instance.GenerateDungeon();
     }
@@ -35,64 +42,85 @@ static public class Action {
     UIManager.instance.SetDungeonFloorText(SaveManager.instance.CurrentFloor);
   }
 
-  static public bool BumpAction(Actor actor, Vector2 direction) {
-    if (actor.Size.x > 1 || actor.Size.y > 1) {
-      for (int i = 0; i < actor.OccupiedTiles.Length; i++) {
-          Actor target = GameManager.instance.GetActorAtLocation(actor.OccupiedTiles[i] + (Vector3)direction);
-          if (target != null && target != actor) {
-              MeleeAction(actor, target);
-              return false;
-          }
+  static public bool BumpAction(Actor actor, Vector2 direction)
+  {
+    if (actor.Size.x > 1 || actor.Size.y > 1)
+    {
+      for (int i = 0; i < actor.OccupiedTiles.Length; i++)
+      {
+        Actor target = GameManager.instance.GetActorAtLocation(actor.OccupiedTiles[i] + (Vector3)direction);
+        if (target != null && target != actor)
+        {
+          MeleeAction(actor, target);
+          return false;
+        }
       }
       MovementAction(actor, direction);
       return true;
-    } else {
-        Actor target = GameManager.instance.GetActorAtLocation(actor.transform.position + (Vector3)direction);
-        if (target) {
-            MeleeAction(actor, target);
-            return false;
-        } else {
-            MovementAction(actor, direction);
-            return true;
-        }
+    }
+    else
+    {
+      Actor target = GameManager.instance.GetActorAtLocation(actor.transform.position + (Vector3)direction);
+      if (target)
+      {
+        MeleeAction(actor, target);
+        return false;
+      }
+      else
+      {
+        MovementAction(actor, direction);
+        return true;
+      }
     }
   }
 
-  static public void MovementAction(Actor actor, Vector2 direction) {
+  static public void MovementAction(Actor actor, Vector2 direction)
+  {
     actor.Move(direction);
     actor.UpdateFieldOfView();
     GameManager.instance.EndTurn();
   }
 
-  static public void MeleeAction(Actor actor, Actor target) {
+  static public void MeleeAction(Actor actor, Actor target)
+  {
     int damage = actor.GetComponent<Fighter>().Power() - target.GetComponent<Fighter>().Defense();
 
     string attackDesc = $"{actor.name} attacks {target.name}";
 
     string colorHex = "";
 
-    if (actor.GetComponent<Player>()) {
+    if (actor.GetComponent<Player>())
+    {
       colorHex = "#ffffff"; // white
-    } else {
+    }
+    else
+    {
       colorHex = "#d1a3a4"; // light red
     }
 
-    if (damage > 0) {
+    if (damage > 0)
+    {
       UIManager.instance.AddMessage($"{attackDesc} for {damage} hit points.", colorHex);
       target.GetComponent<Fighter>().Hp -= damage;
-    } else {
+    }
+    else
+    {
       UIManager.instance.AddMessage($"{attackDesc} but does no damage.", colorHex);
     }
     GameManager.instance.EndTurn();
   }
 
-  static public void PickupAction(Actor actor) {
-    for (int i = 0; i < GameManager.instance.Entities.Count; i++) {
-      if (GameManager.instance.Entities[i].GetComponent<Actor>() || actor.transform.position != GameManager.instance.Entities[i].transform.position) {
+  static public void PickupAction(Actor actor)
+  {
+    for (int i = 0; i < GameManager.instance.Entities.Count; i++)
+    {
+      if (GameManager.instance.Entities[i].GetComponent<Actor>() || actor.transform.position != GameManager.instance.Entities[i].transform.position)
+      {
         continue;
       }
 
-      if (actor.Inventory.Items.Count >= actor.Inventory.Capacity) {
+      if (actor.Inventory.Items.Count >= actor.Inventory.Capacity)
+      {
         UIManager.instance.AddMessage($"Your inventory is full.", "#808080");
         return;
       }
@@ -105,8 +133,10 @@ static public class Action {
     }
   }
 
-  static public void DropAction(Actor actor, Item item) {
-    if (actor.Equipment.ItemIsEquipped(item)) {
+  static public void DropAction(Actor actor, Item item)
+  {
+    if (actor.Equipment.ItemIsEquipped(item))
+    {
       actor.Equipment.ToggleEquip(item);
     }
 
@@ -116,22 +146,27 @@ static public class Action {
     GameManager.instance.EndTurn();
   }
 
-  static public void UseAction(Actor consumer, Item item) {
+  static public void UseAction(Actor consumer, Item item)
+  {
     bool itemUsed = false;
 
-    if (item.Consumable is not null) {
+    if (item.Consumable is not null)
+    {
       itemUsed = item.GetComponent<Consumable>().Activate(consumer);
     }
 
     UIManager.instance.ToggleInventory();
 
-    if (itemUsed) {
+    if (itemUsed)
+    {
       GameManager.instance.EndTurn();
     }
   }
 
-  static public void EquipAction(Actor actor, Item item) {
-    if (item.Equippable is null) {
+  static public void EquipAction(Actor actor, Item item)
+  {
+    if (item.Equippable is null)
+    {
       UIManager.instance.AddMessage($"The {item.name} cannot be equipped.", "#808080");
       return;
     }
@@ -142,17 +177,21 @@ static public class Action {
     GameManager.instance.EndTurn();
   }
 
-  static public void CastAction(Actor consumer, Actor target, Consumable consumable) {
+  static public void CastAction(Actor consumer, Actor target, Consumable consumable)
+  {
     bool castSuccess = consumable.Cast(consumer, target);
 
-    if (castSuccess) {
+    if (castSuccess)
+    {
       GameManager.instance.EndTurn();
     }
   }
-  static public void CastAction(Actor consumer, List<Actor> targets, Consumable consumable) {
+  static public void CastAction(Actor consumer, List<Actor> targets, Consumable consumable)
+  {
     bool castSuccess = consumable.Cast(consumer, targets);
 
-    if (castSuccess) {
+    if (castSuccess)
+    {
       GameManager.instance.EndTurn();
     }
   }
