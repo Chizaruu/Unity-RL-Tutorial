@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Actor : Entity {
+public class Actor : Entity
+{
   [SerializeField] private bool isAlive = true; //read-only
   [SerializeField] private int fieldOfViewRange = 8;
-  [SerializeField] private List<Vector3Int> fieldOfView = new List<Vector3Int>();
+  [SerializeField] private List<Vector3Int> fieldOfView = new();
   [SerializeField] private Inventory inventory;
   [SerializeField] private Equipment equipment;
   [SerializeField] private AI aI;
@@ -20,62 +21,80 @@ public class Actor : Entity {
   public Fighter Fighter { get => fighter; set => fighter = value; }
   public Level Level { get => level; set => level = value; }
 
-  private void OnValidate() {
-    if (GetComponent<Inventory>()) {
+  private void OnValidate()
+  {
+    if (GetComponent<Inventory>())
+    {
       inventory = GetComponent<Inventory>();
     }
 
-    if (GetComponent<AI>()) {
+    if (GetComponent<AI>())
+    {
       aI = GetComponent<AI>();
     }
 
-    if (GetComponent<Fighter>()) {
+    if (GetComponent<Fighter>())
+    {
       fighter = GetComponent<Fighter>();
     }
 
-    if (GetComponent<Level>()) {
+    if (GetComponent<Level>())
+    {
       level = GetComponent<Level>();
     }
 
-    if (GetComponent<Equipment>()) {
+    if (GetComponent<Equipment>())
+    {
       equipment = GetComponent<Equipment>();
     }
   }
 
-  private void Start() {
-    if (!GameManager.instance.Actors.Contains(this)) {
+  private void Start()
+  {
+    if (!GameManager.instance.Actors.Contains(this))
+    {
       AddToGameManager();
     }
 
-    if (isAlive) {
+    if (isAlive)
+    {
       algorithm = new AdamMilVisibility();
       UpdateFieldOfView();
-    } else if (fighter != null) {
+    }
+    else if (fighter != null)
+    {
       fighter.Die();
     }
 
-    if(Size.x > 1 || Size.y > 1) {
+    if (Size.x > 1 || Size.y > 1)
+    {
       OccupiedTiles = GetOccupiedTiles();
     }
   }
 
-  public override void AddToGameManager() {
+  public override void AddToGameManager()
+  {
     base.AddToGameManager();
 
-    if (GetComponent<Player>()) {
+    if (GetComponent<Player>())
+    {
       GameManager.instance.InsertActor(this, 0);
-    } else {
+    }
+    else
+    {
       GameManager.instance.AddActor(this);
     }
   }
 
-  public void UpdateFieldOfView() {
+  public void UpdateFieldOfView()
+  {
     Vector3Int gridPosition = MapManager.instance.FloorMap.WorldToCell(transform.position);
 
     fieldOfView.Clear();
     algorithm.Compute(gridPosition, fieldOfViewRange, fieldOfView);
 
-    if (GetComponent<Player>()) {
+    if (GetComponent<Player>())
+    {
       MapManager.instance.UpdateFogMap(fieldOfView);
       MapManager.instance.SetEntitiesVisibilities();
     }
@@ -92,22 +111,29 @@ public class Actor : Entity {
     levelState: level != null && GetComponent<Player>() ? level.SaveState() : null
   );
 
-  public void LoadState(ActorState state) {
+  public void LoadState(ActorState state)
+  {
     transform.position = state.Position;
     isAlive = state.IsAlive;
 
-    if (!IsAlive) {
+    if (!IsAlive)
+    {
       GameManager.instance.RemoveActor(this);
     }
 
-    if (!state.IsVisible) {
+    if (!state.IsVisible)
+    {
       SpriteRenderer.enabled = false;
     }
 
-    if (state.CurrentAI != null) {
-      if (state.CurrentAI.Type == "HostileEnemy") {
+    if (state.CurrentAI != null)
+    {
+      if (state.CurrentAI.Type == "HostileEnemy")
+      {
         aI = GetComponent<HostileEnemy>();
-      } else if (state.CurrentAI.Type == "ConfusedEnemy") {
+      }
+      else if (state.CurrentAI.Type == "ConfusedEnemy")
+      {
         aI = gameObject.AddComponent<ConfusedEnemy>();
 
         ConfusedState confusedState = state.CurrentAI as ConfusedState;
@@ -115,18 +141,21 @@ public class Actor : Entity {
       }
     }
 
-    if (state.FighterState != null) {
+    if (state.FighterState != null)
+    {
       fighter.LoadState(state.FighterState);
     }
 
-    if (state.LevelState != null) {
+    if (state.LevelState != null)
+    {
       level.LoadState(state.LevelState);
     }
   }
 }
 
 [System.Serializable]
-public class ActorState : EntityState {
+public class ActorState : EntityState
+{
   [SerializeField] private bool isAlive;
   [SerializeField] private AIState currentAI;
   [SerializeField] private FighterState fighterState;
@@ -138,7 +167,8 @@ public class ActorState : EntityState {
   public LevelState LevelState { get => levelState; set => levelState = value; }
 
   public ActorState(EntityType type = EntityType.Actor, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(),
-   bool isAlive = true, AIState currentAI = null, FighterState fighterState = null, LevelState levelState = null) : base(type, name, blocksMovement, isVisible, position) {
+   bool isAlive = true, AIState currentAI = null, FighterState fighterState = null, LevelState levelState = null) : base(type, name, blocksMovement, isVisible, position)
+  {
     this.isAlive = isAlive;
     this.currentAI = currentAI;
     this.fighterState = fighterState;

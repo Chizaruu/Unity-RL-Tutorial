@@ -3,7 +3,8 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary> A* Pathfinding algorithm </summary>
-public class AStar : MonoBehaviour {
+public class AStar : MonoBehaviour
+{
   private Node currentNode;
   private HashSet<Node> openList, closedList;
 
@@ -26,10 +27,11 @@ public class AStar : MonoBehaviour {
       UpdateCurrentTile(ref currentNode);
       path = GeneratePath(currentNode, start, goal);
     }
-    Vector2 stepDirection = new Vector2(path.Peek().x - start.x, path.Peek().y - start.y);
+    Vector2 stepDirection = new(path.Peek().x - start.x, path.Peek().y - start.y);
 
     Actor actor = GameManager.instance.GetActorAtLocation(transform.position + (Vector3)stepDirection);
-    if (actor != null && actor != GetComponent<Actor>()) {
+    if (actor != null && actor != GetComponent<Actor>())
+    {
       return Vector2.zero;
     }
 
@@ -37,14 +39,21 @@ public class AStar : MonoBehaviour {
   }
 
   /// <summary> Finds the neighbours of the current node </summary>
-  private List<Node> FindNeighbours(Vector2Int parentPosition, Vector2Int start) {
-    List<Node> neighbours = new List<Node>();
+  private List<Node> FindNeighbours(Vector2Int parentPosition, Vector2Int start)
+  {
+    List<Node> neighbours = new();
 
-    for (int x = -1; x <= 1; x++) {
-      for (int y = -1; y <= 1; y++) {
+    for (int x = -1; x <= 1; x++)
+    {
+      for (int y = -1; y <= 1; y++)
+      {
         Vector2Int neighbourPos = new Vector2Int(parentPosition.x - x, parentPosition.y - y);
-        if (y != 0 || x != 0) {
-          if (neighbourPos != start && MapManager.instance.FloorMap.GetTile((Vector3Int)neighbourPos)) {
+        if (y != 0 || x != 0)
+        {
+          bool hasFloorOrDoor = MapManager.instance.FloorMap.GetTile((Vector3Int)neighbourPos) || MapManager.instance.InteractableMap.GetTile((Vector3Int)neighbourPos);
+
+          if (neighbourPos != start && hasFloorOrDoor)
+          {
             Node neighbour = GetNode(neighbourPos);
             neighbours.Add(neighbour);
           }
@@ -55,17 +64,23 @@ public class AStar : MonoBehaviour {
   }
 
   /// <summary> Examine neighbours </summary>
-  private void ExamineNeighbours(List<Node> neighbours, Node current, Vector2Int goal) {
-    for (int i = 0; i < neighbours.Count; i++) {
+  private void ExamineNeighbours(List<Node> neighbours, Node current, Vector2Int goal)
+  {
+    for (int i = 0; i < neighbours.Count; i++)
+    {
       Node neighbour = neighbours[i];
 
       int gScore = DetermineGScore(neighbours[i].position, currentNode.position);
 
-      if (openList.Contains(neighbour)) {
-        if (current.g + gScore < neighbour.g) {
+      if (openList.Contains(neighbour))
+      {
+        if (current.g + gScore < neighbour.g)
+        {
           CalcValues(current, neighbour, gScore, goal);
         }
-      } else if (!closedList.Contains(neighbour)) {
+      }
+      else if (!closedList.Contains(neighbour))
+      {
         CalcValues(current, neighbour, gScore, goal);
         openList.Add(neighbour);
       }
@@ -73,29 +88,35 @@ public class AStar : MonoBehaviour {
   }
 
   /// <summary> Calculates the values of the neighbour </summary>
-  private void CalcValues(Node parent, Node neighbour, int cost, Vector2Int goal) {
+  private void CalcValues(Node parent, Node neighbour, int cost, Vector2Int goal)
+  {
     neighbour.parent = parent;
     neighbour.g = parent.g + cost;
-    neighbour.h = ((Mathf.Abs((neighbour.position.x - goal.x)) + Mathf.Abs((neighbour.position.y - goal.y))) * 10);
+    neighbour.h = (Mathf.Abs(neighbour.position.x - goal.x) + Mathf.Abs(neighbour.position.y - goal.y)) * 10;
     neighbour.f = neighbour.g + neighbour.h;
   }
 
   /// <summary> Determines the g score </summary>
-  private int DetermineGScore(Vector2Int neighbour, Vector2Int current) {
+  private int DetermineGScore(Vector2Int neighbour, Vector2Int current)
+  {
     int gScore = 0;
 
     Actor actor = GameManager.instance.GetActorAtLocation((Vector3Int)neighbour);
 
-    if (actor) {
+    if (actor)
+    {
       gScore = 10;
     }
 
     int x = current.x - neighbour.x;
     int y = current.y - neighbour.y;
 
-    if (Mathf.Abs(x - y) % 2 == 1) {
+    if (Mathf.Abs(x - y) % 2 == 1)
+    {
       gScore += 10;
-    } else {
+    }
+    else
+    {
       gScore += 14;
     }
 
@@ -103,32 +124,41 @@ public class AStar : MonoBehaviour {
   }
 
   /// <summary> Updates the current tile </summary>
-  private void UpdateCurrentTile(ref Node current) {
+  private void UpdateCurrentTile(ref Node current)
+  {
     openList.Remove(current);
     closedList.Add(current);
 
-    if (openList.Count > 0) {
+    if (openList.Count > 0)
+    {
       current = openList.OrderBy(x => x.f).First();
     }
   }
 
   /// <summary> Gets the node </summary>
-  private Node GetNode(Vector2Int position) {
-    if (MapManager.instance.Nodes.ContainsKey(position)) {
+  private Node GetNode(Vector2Int position)
+  {
+    if (MapManager.instance.Nodes.ContainsKey(position))
+    {
       return MapManager.instance.Nodes[position];
-    } else {
-      Node node = new Node(position);
+    }
+    else
+    {
+      Node node = new(position);
       MapManager.instance.Nodes.Add(position, node);
       return node;
     }
   }
 
   /// <summary> Generates the path </summary>
-  private Stack<Vector2Int> GeneratePath(Node current, Vector2Int start, Vector2Int goal) {
-    if (current.position == goal) {
-      Stack<Vector2Int> finalPath = new Stack<Vector2Int>();
+  private Stack<Vector2Int> GeneratePath(Node current, Vector2Int start, Vector2Int goal)
+  {
+    if (current.position == goal)
+    {
+      Stack<Vector2Int> finalPath = new();
 
-      while (current.position != start) {
+      while (current.position != start)
+      {
         finalPath.Push(current.position);
 
         current = current.parent;
@@ -136,16 +166,6 @@ public class AStar : MonoBehaviour {
       return finalPath;
     }
     return null;
-  }
-
-  private Vector2 GetPath(Node currentNode) {
-    Stack<Vector2> path = new Stack<Vector2>();
-
-    while (currentNode.parent != null) {
-      path.Push(currentNode.position);
-      currentNode = currentNode.parent;
-    }
-    return path.Pop();
   }
 }
 

@@ -7,13 +7,15 @@ using UnityRandom = UnityEngine.Random;
 
 sealed class ProcGen
 {
-  private List<Tuple<int, int>> maxItemsByFloor = new List<Tuple<int, int>> {
+  private readonly List<Tuple<int, int>> maxItemsByFloor = new()
+  {
     new Tuple<int, int>(1, 1),
     new Tuple<int, int>(4, 2),
     new Tuple<int, int>(7, 3),
     new Tuple<int, int>(10, 4),
   };
-  private List<Tuple<int, int>> maxMonstersByFloor = new List<Tuple<int, int>> {
+  private readonly List<Tuple<int, int>> maxMonstersByFloor = new()
+  {
     new Tuple<int, int>(1, 2),
     new Tuple<int, int>(4, 3),
     new Tuple<int, int>(6, 5),
@@ -21,14 +23,16 @@ sealed class ProcGen
     new Tuple<int, int>(10, 10),
   };
 
-  private List<Tuple<int, string, int>> itemChances = new List<Tuple<int, string, int>> {
+  private readonly List<Tuple<int, string, int>> itemChances = new()
+  {
     new Tuple<int, string, int>(0, "Potion of Health", 35),
     new Tuple<int, string, int>(2, "Confusion Scroll", 10),
     new Tuple<int, string, int>(4, "Lightning Scroll", 25), new Tuple<int, string, int>(4, "Sword", 5),
-    new Tuple<int, string, int>(6, "Fireball Scroll", 25), new Tuple<int, string, int>(6, "Chain Mail", 15),
+    new Tuple<int, string, int>(6, "Fireball Scroll", 25), new(6, "Chain Mail", 15),
   };
 
-  private List<Tuple<int, string, int>> monsterChances = new List<Tuple<int, string, int>> {
+  private readonly List<Tuple<int, string, int>> monsterChances = new()
+  {
     new Tuple<int, string, int>(1, "Orc", 80),
     new Tuple<int, string, int>(1, "Slime", 80),
     new Tuple<int, string, int>(1, "Box", 40),
@@ -37,6 +41,8 @@ sealed class ProcGen
     new Tuple<int, string, int>(5, "Troll", 30),
     new Tuple<int, string, int>(7, "Troll", 60),
   };
+
+  private readonly HashSet<Vector3Int> tunnelCoords = new();
 
   public int GetMaxValueForFloor(List<Tuple<int, int>> values, int floor)
   {
@@ -55,8 +61,8 @@ sealed class ProcGen
 
   public List<string> GetEntitiesAtRandom(List<Tuple<int, string, int>> chances, int numberOfEntities, int floor)
   {
-    List<string> entities = new List<string>();
-    List<int> weightedChances = new List<int>();
+    List<string> entities = new();
+    List<int> weightedChances = new();
 
     foreach (Tuple<int, string, int> chance in chances)
     {
@@ -67,7 +73,7 @@ sealed class ProcGen
       }
     }
 
-    SysRandom rnd = new SysRandom();
+    SysRandom rnd = new();
     List<string> chosenEntities = rnd.Choices(entities, weightedChances, numberOfEntities);
 
     return chosenEntities;
@@ -79,6 +85,7 @@ sealed class ProcGen
 
   public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, List<RectangularRoom> rooms, bool isNewGame)
   {
+    HashSet<Vector3Int> tunnelCoords = new();
     // Generate the rooms.
     for (int roomNum = 0; roomNum < maxRooms; roomNum++)
     {
@@ -88,7 +95,7 @@ sealed class ProcGen
       int roomX = UnityRandom.Range(0, mapWidth - roomWidth - 1);
       int roomY = UnityRandom.Range(0, mapHeight - roomHeight - 1);
 
-      RectangularRoom newRoom = new RectangularRoom(roomX, roomY, roomWidth, roomHeight);
+      RectangularRoom newRoom = new(roomX, roomY, roomWidth, roomHeight);
 
       //Check if this room intersects with any other rooms
       if (newRoom.Overlaps(rooms))
@@ -119,7 +126,7 @@ sealed class ProcGen
       if (rooms.Count != 0)
       {
         //Dig out a tunnel between this room and the previous one.
-        TunnelBetween(rooms[rooms.Count - 1], newRoom);
+        TunnelBetween(rooms[^1], newRoom);
       }
 
       PlaceEntities(newRoom, SaveManager.instance.CurrentFloor);
@@ -127,8 +134,14 @@ sealed class ProcGen
       rooms.Add(newRoom);
     }
 
+    // After all rooms and tunnels have been created, place the doors.
+    foreach (var room in rooms)
+    {
+      PlaceDoors(room, rooms);
+    }
+
     //Add the stairs to the last room.
-    MapManager.instance.FloorMap.SetTile((Vector3Int)rooms[rooms.Count - 1].RandomPoint(), MapManager.instance.DownStairsTile);
+    MapManager.instance.FloorMap.SetTile((Vector3Int)rooms[^1].RandomPoint(), MapManager.instance.DownStairsTile);
 
     //Add the player to the first room.
     Vector3Int playerPos = (Vector3Int)rooms[0].RandomPoint();
@@ -140,7 +153,7 @@ sealed class ProcGen
       if (attempts >= maxAttempts)
       {
         Actor actor = GameManager.instance.GetActorAtLocation(new Vector2(playerPos.x + 0.5f, playerPos.y + 0.5f));
-        
+
         if (actor is not null)
         {
           GameManager.instance.RemoveActor(actor);
@@ -195,7 +208,7 @@ sealed class ProcGen
     }
 
     //Generate the coordinates for this tunnel.
-    List<Vector2Int> tunnelCoords = new List<Vector2Int>();
+    List<Vector2Int> tunnelCoords = new();
     BresenhamLine.Compute(oldRoomCenter, tunnelCorner, tunnelCoords);
     BresenhamLine.Compute(tunnelCorner, newRoomCenter, tunnelCoords);
 
@@ -203,6 +216,7 @@ sealed class ProcGen
     for (int i = 0; i < tunnelCoords.Count; i++)
     {
       SetFloorTile(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y));
+      this.tunnelCoords.Add(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y)); // Record tunnel coordinate
 
       //Set the wall tiles around this tile to be walls.
       for (int x = tunnelCoords[i].x - 1; x <= tunnelCoords[i].x + 1; x++)
@@ -216,6 +230,104 @@ sealed class ProcGen
         }
       }
     }
+  }
+
+  private void PlaceDoors(RectangularRoom room, List<RectangularRoom> allRooms)
+  {
+    // Get potential door positions along the walls of the room.
+    var wallPositions = room.GetWallPositions();
+
+    foreach (var pos in wallPositions)
+    {
+      Vector3Int position = new(pos.x, pos.y, 0);
+
+      // Check if this wall position is adjacent to a floor tile (which would be a tunnel or another room),
+      // and if it's not already part of another room (to avoid placing doors inside rooms),
+      // and ensure it's not directly next to another door.
+      if (IsAdjacentToFloor(position) && !IsPartOfAnotherRoom(position, allRooms, room) && !IsAdjacentToDoor(position))
+      {
+        // Remove the floor tile here.
+        MapManager.instance.FloorMap.SetTile(position, null);
+        // Remove the wall tile here.
+        MapManager.instance.ObstacleMap.SetTile(position, null);
+        // Place a door here.
+        MapManager.instance.InteractableMap.SetTile(position, MapManager.instance.ClosedDoor);
+      }
+    }
+  }
+
+  private bool IsAdjacentToFloor(Vector3Int position)
+  {
+    // Check the four adjacent tiles (up, down, left, right)
+    var adjacentPositions = new Vector3Int[] {
+        position + Vector3Int.up,
+        position + Vector3Int.down,
+        position + Vector3Int.left,
+        position + Vector3Int.right
+    };
+
+    // Check for floors in a straight line (corridor), not just adjacent
+    bool isHorizontalCorridor = MapManager.instance.FloorMap.GetTile(adjacentPositions[2]) && MapManager.instance.FloorMap.GetTile(adjacentPositions[3]);
+    bool isVerticalCorridor = MapManager.instance.FloorMap.GetTile(adjacentPositions[0]) && MapManager.instance.FloorMap.GetTile(adjacentPositions[1]);
+
+    // If either horizontal or vertical adjacent tiles are floors, it could be a corridor entrance.
+    // We'll further refine this by ensuring one of the orthogonal directions is enclosed by walls, indicating a corridor.
+    if (isHorizontalCorridor || isVerticalCorridor)
+    {
+      // Check the orthogonal direction for walls, confirming it's a corridor.
+      Vector3Int orthogonalDirection1 = isHorizontalCorridor ? adjacentPositions[0] : adjacentPositions[2];
+      Vector3Int orthogonalDirection2 = isHorizontalCorridor ? adjacentPositions[1] : adjacentPositions[3];
+
+      // Confirm that the adjacent orthogonal tiles are walls, which would mean this is a corridor end.
+      if (!MapManager.instance.FloorMap.GetTile(orthogonalDirection1) && !MapManager.instance.FloorMap.GetTile(orthogonalDirection2))
+      {
+        // This position is an entrance to a corridor, so it is a valid place for a door.
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private bool IsAdjacentToDoor(Vector3Int position)
+  {
+    var checkPositions = new Vector3Int[]
+    {
+        position + Vector3Int.up,
+        position + Vector3Int.down,
+        position + Vector3Int.left,
+        position + Vector3Int.right
+    };
+
+    foreach (var checkPos in checkPositions)
+    {
+      if (MapManager.instance.InteractableMap.GetTile(checkPos) == MapManager.instance.ClosedDoor)
+      {
+        // Found a door adjacent to this position.
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private bool IsPartOfAnotherRoom(Vector3Int position, List<RectangularRoom> allRooms, RectangularRoom currentRoom)
+  {
+    // We need to check if this position is part of any room other than the current one.
+    foreach (var room in allRooms)
+    {
+      if (room != currentRoom)
+      {
+        var bounds = room.GetBoundsInt();
+        if (bounds.Contains(position))
+        {
+          // If the position is inside the bounds of another room, return true.
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   private bool SetWallTileIfEmpty(Vector3Int pos)
@@ -249,7 +361,7 @@ sealed class ProcGen
     List<string> monsterNames = GetEntitiesAtRandom(monsterChances, numberOfMonsters, floorNumber);
     List<string> itemNames = GetEntitiesAtRandom(itemChances, numberOfItems, floorNumber);
     List<string> entityNames = monsterNames.Concat(itemNames).ToList();
-    
+
     foreach (string entityName in entityNames)
     {
       Vector2Int entityPos = Vector2Int.zero;
