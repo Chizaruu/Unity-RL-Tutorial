@@ -42,6 +42,8 @@ sealed class ProcGen
     new Tuple<int, string, int>(7, "Troll", 60),
   };
 
+  private readonly HashSet<Vector3Int> tunnelCoords = new();
+
   public int GetMaxValueForFloor(List<Tuple<int, int>> values, int floor)
   {
     int currentValue = 0;
@@ -83,6 +85,7 @@ sealed class ProcGen
 
   public void GenerateDungeon(int mapWidth, int mapHeight, int roomMaxSize, int roomMinSize, int maxRooms, List<RectangularRoom> rooms, bool isNewGame)
   {
+    HashSet<Vector3Int> tunnelCoords = new();
     // Generate the rooms.
     for (int roomNum = 0; roomNum < maxRooms; roomNum++)
     {
@@ -123,7 +126,7 @@ sealed class ProcGen
       if (rooms.Count != 0)
       {
         //Dig out a tunnel between this room and the previous one.
-        TunnelBetween(rooms[rooms.Count - 1], newRoom);
+        TunnelBetween(rooms[^1], newRoom);
       }
 
       PlaceEntities(newRoom, SaveManager.instance.CurrentFloor);
@@ -138,7 +141,7 @@ sealed class ProcGen
     }
 
     //Add the stairs to the last room.
-    MapManager.instance.FloorMap.SetTile((Vector3Int)rooms[rooms.Count - 1].RandomPoint(), MapManager.instance.DownStairsTile);
+    MapManager.instance.FloorMap.SetTile((Vector3Int)rooms[^1].RandomPoint(), MapManager.instance.DownStairsTile);
 
     //Add the player to the first room.
     Vector3Int playerPos = (Vector3Int)rooms[0].RandomPoint();
@@ -213,6 +216,7 @@ sealed class ProcGen
     for (int i = 0; i < tunnelCoords.Count; i++)
     {
       SetFloorTile(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y));
+      this.tunnelCoords.Add(new Vector3Int(tunnelCoords[i].x, tunnelCoords[i].y)); // Record tunnel coordinate
 
       //Set the wall tiles around this tile to be walls.
       for (int x = tunnelCoords[i].x - 1; x <= tunnelCoords[i].x + 1; x++)
@@ -238,8 +242,9 @@ sealed class ProcGen
       Vector3Int position = new(pos.x, pos.y, 0);
 
       // Check if this wall position is adjacent to a floor tile (which would be a tunnel or another room),
-      // and if it's not already part of another room (to avoid placing doors inside rooms).
-      if (IsAdjacentToFloor(position) && !IsPartOfAnotherRoom(position, allRooms, room))
+      // and if it's not already part of another room (to avoid placing doors inside rooms),
+      // and ensure it's not directly next to another door.
+      if (IsAdjacentToFloor(position) && !IsPartOfAnotherRoom(position, allRooms, room) && !IsAdjacentToDoor(position))
       {
         // Remove the floor tile here.
         MapManager.instance.FloorMap.SetTile(position, null);
@@ -284,6 +289,27 @@ sealed class ProcGen
     return false;
   }
 
+  private bool IsAdjacentToDoor(Vector3Int position)
+  {
+    var checkPositions = new Vector3Int[]
+    {
+        position + Vector3Int.up,
+        position + Vector3Int.down,
+        position + Vector3Int.left,
+        position + Vector3Int.right
+    };
+
+    foreach (var checkPos in checkPositions)
+    {
+      if (MapManager.instance.InteractableMap.GetTile(checkPos) == MapManager.instance.ClosedDoor)
+      {
+        // Found a door adjacent to this position.
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   private bool IsPartOfAnotherRoom(Vector3Int position, List<RectangularRoom> allRooms, RectangularRoom currentRoom)
   {
