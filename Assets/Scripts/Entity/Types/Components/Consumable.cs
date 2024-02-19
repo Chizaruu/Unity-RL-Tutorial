@@ -9,7 +9,15 @@ public class Consumable : MonoBehaviour
   public bool Activate(Actor consumer)
   {
     consumer.GetComponent<Inventory>().SelectedConsumable = this;
-    return SpellLibrary.ActivateSpell(spellData, consumer);
+
+    if (SpellLibrary.ActivateSpell(spellData, consumer))
+    {
+      Consume(consumer);
+      return true;
+    }
+
+    consumer.GetComponent<Inventory>().SelectedConsumable = null;
+    return false;
   }
 
   public bool Cast(Actor consumer, Actor target)
