@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82e0f466b1b582b4bbc7bdd24a47c561, type: 3}
   m_Name: Lightning
   m_EditorClassIdentifier: 
-  spell: 0
-  damage: 0
+  spell: 3
+  damage: 20
   radius: 0
   numberOfTurns: 0
   healAmount: 0
-  maximumRange: 0
+  maximumRange: 5
   areaOfEffect: 0
-  icon: {fileID: 0}
-  color: {r: 0, g: 0, b: 0, a: 0}
+  icon: {fileID: 1542259967, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
+  color: {r: 1, g: 0.93979657, b: 0, a: 0}

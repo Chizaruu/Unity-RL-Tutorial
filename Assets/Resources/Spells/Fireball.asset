@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82e0f466b1b582b4bbc7bdd24a47c561, type: 3}
   m_Name: Fireball
   m_EditorClassIdentifier: 
-  spell: 0
-  damage: 0
-  radius: 0
+  spell: 1
+  damage: 12
+  radius: 3
   numberOfTurns: 0
   healAmount: 0
   maximumRange: 0
-  areaOfEffect: 0
-  icon: {fileID: 0}
-  color: {r: 0, g: 0, b: 0, a: 0}
+  areaOfEffect: 1
+  icon: {fileID: 825442868, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
+  color: {r: 1, g: 0, b: 0, a: 0}
