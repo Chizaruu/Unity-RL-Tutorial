@@ -5,18 +5,18 @@ using UnityEngine;
 public class Consumable : MonoBehaviour
 {
   public SpellData spellData;
+  [SerializeField] private bool consumeOnActivate;
 
   public bool Activate(Actor consumer)
   {
     consumer.GetComponent<Inventory>().SelectedConsumable = this;
 
-    if (SpellLibrary.ActivateSpell(spellData, consumer))
+    if (SpellLibrary.ActivateSpell(spellData, consumer) && consumeOnActivate)
     {
       Consume(consumer);
       return true;
     }
 
-    consumer.GetComponent<Inventory>().SelectedConsumable = null;
     return false;
   }
 

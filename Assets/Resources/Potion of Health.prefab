@@ -117,3 +117,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spellData: {fileID: 11400000, guid: 16955f9c34fedc541b46783c0824c138, type: 2}
+  consumeOnActivate: 1
