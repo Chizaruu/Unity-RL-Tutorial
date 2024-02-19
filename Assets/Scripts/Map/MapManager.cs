@@ -256,6 +256,7 @@ public class MapManager : MonoBehaviour
           if (tiles[gridPosition].Name == closedDoor.name)
           {
             interactableMap.SetTile(gridPosition, openDoor);
+            tiles[gridPosition].Name = openDoor.name;
           }
         }
       }
@@ -268,6 +269,7 @@ public class MapManager : MonoBehaviour
         if (tiles[gridPosition].Name == closedDoor.name)
         {
           interactableMap.SetTile(gridPosition, openDoor);
+          tiles[gridPosition].Name = openDoor.name;
         }
       }
     }
