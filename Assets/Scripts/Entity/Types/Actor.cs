@@ -70,8 +70,6 @@ public class Actor : Entity
     {
       OccupiedTiles = GetOccupiedTiles();
     }
-
-    MapManager.instance.UpdateTile(this);
   }
 
   public override void AddToGameManager()
