@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Code mostly unchanged from the great http://www.adammil.net/blog/v125_roguelike_vision_algorithms.html#mine
-sealed class AdamMilVisibility : Visibility {
+sealed class AdamMilVisibility : Visibility
+{
   /// <param name="blocksLight">A function that accepts the X and Y coordinates of a tile and determines whether the
   /// given tile blocks the passage of light. The function must be able to accept coordinates that are out of bounds.
   /// </param>
@@ -13,24 +14,26 @@ sealed class AdamMilVisibility : Visibility {
   /// Y >= 0, and X >= Y, and returns the distance from the point to the origin (0,0).
   /// </param>
 
-  public override void Compute(Vector3Int origin, int rangeLimit, List<Vector3Int> fieldOfView) {
+  public override void Compute(Vector3Int origin, int rangeLimit, List<Vector3Int> fieldOfView)
+  {
     fieldOfView.Add(origin);
     for (uint octant = 0; octant < 8; octant++) Compute(octant, origin, rangeLimit, 1, new Slope(1, 1), new Slope(0, 1), fieldOfView);
   }
 
-  struct Slope // represents the slope Y/X as a rational number
+  readonly struct Slope // represents the slope Y/X as a rational number
   {
     public Slope(uint y, uint x) { Y = y; X = x; }
 
-    public bool Greater(uint y, uint x) { return Y * x > X * y; } // this > y/x
-    public bool GreaterOrEqual(uint y, uint x) { return Y * x >= X * y; } // this >= y/x
-    public bool Less(uint y, uint x) { return Y * x < X * y; } // this < y/x
+    public readonly bool Greater(uint y, uint x) { return Y * x > X * y; } // this > y/x
+    public readonly bool GreaterOrEqual(uint y, uint x) { return Y * x >= X * y; } // this >= y/x
+    public readonly bool Less(uint y, uint x) { return Y * x < X * y; } // this < y/x
     //public bool LessOrEqual(uint y, uint x) { return Y*x <= X*y; } // this <= y/x
 
     public readonly uint X, Y;
   }
 
-  void Compute(uint octant, Vector3Int origin, int rangeLimit, uint x, Slope top, Slope bottom, List<Vector3Int> fieldOfView) {
+  void Compute(uint octant, Vector3Int origin, int rangeLimit, uint x, Slope top, Slope bottom, List<Vector3Int> fieldOfView)
+  {
     // throughout this function there are references to various parts of tiles. a tile's coordinates refer to its
     // center, and the following diagram shows the parts of the tile and the vectors from the origin that pass through
     // those parts. given a part of a tile with vector u, a vector v passes above it if v > u and below it if v < u
@@ -51,8 +54,9 @@ sealed class AdamMilVisibility : Visibility {
       if (top.X == 1) // if top == ?/1 then it must be 1/1 because 0/1 < top <= 1/1. this is special-cased because top
       {              // starts at 1/1 and remains 1/1 as long as it doesn't hit anything, so it's a common case
         topY = x;
-      } else // top < 1
-        {
+      }
+      else // top < 1
+      {
         // get the tile that the top vector enters from the left. since our coordinates refer to the center of the
         // tile, this is (x-0.5)*top+0.5, which can be computed as (x-0.5)*top+0.5 = (2(x+0.5)*top+1)/2 =
         // ((2x+1)*top+1)/2. since top == a/b, this is ((2x+1)*a+b)/2b. if it enters a tile at one of the left
@@ -72,8 +76,9 @@ sealed class AdamMilVisibility : Visibility {
           // slope of the vector to the top center of the tile (x*2, topY*2+1) in order for it to miss the wall and
           // pass into the tile above
           if (top.GreaterOrEqual(topY * 2 + 1, x * 2) && !BlocksLight(x, topY + 1, octant, origin)) topY++;
-        } else // the tile doesn't block light
-          {
+        }
+        else // the tile doesn't block light
+        {
           // since this tile doesn't block light, there's nothing to stop it from passing into the tile above, and it
           // does so if the vector is greater than the vector for the bottom-right corner of the tile above. however,
           // there is one additional consideration. later code in this method assumes that if a tile blocks light then
@@ -106,8 +111,9 @@ sealed class AdamMilVisibility : Visibility {
       if (bottom.Y == 0) // if bottom == 0/?, then it's hitting the tile at Y=0 dead center. this is special-cased because
       {                 // bottom.Y starts at zero and remains zero as long as it doesn't hit anything, so it's common
         bottomY = 0;
-      } else // bottom > 0
-        {
+      }
+      else // bottom > 0
+      {
         bottomY = ((x * 2 - 1) * bottom.Y + bottom.X) / (bottom.X * 2); // the tile that the bottom vector enters from the left
         // code below assumes that if a tile is a wall then it's visible, so if the tile contains a wall we have to
         // ensure that the bottom vector actually hits the wall shape. it misses the wall shape if the top-left corner
@@ -115,7 +121,8 @@ sealed class AdamMilVisibility : Visibility {
         // left and above are clear. we can assume the tile to the left is clear because otherwise the bottom vector
         // would be greater, so we only have to check above
         if (bottom.GreaterOrEqual(bottomY * 2 + 1, x * 2) && BlocksLight(x, bottomY, octant, origin) &&
-           !BlocksLight(x, bottomY + 1, octant, origin)) {
+           !BlocksLight(x, bottomY + 1, octant, origin))
+        {
           bottomY++;
         }
       }
@@ -144,7 +151,8 @@ sealed class AdamMilVisibility : Visibility {
           // if we found a transition from clear to opaque or vice versa, adjust the top and bottom vectors
           if (x != rangeLimit) // but don't bother adjusting them if this is the last column anyway
           {
-            if (isOpaque) {
+            if (isOpaque)
+            {
               if (wasOpaque == 0) // if we found a transition from clear to opaque, this sector is done in this column,
               {                  // so adjust the bottom vector upward and continue processing it in the next column
                 // if the opaque tile has a beveled top-left corner, move the bottom vector up to the top center.
@@ -160,13 +168,16 @@ sealed class AdamMilVisibility : Visibility {
                   // since there's no chance that this sector can be split in two by a later transition back to clear
                   if (y == bottomY) { bottom = new Slope(ny, nx); break; } // don't recurse unless necessary
                   else Compute(octant, origin, rangeLimit, x + 1, top, new Slope(ny, nx), fieldOfView);
-                } else // the new bottom is greater than or equal to the top, so the new sector is empty and we'll ignore
-                  {    // it. if we're at the bottom of the column, we'd normally adjust the current sector rather than
+                }
+                else // the new bottom is greater than or equal to the top, so the new sector is empty and we'll ignore
+                {    // it. if we're at the bottom of the column, we'd normally adjust the current sector rather than
                   if (y == bottomY) return; // recursing, so that invalidates the current sector and we're done
                 }
               }
               wasOpaque = 1;
-            } else {
+            }
+            else
+            {
               if (wasOpaque > 0) // if we found a transition from opaque to clear, adjust the top vector downwards
               {
                 // if the opaque tile has a beveled bottom-right corner, move the top vector down to the bottom center.
@@ -196,9 +207,11 @@ sealed class AdamMilVisibility : Visibility {
 
   // NOTE: the code duplication between BlocksLight and SetVisible is for performance. don't refactor the octant
   // translation out unless you don't mind an 18% drop in speed
-  bool BlocksLight(uint x, uint y, uint octant, Vector3Int origin) {
+  bool BlocksLight(uint x, uint y, uint octant, Vector3Int origin)
+  {
     uint nx = (uint)origin.x, ny = (uint)origin.y;
-    switch (octant) {
+    switch (octant)
+    {
       case 0: nx += x; ny -= y; break;
       case 1: nx += y; ny -= x; break;
       case 2: nx -= y; ny -= x; break;
@@ -208,12 +221,24 @@ sealed class AdamMilVisibility : Visibility {
       case 6: nx += y; ny += x; break;
       case 7: nx += x; ny += y; break;
     }
-    return MapManager.instance.ObstacleMap.HasTile(new Vector3Int((int)nx, (int)ny, 0));
+
+    if (MapManager.instance.ObstacleMap.HasTile(new Vector3Int((int)nx, (int)ny, 0)))
+    {
+      return true;
+    }
+    else if (MapManager.instance.InteractableMap.HasTile(new Vector3Int((int)nx, (int)ny, 0)) && MapManager.instance.InteractableMap.GetTile(new Vector3Int((int)nx, (int)ny, 0)).name == "closedDoor")
+    {
+      return true;
+    }
+
+    return false;
   }
 
-  void SetVisible(uint x, uint y, uint octant, Vector3Int origin, List<Vector3Int> fieldOfView) {
+  void SetVisible(uint x, uint y, uint octant, Vector3Int origin, List<Vector3Int> fieldOfView)
+  {
     uint nx = (uint)origin.x, ny = (uint)origin.y;
-    switch (octant) {
+    switch (octant)
+    {
       case 0: nx += x; ny -= y; break;
       case 1: nx += y; ny -= x; break;
       case 2: nx -= y; ny -= x; break;
