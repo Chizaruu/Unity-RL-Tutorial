@@ -6,6 +6,7 @@ public class Consumable : MonoBehaviour
 {
   [SerializeField] private SpellData spellData;
   [SerializeField] private bool consumeOnActivate;
+  [SerializeField] private int amount;
 
   public bool Activate(Actor consumer)
   {
@@ -47,6 +48,12 @@ public class Consumable : MonoBehaviour
   public void Consume(Actor consumer)
   {
     consumer.GetComponent<Inventory>().SelectedConsumable = null;
+
+    if (amount > 1)
+    {
+      amount--;
+      return;
+    }
 
     consumer.Inventory.Items.Remove(GetComponent<Item>());
     GameManager.instance.RemoveEntity(GetComponent<Item>());

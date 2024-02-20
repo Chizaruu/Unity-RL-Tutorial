@@ -6,7 +6,8 @@ public enum Spell
  Fireball,
  Healing,
  Lightning,
- Mana
+ Mana,
+ MagicMissile
 }
 
 [CreateAssetMenu(fileName = "NewSpellData", menuName = "Spell Data")]
@@ -19,6 +20,4 @@ public class SpellData : ScriptableObject
  public int effectRadius;
  public int duration;
  public bool isAreaEffect;
- public Sprite icon;
- public Color color;
 }

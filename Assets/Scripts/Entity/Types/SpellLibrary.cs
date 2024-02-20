@@ -21,7 +21,8 @@ public static class SpellLibrary
             { Spell.Fireball, ActivateFireball },
             { Spell.Healing, ActivateHealing },
             { Spell.Lightning, ActivateLightning },
-            { Spell.Mana, ActivateMana }
+            { Spell.Mana, ActivateMana },
+            { Spell.MagicMissile, ActivateMagicMissile }
         };
 
     castingStrategies = new Dictionary<Spell, SpellCasting>
@@ -29,7 +30,8 @@ public static class SpellLibrary
             { Spell.Confusion, CastConfusion },
             { Spell.Fireball, CastFireball },
             { Spell.Healing, CastHealing },
-            { Spell.Lightning, CastLightning }
+            { Spell.Lightning, CastLightning },
+            { Spell.MagicMissile, CastMagicMissile }
         };
   }
 
@@ -183,6 +185,24 @@ public static class SpellLibrary
     }
 
     UIManager.instance.AddMessage($"You feel your mind clear, and recover {manaRecovered} mana!", "#00FF00");
+    return true;
+  }
+
+  #endregion
+
+  #region Magic Missile
+
+  public static bool ActivateMagicMissile(Actor caster, SpellData data, bool targetSelf = false)
+  {
+    caster.GetComponent<Player>().ToggleTargetMode();
+    UIManager.instance.AddMessage("Select a target to strike.", "#63FFFF");
+    return true;
+  }
+
+  public static bool CastMagicMissile(Actor caster, Actor target, SpellData data, List<Actor> targets)
+  {
+    UIManager.instance.AddMessage($"A magic missile strikes the {target.name} for {data.effectValue} damage!", "#FFFFFF");
+    target.GetComponent<Fighter>().Hp -= data.effectValue;
     return true;
   }
 

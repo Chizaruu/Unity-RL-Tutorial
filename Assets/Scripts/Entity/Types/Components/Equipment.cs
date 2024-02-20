@@ -43,6 +43,23 @@ public class Equipment : MonoBehaviour
     return bonus;
   }
 
+  public int MagicBonus()
+  {
+    int bonus = 0;
+
+    if (weapon != null && weapon.MagicBonus > 0)
+    {
+      bonus += weapon.MagicBonus;
+    }
+
+    if (armor != null && armor.MagicBonus > 0)
+    {
+      bonus += armor.MagicBonus;
+    }
+
+    return bonus;
+  }
+
   public bool ItemIsEquipped(Item item)
   {
     if (item.Equippable is null)

@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Actor))]
 public class SpellBook : MonoBehaviour
 {
-  [SerializeField] private int maxMana, mana;
+  [SerializeField] private int maxMana, mana, baseMagic;
   [SerializeField] private SpellData selectedSpell;
   [SerializeField] private List<SpellData> storedSpells = new List<SpellData>();
 
@@ -33,8 +33,24 @@ public class SpellBook : MonoBehaviour
     }
   }
 
+  public int BaseMagic { get => baseMagic; set => baseMagic = value; }
   public SpellData SelectedSpell { get => selectedSpell; set => selectedSpell = value; }
   public List<SpellData> StoredSpells { get => storedSpells; }
+
+  public int Magic()
+  {
+    return baseMagic + MagicBonus();
+  }
+
+  public int MagicBonus()
+  {
+    if (GetComponent<Equipment>() != null)
+    {
+      return GetComponent<Equipment>().MagicBonus();
+    }
+
+    return 0;
+  }
 
   private void Start()
   {
