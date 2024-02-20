@@ -53,6 +53,9 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
       if (targetMode)
       {
         ToggleTargetMode();
+
+        GetComponent<Inventory>().SelectedConsumable = null;
+        GetComponent<SpellBook>().SelectedSpell = null;
       }
       else if (!UIManager.instance.IsEscapeMenuOpen && !UIManager.instance.IsMenuOpen)
       {
@@ -208,8 +211,6 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
         targetObject.transform.GetChild(0).gameObject.SetActive(false);
       }
       targetObject.SetActive(false);
-      GetComponent<Inventory>().SelectedConsumable = null;
-      GetComponent<SpellBook>().SelectedSpell = null;
     }
   }
 

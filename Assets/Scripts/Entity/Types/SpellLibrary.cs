@@ -136,13 +136,12 @@ public static class SpellLibrary
     Actor healingTarget = target != null ? target : caster;
     int amountRecovered = healingTarget.GetComponent<Fighter>().Heal(data.healAmount);
 
-
     string targetName = healingTarget == caster ? "Player" : healingTarget.name;
 
     if (amountRecovered <= 0)
     {
       string message = healingTarget == caster ? "Your health is already full." : $"The {targetName} is already at full health.";
-      UIManager.instance.AddMessage($"message", "#808080");
+      UIManager.instance.AddMessage(message, "#808080");
       return false;
     }
 

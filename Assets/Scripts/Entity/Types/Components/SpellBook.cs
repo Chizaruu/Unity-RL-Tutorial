@@ -74,50 +74,31 @@ public class SpellBook : MonoBehaviour
 
     if (SpellLibrary.ActivateSpell(spell, GetComponent<Actor>()))
     {
-      UIManager.instance.AddMessage("You cannot activate that spell.", "#FF0000");
-      selectedSpell = null;
-      return;
+      ConsumeMana(spell.manaCost);
     }
+
+    return;
   }
 
   public void CastSpell(Actor target)
   {
-    if (selectedSpell is null)
-    {
-      return;
-    }
-
     if (SpellLibrary.CastSpell(selectedSpell, GetComponent<Actor>(), target))
     {
       ConsumeMana(selectedSpell.manaCost);
     }
-
-    selectedSpell = null;
   }
 
   public void CastSpell(List<Actor> targets)
   {
-    if (selectedSpell is null)
-    {
-      return;
-    }
-
     if (SpellLibrary.CastSpell(selectedSpell, GetComponent<Actor>(), null, targets))
     {
       ConsumeMana(selectedSpell.manaCost);
     }
-
-    selectedSpell = null;
   }
 
   public void ConsumeMana(int amount)
   {
     Mana -= amount;
     selectedSpell = null;
-  }
-
-  public void RestoreMana(int amount)
-  {
-    Mana += amount;
   }
 }
