@@ -10,6 +10,7 @@ public class Actor : Entity
   [SerializeField] private Equipment equipment;
   [SerializeField] private AI aI;
   [SerializeField] private Fighter fighter;
+  [SerializeField] private SpellBook spellBook;
   [SerializeField] private Level level;
   AdamMilVisibility algorithm;
 
@@ -19,6 +20,7 @@ public class Actor : Entity
   public Equipment Equipment { get => equipment; }
   public AI AI { get => aI; set => aI = value; }
   public Fighter Fighter { get => fighter; set => fighter = value; }
+  public SpellBook SpellBook { get => spellBook; set => spellBook = value; }
   public Level Level { get => level; set => level = value; }
 
   private void OnValidate()
@@ -36,6 +38,11 @@ public class Actor : Entity
     if (GetComponent<Fighter>())
     {
       fighter = GetComponent<Fighter>();
+    }
+
+    if (GetComponent<SpellBook>())
+    {
+      spellBook = GetComponent<SpellBook>();
     }
 
     if (GetComponent<Level>())

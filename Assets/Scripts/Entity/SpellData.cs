@@ -4,6 +4,8 @@ using UnityEngine;
 public class SpellData : ScriptableObject
 {
  public Spell spell;
+ public int levelRequired;
+ public int manaCost;
  public int damage;
  public int radius;
  public int numberOfTurns;

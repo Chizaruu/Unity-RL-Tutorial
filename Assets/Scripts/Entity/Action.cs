@@ -195,4 +195,20 @@ static public class Action
       GameManager.instance.EndTurn();
     }
   }
+
+  static public void ActivateSpellAction(Actor actor, SpellData spell)
+  {
+    actor.GetComponent<SpellBook>().ActivateSpell(spell);
+    UIManager.instance.ToggleSpellBook();
+  }
+
+  static public void CastSpellAction(Actor actor, Actor target)
+  {
+    actor.GetComponent<SpellBook>().CastSpell(target);
+  }
+
+  static public void CastSpellAction(Actor actor, List<Actor> targets)
+  {
+    actor.GetComponent<SpellBook>().CastSpell(targets);
+  }
 }

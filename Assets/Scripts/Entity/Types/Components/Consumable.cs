@@ -4,14 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(Item))]
 public class Consumable : MonoBehaviour
 {
-  public SpellData spellData;
+  [SerializeField] private SpellData spellData;
   [SerializeField] private bool consumeOnActivate;
 
   public bool Activate(Actor consumer)
   {
     consumer.GetComponent<Inventory>().SelectedConsumable = this;
 
-    if (SpellLibrary.ActivateSpell(spellData, consumer) && consumeOnActivate)
+    if (SpellLibrary.ActivateSpell(spellData, consumer, consumeOnActivate))
     {
       Consume(consumer);
       return true;

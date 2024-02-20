@@ -131,20 +131,30 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
       {
         if (isSingleTarget)
         {
-          Actor target = SingleTargetChecks(targetObject.transform.position);
+          bool canTargetSelf = GetComponent<SpellBook>().SelectedSpell.spell == Spell.Healing;
 
-          if (target != null)
+          Actor target = SingleTargetChecks(targetObject.transform.position, canTargetSelf);
+
+          if (target != null && GetComponent<Inventory>().SelectedConsumable != null)
           {
             Action.CastAction(GetComponent<Actor>(), target, GetComponent<Inventory>().SelectedConsumable);
+          }
+          else if (target != null && GetComponent<SpellBook>().SelectedSpell != null)
+          {
+            Action.CastSpellAction(GetComponent<Actor>(), target);
           }
         }
         else
         {
           List<Actor> targets = AreaTargetChecks(targetObject.transform.position);
 
-          if (targets != null)
+          if (targets != null && GetComponent<Inventory>().SelectedConsumable != null)
           {
             Action.CastAction(GetComponent<Actor>(), targets, GetComponent<Inventory>().SelectedConsumable);
+          }
+          else if (targets != null && GetComponent<SpellBook>().SelectedSpell != null)
+          {
+            Action.CastSpellAction(GetComponent<Actor>(), targets);
           }
         }
       }
@@ -198,6 +208,7 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
       }
       targetObject.SetActive(false);
       GetComponent<Inventory>().SelectedConsumable = null;
+      GetComponent<SpellBook>().SelectedSpell = null;
     }
   }
 
@@ -254,7 +265,7 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
     }
   }
 
-  private Actor SingleTargetChecks(Vector3 targetPosition)
+  private Actor SingleTargetChecks(Vector3 targetPosition, bool canTargetSelf = false)
   {
     Actor target = GameManager.instance.GetActorAtLocation(targetPosition);
 
@@ -264,7 +275,7 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
       return null;
     }
 
-    if (target == GetComponent<Actor>())
+    if (target == GetComponent<Actor>() && !canTargetSelf)
     {
       UIManager.instance.AddMessage("You can't target yourself!", "#FFFFFF");
       return null;
@@ -300,6 +311,19 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
 
   public void OnCast(InputAction.CallbackContext context)
   {
-    throw new System.NotImplementedException();
+    if (context.performed)
+    {
+      if (CanAct() || UIManager.instance.IsSpellBookOpen)
+      {
+        if (GetComponent<SpellBook>().StoredSpells.Count > 0)
+        {
+          UIManager.instance.ToggleSpellBook(GetComponent<Actor>());
+        }
+        else
+        {
+          UIManager.instance.AddMessage("You have no spells.", "#808080");
+        }
+      }
+    }
   }
 }

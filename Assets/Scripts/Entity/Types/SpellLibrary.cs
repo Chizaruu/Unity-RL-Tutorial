@@ -10,8 +10,10 @@ public enum Spell
 
 public static class SpellLibrary
 {
-  public static bool ActivateSpell(SpellData data, Actor caster)
+  public static bool ActivateSpell(SpellData data, Actor caster, bool targetSelf = false)
   {
+    Player player = caster.GetComponent<Player>();
+
     switch (data.spell)
     {
       case Spell.Confusion:
@@ -23,16 +25,25 @@ public static class SpellLibrary
         UIManager.instance.AddMessage($"Select a location to throw a fireball.", "#63FFFF");
         return false;
       case Spell.Healing:
-        int amountRecovered = caster.GetComponent<Fighter>().Heal(data.healAmount);
-
-        if (amountRecovered <= 0)
+        if (!targetSelf)
         {
-          UIManager.instance.AddMessage("Your health is already full.", "#808080");
+          caster.GetComponent<Player>().ToggleTargetMode();
+          UIManager.instance.AddMessage("Select a target to heal.", "#63FFFF");
           return false;
         }
+        else
+        {
+          int amountRecovered = caster.GetComponent<Fighter>().Heal(data.healAmount);
 
-        UIManager.instance.AddMessage($"You are rejuvenated, and recover {amountRecovered} HP!", "#00FF00");
-        return true;
+          if (amountRecovered <= 0)
+          {
+            UIManager.instance.AddMessage("Your health is already full.", "#808080");
+            return false;
+          }
+
+          UIManager.instance.AddMessage($"You are rejuvenated, and recover {amountRecovered} HP!", "#00FF00");
+          return true;
+        }
       case Spell.Lightning:
         caster.GetComponent<Player>().ToggleTargetMode();
         UIManager.instance.AddMessage("Select a target to strike.", "#63FFFF");
@@ -84,10 +95,12 @@ public static class SpellLibrary
         if (amountRecovered <= 0)
         {
           UIManager.instance.AddMessage($"The {targetName} is already at full health.", "#808080");
+          caster.GetComponent<Player>().ToggleTargetMode();
           return false;
         }
 
         UIManager.instance.AddMessage($"The wounds of the {targetName} start to heal, and it recovers {amountRecovered} HP!", "#00FF00");
+        caster.GetComponent<Player>().ToggleTargetMode();
         return true;
       case Spell.Lightning:
         UIManager.instance.AddMessage($"A lighting bolt strikes the {target.name} with a loud thunder, for {data.damage} damage!", "#FFFFFF");
