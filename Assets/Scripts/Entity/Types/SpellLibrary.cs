@@ -20,7 +20,8 @@ public static class SpellLibrary
             { Spell.Confusion, ActivateConfusion },
             { Spell.Fireball, ActivateFireball },
             { Spell.Healing, ActivateHealing },
-            { Spell.Lightning, ActivateLightning }
+            { Spell.Lightning, ActivateLightning },
+            { Spell.Mana, ActivateMana }
         };
 
     castingStrategies = new Dictionary<Spell, SpellCasting>
@@ -80,7 +81,7 @@ public static class SpellLibrary
       }
 
       confusedEnemy.PreviousAI = target.AI;
-      confusedEnemy.TurnsRemaining = data.numberOfTurns;
+      confusedEnemy.TurnsRemaining = data.duration;
 
       UIManager.instance.AddMessage($"The eyes of the {target.name} look vacant, as it starts to stumble around!", "#FF0000");
       target.AI = confusedEnemy;
@@ -95,7 +96,7 @@ public static class SpellLibrary
 
   private static bool ActivateFireball(Actor caster, SpellData data, bool targetSelf = false)
   {
-    caster.GetComponent<Player>().ToggleTargetMode(data.areaOfEffect, data.radius);
+    caster.GetComponent<Player>().ToggleTargetMode(data.isAreaEffect, data.effectRadius);
     UIManager.instance.AddMessage($"Select a location to throw a fireball.", "#FF0000");
     return true;
   }
@@ -106,8 +107,8 @@ public static class SpellLibrary
     {
       foreach (var t in targets)
       {
-        t.GetComponent<Fighter>().Hp -= data.damage;
-        UIManager.instance.AddMessage($"The {t.name} is engulfed in a fiery explosion, taking {data.damage} damage!", "#FF0000");
+        t.GetComponent<Fighter>().Hp -= data.effectValue;
+        UIManager.instance.AddMessage($"The {t.name} is engulfed in a fiery explosion, taking {data.effectValue} damage!", "#FF0000");
       }
       return true;
     }
@@ -134,7 +135,7 @@ public static class SpellLibrary
   private static bool CastHealing(Actor caster, Actor target, SpellData data, List<Actor> targets)
   {
     Actor healingTarget = target != null ? target : caster;
-    int amountRecovered = healingTarget.GetComponent<Fighter>().Heal(data.healAmount);
+    int amountRecovered = healingTarget.GetComponent<Fighter>().Heal(data.effectValue);
 
     string targetName = healingTarget == caster ? "Player" : healingTarget.name;
 
@@ -162,8 +163,19 @@ public static class SpellLibrary
 
   private static bool CastLightning(Actor caster, Actor target, SpellData data, List<Actor> targets)
   {
-    UIManager.instance.AddMessage($"A lighting bolt strikes the {target.name} with a loud thunder, for {data.damage} damage!", "#FFFFFF");
-    target.GetComponent<Fighter>().Hp -= data.damage;
+    UIManager.instance.AddMessage($"A lighting bolt strikes the {target.name} with a loud thunder, for {data.effectValue} damage!", "#FFFFFF");
+    target.GetComponent<Fighter>().Hp -= data.effectValue;
+    return true;
+  }
+
+  #endregion
+
+  #region Mana
+
+  private static bool ActivateMana(Actor caster, SpellData data, bool targetSelf = false)
+  {
+    UIManager.instance.AddMessage($"You feel a surge of energy as you regain {data.effectValue} mana!", "#00FF00");
+    caster.GetComponent<SpellBook>().Mana += data.effectValue;
     return true;
   }
 

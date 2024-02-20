@@ -101,4 +101,9 @@ public class SpellBook : MonoBehaviour
     Mana -= amount;
     selectedSpell = null;
   }
+
+  public void RestoreMana(int amount)
+  {
+    Mana += amount;
+  }
 }
