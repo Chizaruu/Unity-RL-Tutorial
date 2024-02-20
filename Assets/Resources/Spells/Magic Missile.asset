@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82e0f466b1b582b4bbc7bdd24a47c561, type: 3}
   m_Name: Magic Missile
   m_EditorClassIdentifier: 
-  spell: 0
-  levelRequired: 0
-  manaCost: 0
-  effectValue: 0
-  effectRadius: 0
+  spell: 5
+  levelRequired: 3
+  manaCost: 5
+  effectValue: 4
+  effectRadius: 10
   duration: 0
   isAreaEffect: 0
-  icon: {fileID: 0}
-  color: {r: 0, g: 0, b: 0, a: 0}

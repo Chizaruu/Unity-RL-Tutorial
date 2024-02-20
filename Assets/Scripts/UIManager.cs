@@ -345,7 +345,7 @@ public class UIManager : MonoBehaviour
 
     char c = 'a';
 
-    if (menuContent == inventoryContent)
+    if (menuContent == inventoryContent || menuContent == dropMenuContent)
     {
       for (int itemNum = 0; itemNum < actor.Inventory.Items.Count; itemNum++)
       {

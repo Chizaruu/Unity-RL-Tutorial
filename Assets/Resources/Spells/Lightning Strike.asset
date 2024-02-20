@@ -15,11 +15,7 @@ MonoBehaviour:
   spell: 3
   levelRequired: 8
   manaCost: 20
-  damage: 20
-  radius: 0
-  numberOfTurns: 0
-  healAmount: 0
-  maximumRange: 5
-  areaOfEffect: 0
-  icon: {fileID: 1542259967, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
-  color: {r: 1, g: 0.93979657, b: 0, a: 0}
+  effectValue: 20
+  effectRadius: 5
+  duration: 0
+  isAreaEffect: 0

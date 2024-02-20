@@ -56,6 +56,18 @@ public static class SpellLibrary
     return false;
   }
 
+  private static int CalculateEffectValue(SpellData data, Actor caster)
+  {
+    int effectValue = data.effectValue;
+
+    if (caster.TryGetComponent(out SpellBook spellBook) && spellBook.SelectedSpell != null)
+    {
+      effectValue += spellBook.MagicBonus();
+    }
+
+    return effectValue;
+  }
+
   #region Confusion
 
   private static bool ActivateConfusion(Actor caster, SpellData data, bool targetSelf = false)
@@ -109,7 +121,7 @@ public static class SpellLibrary
     {
       foreach (var t in targets)
       {
-        t.GetComponent<Fighter>().Hp -= data.effectValue;
+        t.GetComponent<Fighter>().Hp -= CalculateEffectValue(data, caster);
         UIManager.instance.AddMessage($"The {t.name} is engulfed in a fiery explosion, taking {data.effectValue} damage!", "#FF0000");
       }
       return true;
@@ -137,7 +149,7 @@ public static class SpellLibrary
   private static bool CastHealing(Actor caster, Actor target, SpellData data, List<Actor> targets)
   {
     Actor healingTarget = target != null ? target : caster;
-    int amountRecovered = healingTarget.GetComponent<Fighter>().Heal(data.effectValue);
+    int amountRecovered = healingTarget.GetComponent<Fighter>().Heal(CalculateEffectValue(data, caster));
 
     string targetName = healingTarget == caster ? "Player" : healingTarget.name;
 
@@ -166,7 +178,7 @@ public static class SpellLibrary
   private static bool CastLightning(Actor caster, Actor target, SpellData data, List<Actor> targets)
   {
     UIManager.instance.AddMessage($"A lighting bolt strikes the {target.name} with a loud thunder, for {data.effectValue} damage!", "#FFFFFF");
-    target.GetComponent<Fighter>().Hp -= data.effectValue;
+    target.GetComponent<Fighter>().Hp -= CalculateEffectValue(data, caster);
     return true;
   }
 
@@ -202,7 +214,7 @@ public static class SpellLibrary
   public static bool CastMagicMissile(Actor caster, Actor target, SpellData data, List<Actor> targets)
   {
     UIManager.instance.AddMessage($"A magic missile strikes the {target.name} for {data.effectValue} damage!", "#FFFFFF");
-    target.GetComponent<Fighter>().Hp -= data.effectValue;
+    target.GetComponent<Fighter>().Hp -= CalculateEffectValue(data, caster);
     return true;
   }
 
