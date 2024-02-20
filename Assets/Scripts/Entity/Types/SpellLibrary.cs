@@ -174,8 +174,15 @@ public static class SpellLibrary
 
   private static bool ActivateMana(Actor caster, SpellData data, bool targetSelf = false)
   {
-    UIManager.instance.AddMessage($"You feel a surge of energy as you regain {data.effectValue} mana!", "#00FF00");
-    caster.GetComponent<SpellBook>().Mana += data.effectValue;
+    int manaRecovered = caster.GetComponent<SpellBook>().RestoreMana(data.effectValue);
+
+    if (manaRecovered <= 0)
+    {
+      UIManager.instance.AddMessage("Your mana is already full.", "#808080");
+      return false;
+    }
+
+    UIManager.instance.AddMessage($"You feel your mind clear, and recover {manaRecovered} mana!", "#00FF00");
     return true;
   }
 

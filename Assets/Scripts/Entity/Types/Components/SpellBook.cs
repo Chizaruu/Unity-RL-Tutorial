@@ -102,8 +102,22 @@ public class SpellBook : MonoBehaviour
     selectedSpell = null;
   }
 
-  public void RestoreMana(int amount)
+  public int RestoreMana(int amount)
   {
-    Mana += amount;
+    if (mana == maxMana)
+    {
+      return 0;
+    }
+
+    int newManaValue = mana + amount;
+
+    if (newManaValue > maxMana)
+    {
+      newManaValue = maxMana;
+    }
+
+    int amountRecovered = newManaValue - mana;
+    Mana = newManaValue;
+    return amountRecovered;
   }
 }
