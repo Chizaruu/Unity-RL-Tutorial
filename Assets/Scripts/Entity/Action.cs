@@ -150,7 +150,7 @@ static public class Action
   {
     bool itemUsed = false;
 
-    if (item.Consumable is not null)
+    if (item.Consumable != null)
     {
       itemUsed = item.GetComponent<Consumable>().Activate(consumer);
     }

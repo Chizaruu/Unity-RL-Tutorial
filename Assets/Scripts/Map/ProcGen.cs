@@ -147,14 +147,14 @@ sealed class ProcGen
     Vector3Int playerPos = (Vector3Int)rooms[0].RandomPoint();
     int maxAttempts = 10, attempts = 0;
 
-    while (GameManager.instance.GetActorAtLocation(new Vector2(playerPos.x + 0.5f, playerPos.y + 0.5f)) is not null)
+    while (GameManager.instance.GetActorAtLocation(new Vector2(playerPos.x + 0.5f, playerPos.y + 0.5f)) != null)
     {
       playerPos = (Vector3Int)rooms[0].RandomPoint();
       if (attempts >= maxAttempts)
       {
         Actor actor = GameManager.instance.GetActorAtLocation(new Vector2(playerPos.x + 0.5f, playerPos.y + 0.5f));
 
-        if (actor is not null)
+        if (actor != null)
         {
           GameManager.instance.RemoveActor(actor);
           GameManager.instance.RemoveEntity(actor);
@@ -396,7 +396,7 @@ sealed class ProcGen
 
       if (!canPlace)
       {
-        if (entity.GetComponent<Actor>() is not null)
+        if (entity.GetComponent<Actor>() != null)
         {
           GameManager.instance.RemoveActor(entity.GetComponent<Actor>());
         }

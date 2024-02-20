@@ -1,5 +1,13 @@
 using UnityEngine;
 
+public enum Spell
+{
+ Confusion,
+ Fireball,
+ Healing,
+ Lightning
+}
+
 [CreateAssetMenu(fileName = "NewSpellData", menuName = "Spell Data")]
 public class SpellData : ScriptableObject
 {

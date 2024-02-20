@@ -131,7 +131,8 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
       {
         if (isSingleTarget)
         {
-          bool canTargetSelf = GetComponent<SpellBook>().SelectedSpell.spell == Spell.Healing;
+          bool isCastedFromSpellBook = GetComponent<SpellBook>().SelectedSpell != null;
+          bool canTargetSelf = isCastedFromSpellBook && GetComponent<SpellBook>().SelectedSpell.spell == Spell.Healing;
 
           Actor target = SingleTargetChecks(targetObject.transform.position, canTargetSelf);
 

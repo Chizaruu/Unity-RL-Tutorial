@@ -249,7 +249,7 @@ public class UIManager : MonoBehaviour
     isCharacterInformationMenuOpen = !isCharacterInformationMenuOpen;
     SetBooleans(characterInformationMenu, isCharacterInformationMenuOpen);
 
-    if (actor is not null)
+    if (actor != null)
     {
       characterInformationMenu.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"Level: {actor.GetComponent<Level>().CurrentLevel}";
       characterInformationMenu.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = $"XP: {actor.GetComponent<Level>().CurrentXp}";
@@ -356,11 +356,11 @@ public class UIManager : MonoBehaviour
         {
           if (menuContent == inventoryContent)
           {
-            if (item.Consumable is not null)
+            if (item.Consumable != null)
             {
               Action.UseAction(actor, item);
             }
-            else if (item.Equippable is not null)
+            else if (item.Equippable != null)
             {
               Action.EquipAction(actor, item);
             }

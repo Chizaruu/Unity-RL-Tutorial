@@ -1,22 +1,26 @@
 using System;
 using UnityEngine;
 
-public class Item : Entity {
+public class Item : Entity
+{
   [SerializeField] private Consumable consumable;
   [SerializeField] private Equippable equippable;
 
   public Consumable Consumable { get => consumable; }
   public Equippable Equippable { get => equippable; }
 
-  private void OnValidate() {
-    if (GetComponent<Consumable>()) {
+  private void OnValidate()
+  {
+    if (GetComponent<Consumable>())
+    {
       consumable = GetComponent<Consumable>();
     }
   }
 
   private void Start()
   {
-    if (!GameManager.instance.Entities.Contains(this)) {
+    if (!GameManager.instance.Entities.Contains(this))
+    {
       AddToGameManager();
     }
   }
@@ -29,16 +33,20 @@ public class Item : Entity {
       parent: transform.parent != null ? transform.parent.gameObject.name : ""
     );
 
-  public void LoadState(ItemState state) {
-    if (!state.IsVisible) {
+  public void LoadState(ItemState state)
+  {
+    if (!state.IsVisible)
+    {
       SpriteRenderer.enabled = false;
     }
 
-    if (state.Parent is not "") {
+    if (state.Parent != "")
+    {
       GameObject parent = GameObject.Find(state.Parent);
       parent.GetComponent<Inventory>().Add(this);
 
-      if (equippable is not null && state.Name.Contains("(E)")) {
+      if (equippable != null && state.Name.Contains("(E)"))
+      {
         parent.GetComponent<Equipment>().EquipToSlot(equippable.EquipmentType.ToString(), this, false);
       }
     }
@@ -48,13 +56,15 @@ public class Item : Entity {
 }
 
 [System.Serializable]
-public class ItemState : EntityState {
+public class ItemState : EntityState
+{
   [SerializeField] private string parent;
 
   public string Parent { get => parent; set => parent = value; }
 
   public ItemState(EntityType type = EntityType.Item, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(),
-   string parent = "") : base(type, name, blocksMovement, isVisible, position) {
+   string parent = "") : base(type, name, blocksMovement, isVisible, position)
+  {
     this.parent = parent;
   }
 }
