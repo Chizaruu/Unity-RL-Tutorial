@@ -74,13 +74,19 @@ public static class SpellLibrary
   {
     caster.GetComponent<Player>().ToggleTargetMode();
     UIManager.instance.AddMessage($"Select a target to confuse.", "#63FFFF");
-    return true;
+    return false;
   }
 
   private static bool CastConfusion(Actor caster, Actor target, SpellData data, List<Actor> targets)
   {
     if (target != null)
     {
+      if (target.AI == null)
+      {
+        UIManager.instance.AddMessage($"The {target.name} is immune to confusion.", "#FF0000");
+        return false;
+      }
+
       if (target.TryGetComponent(out ConfusedEnemy confusedEnemy))
       {
         if (confusedEnemy.TurnsRemaining > 0)
@@ -112,7 +118,7 @@ public static class SpellLibrary
   {
     caster.GetComponent<Player>().ToggleTargetMode(data.isAreaEffect, data.effectRadius);
     UIManager.instance.AddMessage($"Select a location to throw a fireball.", "#FF0000");
-    return true;
+    return false;
   }
 
   private static bool CastFireball(Actor caster, Actor target, SpellData data, List<Actor> targets)
@@ -208,7 +214,7 @@ public static class SpellLibrary
   {
     caster.GetComponent<Player>().ToggleTargetMode();
     UIManager.instance.AddMessage("Select a target to strike.", "#63FFFF");
-    return true;
+    return false;
   }
 
   public static bool CastMagicMissile(Actor caster, Actor target, SpellData data, List<Actor> targets)

@@ -12,7 +12,7 @@ public class Consumable : MonoBehaviour
   {
     consumer.GetComponent<Inventory>().SelectedConsumable = this;
 
-    if (SpellLibrary.ActivateSpell(spellData, consumer, consumeOnActivate))
+    if (SpellLibrary.ActivateSpell(spellData, consumer, consumeOnActivate) && consumeOnActivate)
     {
       Consume(consumer);
       return true;

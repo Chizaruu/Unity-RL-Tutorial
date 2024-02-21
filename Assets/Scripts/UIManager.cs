@@ -207,6 +207,7 @@ public class UIManager : MonoBehaviour
         $"a) Constitution (+20 HP, from {fighter.MaxHp})",
         $"b) Strength (+1 attack, from {fighter.Power()})",
         $"c) Agility (+1 defense, from {fighter.Defense()})",
+        $"d) Intelligence (+1 magic, from {spellBook.Magic()})",
         $"d) Mana (+20 mana, from {spellBook.MaxMana})"
     };
 
@@ -237,7 +238,8 @@ public class UIManager : MonoBehaviour
       case 0: level.IncreaseMaxHp(); break;
       case 1: level.IncreasePower(); break;
       case 2: level.IncreaseDefense(); break;
-      case 3: level.IncreaseMaxMana(); break;
+      case 3: level.IncreaseMagic(); break;
+      case 4: level.IncreaseMaxMana(); break;
       default: Debug.LogError("Invalid choice index!"); break;
     }
     ToggleLevelUpMenu(actor);

@@ -18,4 +18,4 @@ MonoBehaviour:
   effectValue: 12
   effectRadius: 3
   duration: 0
-  isAreaEffect: 0
+  isAreaEffect: 1

@@ -70,6 +70,14 @@ public class Level : MonoBehaviour
     IncreaseLevel();
   }
 
+  public void IncreaseMagic(int amount = 1)
+  {
+    GetComponent<SpellBook>().BaseMagic += amount;
+
+    UIManager.instance.AddMessage($"You feel more in tune with the arcane!", "#00FF00"); //Green
+    IncreaseLevel();
+  }
+
   public LevelState SaveState() => new LevelState(
     currentLevel: currentLevel,
     currentXp: currentXp,
