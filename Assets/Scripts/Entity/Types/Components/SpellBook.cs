@@ -136,4 +136,25 @@ public class SpellBook : MonoBehaviour
     Mana = newManaValue;
     return amountRecovered;
   }
+
+  public SpellBookState SaveState() => new(this);
+
+  public void LoadState(SpellBookState state)
+  {
+    maxMana = state.maxMana;
+    mana = state.mana;
+    baseMagic = state.baseMagic;
+  }
+}
+
+public class SpellBookState
+{
+  public int maxMana, mana, baseMagic;
+
+  public SpellBookState(SpellBook spellBook)
+  {
+    maxMana = spellBook.MaxMana;
+    mana = spellBook.Mana;
+    baseMagic = spellBook.BaseMagic;
+  }
 }
