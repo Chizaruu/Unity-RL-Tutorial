@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 333760861231511014}
   - component: {fileID: 3799066079496829687}
   - component: {fileID: 1077418835589228385}
-  - component: {fileID: 8987926104591548097}
+  - component: {fileID: 2429755986844959524}
   m_Layer: 0
-  m_Name: Fireball Scroll
+  m_Name: Wand of Magic Missile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,8 +75,8 @@ SpriteRenderer:
   m_SortingLayerID: 1161121641
   m_SortingLayer: 1
   m_SortingOrder: 1
-  m_Sprite: {fileID: 1921150528, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 941761630, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -102,9 +102,9 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3799066079496829687}
   size: {x: 1, y: 1}
   occupiedTiles: []
-  consumable: {fileID: 8987926104591548097}
+  consumable: {fileID: 2429755986844959524}
   equippable: {fileID: 0}
---- !u!114 &8987926104591548097
+--- !u!114 &2429755986844959524
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,4 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5dc102e1259ced4f822a13cb884c65b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spellData: {fileID: 11400000, guid: 3a91e115656e44e478c8936482f27c20, type: 2}
+  spellData: {fileID: 11400000, guid: 5a38d612bc741c44e83161132e0a7b61, type: 2}
+  consumeOnActivate: 0
+  amount: 3

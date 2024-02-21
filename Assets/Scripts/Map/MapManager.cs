@@ -70,7 +70,7 @@ public class MapManager : MonoBehaviour
   {
     SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.FloorNumber == SaveManager.instance.CurrentFloor);
 
-    if (sceneState is not null)
+    if (sceneState != null)
     {
       LoadState(sceneState.MapState);
     }
@@ -121,11 +121,11 @@ public class MapManager : MonoBehaviour
     GameObject entityObject = Instantiate(Resources.Load<GameObject>($"{entity}"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
     entityObject.name = entity;
 
-    if (entityObject.GetComponent<Actor>() is not null)
+    if (entityObject.GetComponent<Actor>() != null)
     {
       entityObject.GetComponent<Actor>().AddToGameManager();
     }
-    else if (entityObject.GetComponent<Item>() is not null)
+    else if (entityObject.GetComponent<Item>() != null)
     {
       entityObject.GetComponent<Item>().AddToGameManager();
     }

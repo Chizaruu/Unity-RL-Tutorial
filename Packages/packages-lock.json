@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.tsk.ide.vscode": {
+      "version": "https://github.com/Chizaruu/com.tsk.ide.vscode.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "48c53edea7eb365bb4253ba6d258d7867add485a"
+    },
     "com.unity.2d.animation": {
       "version": "9.1.0",
       "depth": 1,
@@ -149,15 +156,6 @@
       "source": "registry",
       "dependencies": {
         "com.unity.ext.nunit": "1.0.6"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.ide.visualstudio": {
-      "version": "2.0.22",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.test-framework": "1.1.9"
       },
       "url": "https://packages.unity.com"
     },

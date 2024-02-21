@@ -1,15 +1,19 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
-public class Fighter : MonoBehaviour {
+public class Fighter : MonoBehaviour
+{
   [SerializeField] private int maxHp, hp, baseDefense, basePower;
   [SerializeField] private Actor target;
 
-  public int Hp {
-    get => hp; set {
+  public int Hp
+  {
+    get => hp; set
+    {
       hp = Mathf.Max(0, Mathf.Min(value, maxHp));
 
-      if (GetComponent<Player>()) {
+      if (GetComponent<Player>())
+      {
         UIManager.instance.SetHealth(hp, maxHp);
       }
 
@@ -18,10 +22,13 @@ public class Fighter : MonoBehaviour {
     }
   }
 
-  public int MaxHp {
-    get => maxHp; set {
+  public int MaxHp
+  {
+    get => maxHp; set
+    {
       maxHp = value;
-      if (GetComponent<Player>()) {
+      if (GetComponent<Player>())
+      {
         UIManager.instance.SetHealthMax(maxHp);
       }
     }
@@ -31,42 +38,55 @@ public class Fighter : MonoBehaviour {
   public int BasePower { get => basePower; set => basePower = value; }
   public Actor Target { get => target; set => target = value; }
 
-  public int Power() {
+  public int Power()
+  {
     return basePower + PowerBonus();
   }
 
-  public int Defense() {
+  public int Defense()
+  {
     return baseDefense + DefenseBonus();
   }
 
-  public int DefenseBonus() {
-    if (GetComponent<Equipment>() is not null) {
+  public int DefenseBonus()
+  {
+    if (GetComponent<Equipment>() != null)
+    {
       return GetComponent<Equipment>().DefenseBonus();
     }
 
     return 0;
   }
 
-  public int PowerBonus() {
-    if (GetComponent<Equipment>() is not null) {
+  public int PowerBonus()
+  {
+    if (GetComponent<Equipment>() != null)
+    {
       return GetComponent<Equipment>().PowerBonus();
     }
 
     return 0;
   }
 
-  private void Start() {
-    if (GetComponent<Player>()) {
+  private void Start()
+  {
+    if (GetComponent<Player>())
+    {
       UIManager.instance.SetHealthMax(maxHp);
       UIManager.instance.SetHealth(hp, maxHp);
     }
   }
 
-  public void Die() {
-    if (GetComponent<Actor>().IsAlive) {
-      if (GetComponent<Player>()) {
+  public void Die()
+  {
+    if (GetComponent<Actor>().IsAlive)
+    {
+      if (GetComponent<Player>())
+      {
         UIManager.instance.AddMessage("You died!", "#ff0000"); //Red
-      } else {
+      }
+      else
+      {
         GameManager.instance.Actors[0].GetComponent<Level>().AddExperience(GetComponent<Level>().XPGiven); //Give XP to player
         UIManager.instance.AddMessage($"{name} is dead!", "#ffa500"); //Light Orange
       }
@@ -80,19 +100,23 @@ public class Fighter : MonoBehaviour {
 
     name = $"Remains of {name}";
     GetComponent<Actor>().BlocksMovement = false;
-    if (!GetComponent<Player>()) {
+    if (!GetComponent<Player>())
+    {
       GameManager.instance.RemoveActor(this.GetComponent<Actor>());
     }
   }
 
-  public int Heal(int amount) {
-    if (hp == maxHp) {
+  public int Heal(int amount)
+  {
+    if (hp == maxHp)
+    {
       return 0;
     }
 
     int newHPValue = hp + amount;
 
-    if (newHPValue > maxHp) {
+    if (newHPValue > maxHp)
+    {
       newHPValue = maxHp;
     }
 
@@ -109,7 +133,8 @@ public class Fighter : MonoBehaviour {
       target: target != null ? target.name : null
     );
 
-  public void LoadState(FighterState state) {
+  public void LoadState(FighterState state)
+  {
     maxHp = state.MaxHp;
     hp = state.Hp;
     baseDefense = state.Defense;
@@ -118,7 +143,8 @@ public class Fighter : MonoBehaviour {
   }
 }
 
-public class FighterState {
+public class FighterState
+{
   [SerializeField] private int maxHp, hp, defense, power;
   [SerializeField] private string target;
 
@@ -128,7 +154,8 @@ public class FighterState {
   public int Power { get => power; set => power = value; }
   public string Target { get => target; set => target = value; }
 
-  public FighterState(int maxHp, int hp, int defense, int power, string target) {
+  public FighterState(int maxHp, int hp, int defense, int power, string target)
+  {
     this.maxHp = maxHp;
     this.hp = hp;
     this.defense = defense;

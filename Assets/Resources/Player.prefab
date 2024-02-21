@@ -24,6 +24,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1535259046649538380}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,7 +32,6 @@ Transform:
   m_Children:
   - {fileID: 8206838570843354000}
   m_Father: {fileID: 2656715864512435697}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &111466173861117151
 SpriteRenderer:
@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 6134931932134907322}
   - component: {fileID: -6137620390040203496}
   - component: {fileID: 7394922030631761700}
+  - component: {fileID: 3228169421357713407}
   - component: {fileID: 3052805927703528690}
   - component: {fileID: 2368456351757360051}
   - component: {fileID: -1773519499549426853}
@@ -115,6 +116,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2353431262086747075}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -122,7 +124,6 @@ Transform:
   m_Children:
   - {fileID: 1434772833833744713}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6134931932134907322
 SpriteRenderer:
@@ -215,7 +216,29 @@ MonoBehaviour:
   equipment: {fileID: 3980022478726739198}
   aI: {fileID: 0}
   fighter: {fileID: 3052805927703528690}
+  spellBook: {fileID: 3228169421357713407}
   level: {fileID: -1773519499549426853}
+--- !u!114 &3228169421357713407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2353431262086747075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a89f9f04dffc5be438377b778f3b7b34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxMana: 1
+  mana: 0
+  selectedSpell: {fileID: 0}
+  storedSpells:
+  - {fileID: 11400000, guid: 16955f9c34fedc541b46783c0824c138, type: 2}
+  - {fileID: 11400000, guid: a43a9d500aeb46a4e8611ed045ba9f97, type: 2}
+  - {fileID: 11400000, guid: be120d05d032f9043a6cb8d90dbdfec0, type: 2}
+  - {fileID: 11400000, guid: 3a91e115656e44e478c8936482f27c20, type: 2}
+  - {fileID: 11400000, guid: ca501a2b8288f7a4b87119b758235502, type: 2}
 --- !u!114 &3052805927703528690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,13 +327,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7515245505423294807}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1434772833833744713}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7239464009324481033
 SpriteRenderer:

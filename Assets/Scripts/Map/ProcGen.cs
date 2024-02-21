@@ -26,9 +26,15 @@ sealed class ProcGen
   private readonly List<Tuple<int, string, int>> itemChances = new()
   {
     new Tuple<int, string, int>(0, "Potion of Health", 35),
+    new Tuple<int, string, int>(1, "Potion of Mana", 30),
+    new Tuple<int, string, int>(1, "Rod", 10),
     new Tuple<int, string, int>(2, "Confusion Scroll", 10),
-    new Tuple<int, string, int>(4, "Lightning Scroll", 25), new Tuple<int, string, int>(4, "Sword", 5),
-    new Tuple<int, string, int>(6, "Fireball Scroll", 25), new(6, "Chain Mail", 15),
+    new Tuple<int, string, int>(3, "Wand of Magic Missile", 30),
+    new Tuple<int, string, int>(4, "Lightning Scroll", 25),
+    new Tuple<int, string, int>(4, "Sword", 5),
+    new Tuple<int, string, int>(5, "Staff", 5),
+    new Tuple<int, string, int>(6, "Fireball Scroll", 25),
+    new Tuple<int, string, int>(6, "Chain Mail", 15),
   };
 
   private readonly List<Tuple<int, string, int>> monsterChances = new()
@@ -147,14 +153,14 @@ sealed class ProcGen
     Vector3Int playerPos = (Vector3Int)rooms[0].RandomPoint();
     int maxAttempts = 10, attempts = 0;
 
-    while (GameManager.instance.GetActorAtLocation(new Vector2(playerPos.x + 0.5f, playerPos.y + 0.5f)) is not null)
+    while (GameManager.instance.GetActorAtLocation(new Vector2(playerPos.x + 0.5f, playerPos.y + 0.5f)) != null)
     {
       playerPos = (Vector3Int)rooms[0].RandomPoint();
       if (attempts >= maxAttempts)
       {
         Actor actor = GameManager.instance.GetActorAtLocation(new Vector2(playerPos.x + 0.5f, playerPos.y + 0.5f));
 
-        if (actor is not null)
+        if (actor != null)
         {
           GameManager.instance.RemoveActor(actor);
           GameManager.instance.RemoveEntity(actor);
@@ -396,7 +402,7 @@ sealed class ProcGen
 
       if (!canPlace)
       {
-        if (entity.GetComponent<Actor>() is not null)
+        if (entity.GetComponent<Actor>() != null)
         {
           GameManager.instance.RemoveActor(entity.GetComponent<Actor>());
         }

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82e0f466b1b582b4bbc7bdd24a47c561, type: 3}
+  m_Name: Mana Spring
+  m_EditorClassIdentifier: 
+  spell: 4
+  levelRequired: 0
+  manaCost: 0
+  effectValue: 10
+  effectRadius: 0
+  duration: 0
+  isAreaEffect: 0
+  icon: {fileID: 1052692174, guid: d5e9a53ff63e1d04bbc1df4c7c3666be, type: 3}
+  color: {r: 0, g: 0.013520718, b: 1, a: 0}

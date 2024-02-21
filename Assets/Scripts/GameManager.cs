@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
   {
     SceneState sceneState = SaveManager.instance.Save.Scenes.Find(x => x.FloorNumber == SaveManager.instance.CurrentFloor);
 
-    if (sceneState is not null)
+    if (sceneState != null)
     {
       LoadState(sceneState.GameState, true);
     }

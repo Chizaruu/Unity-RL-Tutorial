@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3770998390706036104}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3799066079496829687
 SpriteRenderer:
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3770998390706036104}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05dcc5c5bdde40b48ac4aec4777ec1e3, type: 3}
+  m_Script: {fileID: 11500000, guid: d5dc102e1259ced4f822a13cb884c65b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfTurns: 10
+  spellData: {fileID: 11400000, guid: be120d05d032f9043a6cb8d90dbdfec0, type: 2}
