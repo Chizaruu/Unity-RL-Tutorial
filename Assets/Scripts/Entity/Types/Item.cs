@@ -62,8 +62,8 @@ public class ItemState : EntityState
 
   public string Parent { get => parent; set => parent = value; }
 
-  public ItemState(EntityType type = EntityType.Item, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(),
-   string parent = "") : base(type, name, blocksMovement, isVisible, position)
+  public ItemState(EntityType entityType = EntityType.Item, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(),
+   string parent = "") : base(entityType, name, blocksMovement, isVisible, position)
   {
     this.parent = parent;
   }

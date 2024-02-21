@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -118,7 +117,12 @@ public class MapManager : MonoBehaviour
 
   public GameObject CreateEntity(string entity, Vector2 position)
   {
-    GameObject entityObject = Instantiate(Resources.Load<GameObject>($"{entity}"), new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+    var entityPosition = new Vector2(
+      Mathf.Floor(position.x) + 0.5f,
+      Mathf.Floor(position.y) + 0.5f
+    );
+
+    GameObject entityObject = Instantiate(Resources.Load<GameObject>($"{entity}"), entityPosition, Quaternion.identity);
     entityObject.name = entity;
 
     if (entityObject.GetComponent<Actor>() != null)

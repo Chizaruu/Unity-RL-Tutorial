@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
@@ -79,7 +81,8 @@ public class Fighter : MonoBehaviour
 
   public void Die()
   {
-    if (GetComponent<Actor>().IsAlive)
+    Actor actor = GetComponent<Actor>();
+    if (actor.IsAlive)
     {
       if (GetComponent<Player>())
       {
@@ -90,20 +93,17 @@ public class Fighter : MonoBehaviour
         GameManager.instance.Actors[0].GetComponent<Level>().AddExperience(GetComponent<Level>().XPGiven); //Give XP to player
         UIManager.instance.AddMessage($"{name} is dead!", "#ffa500"); //Light Orange
       }
-      GetComponent<Actor>().IsAlive = false;
+      actor.IsAlive = false;
     }
 
-    SpriteRenderer spriteRenderer = GetComponent<Actor>().SpriteRenderer;
+    SpriteRenderer spriteRenderer = actor.SpriteRenderer;
     spriteRenderer.sprite = GameManager.instance.DeadSprite;
     spriteRenderer.color = new Color(191, 0, 0, 1);
     spriteRenderer.sortingOrder = 0;
 
     name = $"Remains of {name}";
-    GetComponent<Actor>().BlocksMovement = false;
-    if (!GetComponent<Player>())
-    {
-      GameManager.instance.RemoveActor(this.GetComponent<Actor>());
-    }
+    actor.BlocksMovement = false;
+    GameManager.instance.ActorQueue = new Queue<Actor>(GameManager.instance.ActorQueue.Where(x => x != actor));
   }
 
   public int Heal(int amount)

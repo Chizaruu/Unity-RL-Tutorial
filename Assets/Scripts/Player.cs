@@ -273,7 +273,7 @@ sealed class Player : MonoBehaviour, Controls.IPlayerActions
 
     if (target == null)
     {
-      UIManager.instance.AddMessage("You must select an enemy to target.", "#FFFFFF");
+      UIManager.instance.AddMessage("You must select a living target.", "#FFFFFF");
       return null;
     }
 

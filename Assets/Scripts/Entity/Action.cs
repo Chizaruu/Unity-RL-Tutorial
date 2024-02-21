@@ -11,7 +11,7 @@ static public class Action
   static public void TakeStairsAction(Actor actor)
   {
     Vector3Int pos = MapManager.instance.FloorMap.WorldToCell(actor.transform.position);
-    string tileName = MapManager.instance.FloorMap.GetTile(pos).name;
+    string tileName = MapManager.instance.FloorMap.HasTile(pos) ? MapManager.instance.FloorMap.GetTile(pos).name : MapManager.instance.InteractableMap.GetTile(pos).name;
 
     if (tileName != MapManager.instance.UpStairsTile.name && tileName != MapManager.instance.DownStairsTile.name)
     {
@@ -34,7 +34,7 @@ static public class Action
     }
     else
     {
-      GameManager.instance.Reset(false);
+      GameManager.instance.ResetManager(false);
       MapManager.instance.GenerateDungeon();
     }
 
@@ -49,7 +49,7 @@ static public class Action
       for (int i = 0; i < actor.OccupiedTiles.Length; i++)
       {
         Actor target = GameManager.instance.GetActorAtLocation(actor.OccupiedTiles[i] + (Vector3)direction);
-        if (target != null && target != actor)
+        if (target != null && target != actor && target.IsAlive)
         {
           MeleeAction(actor, target);
           return false;
@@ -61,7 +61,7 @@ static public class Action
     else
     {
       Actor target = GameManager.instance.GetActorAtLocation(actor.transform.position + (Vector3)direction);
-      if (target)
+      if (target && target.IsAlive)
       {
         MeleeAction(actor, target);
         return false;

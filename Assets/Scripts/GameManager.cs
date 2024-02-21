@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
   [Header("Time")]
   [SerializeField] private float baseTime = 0.075f;
   [SerializeField] private float delayTime; //Read-only
-  private Queue<Actor> actorQueue;
+  private Queue<Actor> actorQueue = new();
 
   [Header("Entities")]
   [SerializeField] private bool isPlayerTurn = true; //Read-only
@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
   public bool IsPlayerTurn { get => isPlayerTurn; }
   public List<Entity> Entities { get => entities; }
   public List<Actor> Actors { get => actors; }
+  public Queue<Actor> ActorQueue { get => actorQueue; set => actorQueue = value; }
   public Sprite DeadSprite { get => deadSprite; }
 
   private void Awake()
@@ -157,6 +158,8 @@ public class GameManager : MonoBehaviour
   {
     foreach (Actor actor in actors)
     {
+      if (!actor.IsAlive) continue; // Skip dead actors
+
       if (actor.Size.x == 1 && actor.Size.y == 1)
       {
         if (actor.transform.position == location)
@@ -181,6 +184,8 @@ public class GameManager : MonoBehaviour
 
     foreach (Actor actor in actors)
     {
+      if (!actor.IsAlive) continue; // Skip dead actors
+
       if (actor.Size.x == 1 && actor.Size.y == 1)
       {
         if (actor.transform.position == location)
@@ -203,104 +208,89 @@ public class GameManager : MonoBehaviour
 
   public GameState SaveState()
   {
-    foreach (Item item in actors[0].Inventory.Items)
-    {
-      AddEntity(item);
-    }
+    List<EntityState> itemStates = actors[0].Inventory.Items.Select(item => item.SaveState()).ToList();
+    List<EntityState> actorStates = actors.Select(actor => actor.SaveState()).ToList();
 
-    GameState gameState = new(entities: entities.ConvertAll(x => x.SaveState()));
-
-    foreach (Item item in actors[0].Inventory.Items)
-    {
-      RemoveEntity(item);
-    }
+    GameState gameState = new(actorStates.Concat(itemStates).ToList());
 
     return gameState;
   }
 
   public void LoadState(GameState state, bool canRemovePlayer)
   {
-    isPlayerTurn = false; //Prevents player from moving during load
-
-    Reset(canRemovePlayer);
+    isPlayerTurn = false;
+    ResetManager(canRemovePlayer);
     StartCoroutine(LoadEntityStates(state.Entities, canRemovePlayer));
   }
 
   private IEnumerator LoadEntityStates(List<EntityState> entityStates, bool canPlacePlayer)
   {
-    int entityState = 0;
-    while (entityState < entityStates.Count)
+    foreach (var entityState in entityStates)
     {
       yield return new WaitForEndOfFrame();
-
-      if (entityStates[entityState].Type == EntityState.EntityType.Actor)
-      {
-        ActorState actorState = entityStates[entityState] as ActorState;
-
-        string entityName = entityStates[entityState].Name.Contains("Remains of") ?
-          entityStates[entityState].Name.Substring(entityStates[entityState].Name.LastIndexOf(' ') + 1) : entityStates[entityState].Name;
-
-        if (entityName == "Player" && !canPlacePlayer)
-        {
-          actors[0].transform.position = entityStates[entityState].Position;
-          RefreshPlayer();
-          entityState++;
-          continue;
-        }
-
-        Actor actor = MapManager.instance.CreateEntity(entityName, actorState.Position).GetComponent<Actor>();
-
-        actor.LoadState(actorState);
-      }
-      else if (entityStates[entityState].Type == EntityState.EntityType.Item)
-      {
-        ItemState itemState = entityStates[entityState] as ItemState;
-
-        string entityName = entityStates[entityState].Name.Contains("(E)") ?
-          entityStates[entityState].Name.Replace(" (E)", "") : entityStates[entityState].Name;
-
-        if (itemState.Parent == "Player" && !canPlacePlayer)
-        {
-          entityState++;
-          continue;
-        }
-
-        Item item = MapManager.instance.CreateEntity(entityName, itemState.Position).GetComponent<Item>();
-
-        item.LoadState(itemState);
-      }
-
-      entityState++;
+      ProcessEntityState(entityState, canPlacePlayer);
     }
-    isPlayerTurn = true; //Allows player to move after load
+
+    isPlayerTurn = true;
+  }
+  private void ProcessEntityState(EntityState entityState, bool canPlacePlayer)
+  {
+    string entityName = entityState.Name;
+    if (entityState.Type == EntityState.EntityType.Actor && entityState.Name.Contains("Remains of"))
+    {
+      entityName = entityState.Name[(entityState.Name.LastIndexOf(' ') + 1)..];
+    }
+    else if (entityState.Type == EntityState.EntityType.Item)
+    {
+      entityName = entityState.Name.Contains("(E)") ? entityState.Name[..^4] : entityState.Name;
+    }
+
+    if (entityState.Type == EntityState.EntityType.Actor)
+    {
+      if (entityName == "Player" && !canPlacePlayer)
+      {
+        actors[0].transform.position = entityState.Position;
+        RefreshPlayer();
+        return;
+      }
+
+      var actor = MapManager.instance.CreateEntity(entityName, entityState.Position).GetComponent<Actor>();
+      actor.LoadState((ActorState)entityState);
+    }
+    else if (entityState.Type == EntityState.EntityType.Item)
+    {
+      if (((ItemState)entityState).Parent == "Player" && !canPlacePlayer)
+      {
+        return;
+      }
+
+      var item = MapManager.instance.CreateEntity(entityName, entityState.Position).GetComponent<Item>();
+      item.LoadState((ItemState)entityState);
+    }
   }
 
-  public void Reset(bool canRemovePlayer)
+  public void ResetManager(bool canRemovePlayer)
   {
-    if (entities.Count > 0)
+    foreach (var entity in entities)
     {
-      foreach (Entity entity in entities)
+      if (!canRemovePlayer && entity.GetComponent<Player>())
       {
-        if (!canRemovePlayer && entity.GetComponent<Player>())
-        {
-          continue;
-        }
+        continue;
+      }
+      Destroy(entity.gameObject);
+    }
 
-        Destroy(entity.gameObject);
-      }
-
-      if (canRemovePlayer)
-      {
-        entities.Clear();
-        actors.Clear();
-        actorQueue.Clear();
-      }
-      else
-      {
-        entities.RemoveRange(1, entities.Count - 1);
-        actors.RemoveRange(1, actors.Count - 1);
-        actorQueue = new Queue<Actor>(actorQueue.Where(x => x.GetComponent<Player>()));
-      }
+    entities.Clear();
+    if (canRemovePlayer)
+    {
+      actors.Clear();
+      actorQueue.Clear();
+    }
+    else
+    {
+      entities.Add(actors[0]);
+      actors = new List<Actor> { actors[0] };
+      actorQueue = new Queue<Actor>(actorQueue.Where(x => x.GetComponent<Player>()));
     }
   }
 }

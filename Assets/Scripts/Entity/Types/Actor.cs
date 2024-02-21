@@ -58,13 +58,12 @@ public class Actor : Entity
 
   private void Start()
   {
-    if (!GameManager.instance.Actors.Contains(this))
-    {
-      AddToGameManager();
-    }
-
     if (isAlive)
     {
+      if (!GameManager.instance.Actors.Contains(this))
+      {
+        AddToGameManager();
+      }
       algorithm = new AdamMilVisibility();
       UpdateFieldOfView();
     }
@@ -115,6 +114,7 @@ public class Actor : Entity
     position: transform.position,
     currentAI: aI != null ? AI.SaveState() : null,
     fighterState: fighter != null ? fighter.SaveState() : null,
+    spellBookState: spellBook != null ? spellBook.SaveState() : null,
     levelState: level != null && GetComponent<Player>() ? level.SaveState() : null
   );
 
@@ -122,11 +122,6 @@ public class Actor : Entity
   {
     transform.position = state.Position;
     isAlive = state.IsAlive;
-
-    if (!IsAlive)
-    {
-      GameManager.instance.RemoveActor(this);
-    }
 
     if (!state.IsVisible)
     {
@@ -153,6 +148,11 @@ public class Actor : Entity
       fighter.LoadState(state.FighterState);
     }
 
+    if (state.SpellBookState != null)
+    {
+      spellBook.LoadState(state.SpellBookState);
+    }
+
     if (state.LevelState != null)
     {
       level.LoadState(state.LevelState);
@@ -166,19 +166,22 @@ public class ActorState : EntityState
   [SerializeField] private bool isAlive;
   [SerializeField] private AIState currentAI;
   [SerializeField] private FighterState fighterState;
+  [SerializeField] private SpellBookState spellBookState;
   [SerializeField] private LevelState levelState;
 
   public bool IsAlive { get => isAlive; set => isAlive = value; }
   public AIState CurrentAI { get => currentAI; set => currentAI = value; }
   public FighterState FighterState { get => fighterState; set => fighterState = value; }
+  public SpellBookState SpellBookState { get => spellBookState; set => spellBookState = value; }
   public LevelState LevelState { get => levelState; set => levelState = value; }
 
-  public ActorState(EntityType type = EntityType.Actor, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(),
-   bool isAlive = true, AIState currentAI = null, FighterState fighterState = null, LevelState levelState = null) : base(type, name, blocksMovement, isVisible, position)
+  public ActorState(EntityType entityType = EntityType.Actor, string name = "", bool blocksMovement = false, bool isVisible = false, Vector3 position = new Vector3(),
+   bool isAlive = true, AIState currentAI = null, FighterState fighterState = null, SpellBookState spellBookState = null, LevelState levelState = null) : base(entityType, name, blocksMovement, isVisible, position)
   {
     this.isAlive = isAlive;
     this.currentAI = currentAI;
     this.fighterState = fighterState;
+    this.spellBookState = spellBookState;
     this.levelState = levelState;
   }
 }
