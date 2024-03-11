@@ -33,8 +33,9 @@ The tutorial is divided into several parts, each covering a specific aspect of c
 
 ---
 
-[Extras - Multi Tiled Entities](https://youtu.be/JsY5trMzZv8)
-[Extras - Miniupdate #1 (Better Turn Management)](https://youtu.be/zaL5POW8ssM)
+[Extras - Multi Tiled Entities](https://youtu.be/JsY5trMzZv8)  
+[Extras - Miniupdate #1 (Better Turn Management)](https://youtu.be/zaL5POW8ssM)  
+[Extras - Adding Doors](https://youtu.be/i42zE5LLn7c)  
 
 Each part will build on the previous one, so make sure to follow them in order.
 
